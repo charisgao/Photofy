@@ -3,9 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.18070652173913043" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1734375" />
         <entry key="app/src/main/res/layout/fragment_camera.xml" value="0.20416666666666666" />
+        <entry key="app/src/main/res/layout/fragment_camera_result.xml" value="0.19630192502532928" />
         <entry key="app/src/main/res/layout/fragment_compose.xml" value="0.21822916666666667" />
         <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.36944444444444446" />
       </map>

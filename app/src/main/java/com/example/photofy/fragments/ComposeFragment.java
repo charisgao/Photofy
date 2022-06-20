@@ -10,6 +10,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +21,9 @@ import com.example.photofy.R;
 
 public class ComposeFragment extends Fragment {
 
-    private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
-    private static final int CAMERA_REQUEST_CODE = 10;
+    public static final String TAG = "ComposeFragment";
+    private static final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private static final int PERMISSIONS_REQUEST_CODE = 1001;
 
     private Button btnEnableCamera;
 
@@ -44,7 +46,7 @@ public class ComposeFragment extends Fragment {
         btnEnableCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (hasCameraPermission()) {
+                if (allPermissionsGranted()) {
                     enableCamera();
                 } else {
                     requestPermission();
@@ -53,8 +55,14 @@ public class ComposeFragment extends Fragment {
         });
     }
 
-    private boolean hasCameraPermission() {
-        return ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+    private boolean allPermissionsGranted() {
+        for (String permission : REQUIRED_PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(getContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+                Log.i(TAG, "false!!!");
+                return false;
+            }
+        }
+        return true;
     }
 
     private void enableCamera() {
@@ -67,6 +75,6 @@ public class ComposeFragment extends Fragment {
     }
 
     private void requestPermission() {
-        ActivityCompat.requestPermissions((MainActivity) getContext(), CAMERA_PERMISSION, CAMERA_REQUEST_CODE);
+        ActivityCompat.requestPermissions((MainActivity) getContext(), REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
     }
 }
