@@ -46,4 +46,8 @@ public class MainActivity extends AppCompatActivity {
         // Set default selection
         bottomNavigationView.setSelectedItemId(R.id.action_home);
     }
+
+
+    // TODO: logout method
+    // use AuthorizationClient clearCookies method to log out and clear all stored tokens for Spotify
 }

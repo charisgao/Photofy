@@ -88,31 +88,33 @@ public class CameraFragment extends Fragment {
 
                 ImageCapture.OutputFileOptions outputFileOptions =
                         new ImageCapture.OutputFileOptions.Builder(file).build();
-                imageCapture.takePicture(outputFileOptions, executor,
-                        new ImageCapture.OnImageSavedCallback() {
-                            @Override
-                            public void onImageSaved(ImageCapture.OutputFileResults outputFileResults) {
-                                Image picture = new Image();
-                                picture.setUser(ParseUser.getCurrentUser());
-                                picture.setImage(new ParseFile(file));
-                                picture.saveInBackground(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                    }
-                                });
-                                result.putString("bundleKey", file.getAbsolutePath());
-                                FragmentManager manager = ((MainActivity) getContext()).getSupportFragmentManager();
-                                manager.setFragmentResult("requestKey", result);
-                                ComposeFragment composeFragment = new ComposeFragment();
-                                manager.beginTransaction().replace(R.id.flContainer, composeFragment).addToBackStack(null).commit();
+                imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback() {
+                        @Override
+                        public void onImageSaved(ImageCapture.OutputFileResults outputFileResults) {
+                            Image picture = new Image();
+                            picture.setUser(ParseUser.getCurrentUser());
+                            picture.setImage(new ParseFile(file));
+                            picture.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                }
+                            });
+                            result.putString("bundleKey", file.getAbsolutePath());
+                            FragmentManager manager = ((MainActivity) getContext()).getSupportFragmentManager();
+                            manager.setFragmentResult("requestKey", result);
+                            ComposeFragment composeFragment = new ComposeFragment();
+                            manager.beginTransaction()
+                                    .replace(R.id.flContainer, composeFragment)
+                                    .addToBackStack(null)
+                                    .commit();
 
-                                Log.i(TAG, "Image saved successfully");
-                            }
-                            @Override
-                            public void onError(ImageCaptureException error) {
-                                Log.e(TAG, "Error while capturing camera image", error);
-                            }
+                            Log.i(TAG, "Image saved successfully");
                         }
+                        @Override
+                        public void onError(ImageCaptureException error) {
+                            Log.e(TAG, "Error while capturing camera image", error);
+                        }
+                    }
                 );
             }
         });
