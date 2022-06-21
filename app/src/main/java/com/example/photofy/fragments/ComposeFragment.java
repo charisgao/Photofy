@@ -2,6 +2,9 @@ package com.example.photofy.fragments;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,12 +12,15 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.example.photofy.activities.MainActivity;
 import com.example.photofy.R;
@@ -26,6 +32,8 @@ public class ComposeFragment extends Fragment {
     private static final int PERMISSIONS_REQUEST_CODE = 1001;
 
     private Button btnEnableCamera;
+    private ImageView ivCapturedImage;
+    private FragmentManager manager;
 
     public ComposeFragment() {
         // Required empty public constructor
@@ -43,6 +51,7 @@ public class ComposeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         btnEnableCamera = view.findViewById(R.id.btnEnableCamera);
+        ivCapturedImage = view.findViewById(R.id.ivCapturedImage);
         btnEnableCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,6 +60,24 @@ public class ComposeFragment extends Fragment {
                 } else {
                     requestPermission();
                 }
+            }
+        });
+
+        manager = ((MainActivity) getContext()).getSupportFragmentManager();
+        manager.setFragmentResultListener("requestKey", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
+                Log.i(TAG, "inFragmentResult");
+                String path = bundle.getString("bundleKey");
+                Bitmap bitmap = BitmapFactory.decodeFile(path);
+
+                // Rotate image to be portrait
+                Matrix matrix = new Matrix();
+                matrix.postRotate(90);
+                Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+                ivCapturedImage.setImageBitmap(rotatedBitmap);
+                btnEnableCamera.setVisibility(View.GONE);
             }
         });
     }
@@ -66,11 +93,7 @@ public class ComposeFragment extends Fragment {
 
     private void enableCamera() {
         CameraFragment cameraFragment = new CameraFragment();
-        ((MainActivity) getContext()).getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.flContainer, cameraFragment)
-                .addToBackStack(null)
-                .commit();
+        manager.beginTransaction().replace(R.id.flContainer, cameraFragment).addToBackStack(null).commit();
     }
 
     private void requestPermission() {
