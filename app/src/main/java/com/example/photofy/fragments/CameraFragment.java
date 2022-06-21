@@ -96,16 +96,16 @@ public class CameraFragment extends Fragment {
                                 picture.saveInBackground(new SaveCallback() {
                                     @Override
                                     public void done(ParseException e) {
-                                        // TODO: fix bundle and fragment, need to show image before picture completely finishes saving
-                                        CameraResultFragment cameraResultFragment = new CameraResultFragment();
-                                        Bundle bundle = new Bundle();
-                                        bundle.putParcelable("image", picture);
-                                        cameraResultFragment.setArguments(bundle);
-                                        ((MainActivity) getContext()).getSupportFragmentManager()
-                                                .beginTransaction()
-                                                .replace(R.id.flContainer, cameraResultFragment)
-                                                .addToBackStack(null)
-                                                .commit();
+//                                        // TODO: fix bundle and fragment, need to show image before picture completely finishes saving
+//                                        CameraResultFragment cameraResultFragment = new CameraResultFragment();
+//                                        Bundle bundle = new Bundle();
+//                                        bundle.putParcelable("image", picture);
+//                                        cameraResultFragment.setArguments(bundle);
+//                                        ((MainActivity) getContext()).getSupportFragmentManager()
+//                                                .beginTransaction()
+//                                                .replace(R.id.flContainer, cameraResultFragment)
+//                                                .addToBackStack(null)
+//                                                .commit();
                                     }
                                 });
                                 Log.i(TAG, "Image saved successfully");
@@ -148,6 +148,6 @@ public class CameraFragment extends Fragment {
         }
 
         // Return the file target for the photo based on timestamp
-        return new File(mediaStorageDir.getPath() + File.separator + "Image.<" + dateFormat.format(new Date()) + ">.jpg");
+        return new File(mediaStorageDir.getPath() + File.separator + "Image_" + dateFormat.format(new Date()) + ".jpg");
     }
 }
