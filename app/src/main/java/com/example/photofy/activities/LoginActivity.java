@@ -1,5 +1,7 @@
 package com.example.photofy.activities;
 
+import static com.example.photofy.activities.SpotifyLoginActivity.spotifyToken;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -28,10 +30,16 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // If Parse user is already logged in and authorized through Spotify
         if (ParseUser.getCurrentUser() != null) {
-            goMainActivity();
+            if (spotifyToken != null) {
+                goMainActivity();
+            } else {
+                goSpotifyLoginActivity();
+            }
         }
 
+        // Connect visual components with logic
         etLoginUsername = findViewById(R.id.etLoginUsername);
         etLoginPassword = findViewById(R.id.etLoginPassword);
         btnLogin = findViewById(R.id.btnLogin);
@@ -46,6 +54,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // Logs in user to Parse
     private void loginUser(String username, String password) {
         Log.i(TAG, "logging in user " + username);
         ParseUser.logInInBackground(username, password, new LogInCallback() {
@@ -55,10 +64,15 @@ public class LoginActivity extends AppCompatActivity {
                     Log.e(TAG, "Issue with login", e);
                     return;
                 }
-                goMainActivity();
-                Toast.makeText(LoginActivity.this, R.string.login_toast, Toast.LENGTH_SHORT).show();
+                goSpotifyLoginActivity();
             }
         });
+    }
+
+    private void goSpotifyLoginActivity() {
+        Intent i = new Intent (this, SpotifyLoginActivity.class);
+        startActivity(i);
+        finish();
     }
 
     private void goMainActivity() {

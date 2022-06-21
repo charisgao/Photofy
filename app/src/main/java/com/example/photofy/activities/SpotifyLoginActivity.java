@@ -27,6 +27,7 @@ public class SpotifyLoginActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 1337;
     private static final String CLIENT_ID = spotifyKey;
     private static final String REDIRECT_URI = "intent://";
+    public static String spotifyToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +40,13 @@ public class SpotifyLoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // Request code verifies that result comes from login activity
+                // Spotify Auth API object instance
                 AuthorizationRequest.Builder builder =
                         new AuthorizationRequest.Builder(CLIENT_ID, AuthorizationResponse.Type.TOKEN, REDIRECT_URI);
-                builder.setScopes(new String[]{"streaming"});
+
+                // Empty string to generate token with all permissions
+                builder.setScopes(new String[]{""});
+
                 AuthorizationRequest request = builder.build();
                 AuthorizationClient.openLoginActivity(SpotifyLoginActivity.this, REQUEST_CODE, request);
             }
@@ -60,12 +64,20 @@ public class SpotifyLoginActivity extends AppCompatActivity {
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
-                    Toast.makeText(this, "Logged in Spotify", Toast.LENGTH_LONG).show();
+                    spotifyToken = response.getAccessToken();
+                    Toast.makeText(SpotifyLoginActivity.this, R.string.login_toast, Toast.LENGTH_SHORT).show();
+                    goMainActivity();
                 case ERROR:
                     Log.e(TAG, "Something went wrong with Spotify authorization");
                 default:
                     break;
             }
         }
+    }
+
+    private void goMainActivity() {
+        Intent i = new Intent (this, MainActivity.class);
+        startActivity(i);
+        finish();
     }
 }
