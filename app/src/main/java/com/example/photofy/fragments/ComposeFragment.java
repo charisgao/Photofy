@@ -58,7 +58,6 @@ public class ComposeFragment extends Fragment {
     private boolean allPermissionsGranted() {
         for (String permission : REQUIRED_PERMISSIONS) {
             if (ContextCompat.checkSelfPermission(getContext(), permission) != PackageManager.PERMISSION_GRANTED) {
-                Log.i(TAG, "false!!!");
                 return false;
             }
         }

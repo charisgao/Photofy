@@ -11,7 +11,7 @@
         android:id="@+id/btnEnableCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Open camera"
+        android:text="@string/open_camera"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
