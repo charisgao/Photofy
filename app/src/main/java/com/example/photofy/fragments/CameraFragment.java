@@ -76,7 +76,7 @@ public class CameraFragment extends Fragment {
                 ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
                 bindPreview(cameraProvider);
             } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Error while creating camera", e);
             }
         }, ContextCompat.getMainExecutor(getContext()));
 
@@ -112,8 +112,7 @@ public class CameraFragment extends Fragment {
                             }
                             @Override
                             public void onError(ImageCaptureException error) {
-                                Log.e(TAG, "failed");
-                                error.printStackTrace();
+                                Log.e(TAG, "Error while capturing camera image", error);
                             }
                         }
                 );
@@ -148,7 +147,7 @@ public class CameraFragment extends Fragment {
             Log.d(TAG, "failed to create directory");
         }
 
-        // Return the file target for the photo based on filename
-        return new File(mediaStorageDir.getPath() + File.separator + dateFormat.format(new Date()) + ".jpg");
+        // Return the file target for the photo based on timestamp
+        return new File(mediaStorageDir.getPath() + File.separator + "Image.<" + dateFormat.format(new Date()) + ">.jpg");
     }
 }
