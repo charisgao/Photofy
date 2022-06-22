@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.photofy.R;
-import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.sdk.android.auth.AuthorizationClient;
 import com.spotify.sdk.android.auth.AuthorizationRequest;
 import com.spotify.sdk.android.auth.AuthorizationResponse;
@@ -27,7 +26,6 @@ public class SpotifyLoginActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 1337;
     private static final String CLIENT_ID = spotifyKey;
     private static final String REDIRECT_URI = "intent://";
-    public static String spotifyToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +62,9 @@ public class SpotifyLoginActivity extends AppCompatActivity {
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
-                    spotifyToken = response.getAccessToken();
+                    String spotifyToken = response.getAccessToken();
                     Toast.makeText(SpotifyLoginActivity.this, R.string.login_toast, Toast.LENGTH_SHORT).show();
-                    goMainActivity();
+                    goMainActivity(spotifyToken);
                 case ERROR:
                     Log.e(TAG, "Something went wrong with Spotify authorization");
                 default:
@@ -75,9 +73,10 @@ public class SpotifyLoginActivity extends AppCompatActivity {
         }
     }
 
-    private void goMainActivity() {
+    private void goMainActivity(String token) {
         Intent i = new Intent (this, MainActivity.class);
         startActivity(i);
+        i.putExtra("token", token);
         finish();
     }
 }

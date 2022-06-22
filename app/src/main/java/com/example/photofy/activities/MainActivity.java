@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        String spotifyToken = getIntent().getStringExtra("token");
+
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         btnLogout = findViewById(R.id.btnLogout);
 
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // TODO: use AuthorizationClient clearCookies method to log out and clear all stored tokens for Spotify
     private void logout() {
         ParseUser.logOutInBackground(new LogOutCallback() {
             @Override
@@ -87,8 +90,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
         finish();
     }
-
-
-    // TODO: logout method
-    // use AuthorizationClient clearCookies method to log out and clear all stored tokens for Spotify
 }

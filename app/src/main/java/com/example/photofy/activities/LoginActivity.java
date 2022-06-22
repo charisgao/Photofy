@@ -1,7 +1,5 @@
 package com.example.photofy.activities;
 
-import static com.example.photofy.activities.SpotifyLoginActivity.spotifyToken;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -10,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.photofy.R;
 import com.parse.LogInCallback;
@@ -24,6 +21,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etLoginUsername;
     private EditText etLoginPassword;
     private Button btnLogin;
+    private Button btnSignUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,17 +30,14 @@ public class LoginActivity extends AppCompatActivity {
 
         // If Parse user is already logged in and authorized through Spotify
         if (ParseUser.getCurrentUser() != null) {
-            if (spotifyToken != null) {
-                goMainActivity();
-            } else {
-                goSpotifyLoginActivity();
-            }
+            goSpotifyLoginActivity();
         }
 
         // Connect visual components with logic
         etLoginUsername = findViewById(R.id.etLoginUsername);
         etLoginPassword = findViewById(R.id.etLoginPassword);
         btnLogin = findViewById(R.id.btnLogin);
+        btnSignUp = findViewById(R.id.btnSignUp);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,6 +45,14 @@ public class LoginActivity extends AppCompatActivity {
                 String username = etLoginUsername.getText().toString();
                 String password = etLoginPassword.getText().toString();
                 loginUser(username, password);
+            }
+        });
+
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(LoginActivity.this, SignupActivity.class);
+                startActivity(i);
             }
         });
     }
@@ -71,12 +74,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void goSpotifyLoginActivity() {
         Intent i = new Intent (this, SpotifyLoginActivity.class);
-        startActivity(i);
-        finish();
-    }
-
-    private void goMainActivity() {
-        Intent i = new Intent (this, MainActivity.class);
         startActivity(i);
         finish();
     }

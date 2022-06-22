@@ -9,4 +9,5 @@
     <string name="password_hint">password</string>
     <string name="open_camera">Open camera</string>
     <string name="capture_image_button">capture image button</string>
+    <string name="signup">Sign up</string>
 </resources>
