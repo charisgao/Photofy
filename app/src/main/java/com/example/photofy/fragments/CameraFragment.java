@@ -24,7 +24,7 @@ import android.view.ViewGroup;
 
 import com.example.photofy.R;
 import com.example.photofy.activities.MainActivity;
-import com.example.photofy.models.Image;
+import com.example.photofy.models.Photo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.parse.ParseException;
@@ -91,7 +91,7 @@ public class CameraFragment extends Fragment {
                 imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback() {
                         @Override
                         public void onImageSaved(ImageCapture.OutputFileResults outputFileResults) {
-                            Image picture = new Image();
+                            Photo picture = new Photo();
                             picture.setUser(ParseUser.getCurrentUser());
                             picture.setImage(new ParseFile(file));
                             picture.saveInBackground(new SaveCallback() {
@@ -99,7 +99,8 @@ public class CameraFragment extends Fragment {
                                 public void done(ParseException e) {
                                 }
                             });
-                            result.putString("bundleKey", file.getAbsolutePath());
+                            result.putString("filePath", file.getAbsolutePath());
+                            result.putParcelable("image", picture);
                             FragmentManager manager = ((MainActivity) getContext()).getSupportFragmentManager();
                             manager.setFragmentResult("requestKey", result);
                             ComposeFragment composeFragment = new ComposeFragment();
@@ -108,7 +109,7 @@ public class CameraFragment extends Fragment {
                                     .addToBackStack(null)
                                     .commit();
 
-                            Log.i(TAG, "Image saved successfully");
+                            Log.i(TAG, "Photo saved successfully");
                         }
                         @Override
                         public void onError(ImageCaptureException error) {

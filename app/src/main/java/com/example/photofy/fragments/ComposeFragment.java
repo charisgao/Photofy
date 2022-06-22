@@ -22,8 +22,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.example.photofy.DetectProperties;
 import com.example.photofy.activities.MainActivity;
 import com.example.photofy.R;
+import com.example.photofy.models.Photo;
 
 public class ComposeFragment extends Fragment {
 
@@ -34,6 +36,10 @@ public class ComposeFragment extends Fragment {
     private Button btnEnableCamera;
     private ImageView ivCapturedImage;
     private FragmentManager manager;
+
+    private Button btnGetColors;
+
+    private DetectProperties getColor;
 
     public ComposeFragment() {
         // Required empty public constructor
@@ -52,6 +58,8 @@ public class ComposeFragment extends Fragment {
 
         btnEnableCamera = view.findViewById(R.id.btnEnableCamera);
         ivCapturedImage = view.findViewById(R.id.ivCapturedImage);
+
+        btnGetColors = view.findViewById(R.id.btnGetColors);
         btnEnableCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,7 +76,7 @@ public class ComposeFragment extends Fragment {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
                 Log.i(TAG, "inFragmentResult");
-                String path = bundle.getString("bundleKey");
+                String path = bundle.getString("filePath");
                 Bitmap bitmap = BitmapFactory.decodeFile(path);
 
                 // Rotate image to be portrait
@@ -78,6 +86,20 @@ public class ComposeFragment extends Fragment {
 
                 ivCapturedImage.setImageBitmap(rotatedBitmap);
                 btnEnableCamera.setVisibility(View.GONE);
+
+                btnGetColors.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Photo picture = bundle.getParcelable("image");
+
+                        if (getColor == null){
+                            getColor = new DetectProperties(picture, getContext());
+                        } else {
+                            getColor.makeReady();
+                        }
+                        new Thread(getColor).start();
+                    }
+                });
             }
         });
     }

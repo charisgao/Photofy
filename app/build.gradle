@@ -27,6 +27,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    packagingOptions {
+        resources.excludes.add("META-INF/*")
+    }
 }
 
 dependencies {
@@ -62,4 +66,5 @@ dependencies {
     // Google Cloud Vision API
     implementation platform('com.google.cloud:libraries-bom:25.4.0')
     implementation 'com.google.cloud:google-cloud-vision'
+    implementation 'com.google.cloud:google-cloud-storage'
 }

@@ -12,6 +12,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".PhotofyApplication"
@@ -52,6 +53,12 @@
         <meta-data
             android:name="spotifyClientId"
             android:value="${SPOTIFY_CLIENT_ID}" />
+
+        <!--retrieve Google credentials-->
+        <meta-data
+            android:name="googleCredentials"
+            android:value="${GOOGLE_APPLICATION_CREDENTIALS}" />
+
     </application>
 
 </manifest>

@@ -6,7 +6,7 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 @ParseClassName("Image")
-public class Image extends ParseObject {
+public class Photo extends ParseObject {
 
     public static final String KEY_IMAGE = "Photo";
     public static final String KEY_USER = "User";
