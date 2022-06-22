@@ -92,12 +92,9 @@ public class ComposeFragment extends Fragment {
                     public void onClick(View v) {
                         Photo picture = bundle.getParcelable("image");
 
-                        if (getColor == null){
+                        if (getColor == null) {
                             getColor = new DetectProperties(picture, getContext());
-                        } else {
-                            getColor.makeReady();
                         }
-                        new Thread(getColor).start();
                     }
                 });
             }

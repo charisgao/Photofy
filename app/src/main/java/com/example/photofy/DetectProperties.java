@@ -3,10 +3,14 @@ package com.example.photofy;
 import static com.example.photofy.PhotofyApplication.googleCredentials;
 
 import android.content.Context;
-import android.os.Environment;
+import android.os.StrictMode;
 import android.util.Log;
 
 import com.example.photofy.models.Photo;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.services.vision.v1.Vision;
+import com.google.api.services.vision.v1.VisionRequestInitializer;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
@@ -18,7 +22,6 @@ import com.google.cloud.vision.v1.DominantColorsAnnotation;
 import com.google.cloud.vision.v1.Feature;
 import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
-import com.google.cloud.vision.v1.ImageProperties;
 import com.google.cloud.vision.v1.ImageSource;
 
 import java.io.IOException;
@@ -27,36 +30,43 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class DetectProperties implements Runnable {
+public class DetectProperties {
 
     public static final String TAG = "DetectProperties";
 
     private Context context;
     private Photo picture;
-
+    private Vision vision;
     private AtomicBoolean alive = new AtomicBoolean(true);
 
     public DetectProperties(Photo picture, Context context) {
         this.picture = picture;
         this.context = context;
-        Log.d(TAG," Thread Started");
-    }
 
-    public void authExplicit(String jsonPath, Context context) throws IOException {
-        GoogleCredentials credentials = GoogleCredentials.fromStream(context.getAssets().open(jsonPath))
-                .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
-        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-        String filePath = picture.getImage().getUrl();
-        detectPropertiesGcs(filePath);
-    }
-
-    @Override
-    public void run() {
         try {
             authExplicit(googleCredentials, context);
         } catch (IOException e) {
             Log.e(TAG, "Credentials error " + e);
         }
+    }
+
+    public void authExplicit(String jsonPath, Context context) throws IOException {
+
+        Vision.Builder visionBuilder = new Vision.Builder(
+                new NetHttpTransport(),
+                new AndroidJsonFactory(),
+                null);
+
+        visionBuilder.setVisionRequestInitializer(
+                new VisionRequestInitializer("39a345492ae6552df7e74edf8c58c900e975f029"));
+
+        vision = visionBuilder.build();
+
+//        GoogleCredentials credentials = GoogleCredentials.fromStream(context.getAssets().open(jsonPath))
+//                .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
+//        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+        String filePath = picture.getImage().getUrl();
+        detectPropertiesGcs(filePath);
     }
 
     public void quit(){
@@ -69,6 +79,7 @@ public class DetectProperties implements Runnable {
 
     // Detects image properties such as color frequency from the specified remote image
     public static void detectPropertiesGcs(String gcsPath) throws IOException {
+
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
         ImageSource imgSource = ImageSource.newBuilder().setGcsImageUri(gcsPath).build();
@@ -78,11 +89,12 @@ public class DetectProperties implements Runnable {
                 AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
         requests.add(request);
 
-
         // Initialize client that will be used to send requests. This client only needs to be created
         // once, and can be reused for multiple requests. After completing all of your requests, call
         // the "close" method on the client to safely clean up any remaining background resources.
-            BatchAnnotateImagesResponse response = ImageAnnotatorClient.create().batchAnnotateImages(requests);
+        try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
+            BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
+
             List<AnnotateImageResponse> responses = response.getResponsesList();
 
             for (AnnotateImageResponse res : responses) {
@@ -101,5 +113,6 @@ public class DetectProperties implements Runnable {
                             color.getColor().getBlue());
                 }
             }
+        }
     }
 }
