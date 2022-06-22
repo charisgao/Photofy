@@ -3,14 +3,9 @@ package com.example.photofy;
 import static com.example.photofy.PhotofyApplication.googleCredentials;
 
 import android.content.Context;
-import android.os.StrictMode;
 import android.util.Log;
 
 import com.example.photofy.models.Photo;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.services.vision.v1.Vision;
-import com.google.api.services.vision.v1.VisionRequestInitializer;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
@@ -36,7 +31,6 @@ public class DetectProperties {
 
     private Context context;
     private Photo picture;
-    private Vision vision;
     private AtomicBoolean alive = new AtomicBoolean(true);
 
     public DetectProperties(Photo picture, Context context) {
@@ -52,29 +46,11 @@ public class DetectProperties {
 
     public void authExplicit(String jsonPath, Context context) throws IOException {
 
-        Vision.Builder visionBuilder = new Vision.Builder(
-                new NetHttpTransport(),
-                new AndroidJsonFactory(),
-                null);
-
-        visionBuilder.setVisionRequestInitializer(
-                new VisionRequestInitializer("39a345492ae6552df7e74edf8c58c900e975f029"));
-
-        vision = visionBuilder.build();
-
-//        GoogleCredentials credentials = GoogleCredentials.fromStream(context.getAssets().open(jsonPath))
-//                .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
-//        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+        GoogleCredentials credentials = GoogleCredentials.fromStream(context.getAssets().open(jsonPath))
+                .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
+        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
         String filePath = picture.getImage().getUrl();
         detectPropertiesGcs(filePath);
-    }
-
-    public void quit(){
-        alive.set(false);
-    }
-
-    public void makeReady(){
-        alive.set(true);
     }
 
     // Detects image properties such as color frequency from the specified remote image
