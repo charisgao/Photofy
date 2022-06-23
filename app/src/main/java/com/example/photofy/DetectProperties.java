@@ -24,6 +24,9 @@ import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.cloud.vision.v1.ImageAnnotatorSettings;
 import com.google.cloud.vision.v1.ImageSource;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,14 +108,20 @@ public class DetectProperties {
 
                 DominantColorsAnnotation colors = res.getImagePropertiesAnnotation().getDominantColors();
                 for (ColorInfo color : colors.getColorsList()) {
-                    System.out.format(
-                            "fraction: %f%nr: %f, g: %f, b: %f%n",
-                            color.getPixelFraction(),
-                            color.getColor().getRed(),
-                            color.getColor().getGreen(),
-                            color.getColor().getBlue());
+//                    System.out.format(
+//                            "fraction: %f%nr: %f, g: %f, b: %f%n",
+//                            color.getPixelFraction(),
+//                            color.getColor().getRed(),
+//                            color.getColor().getGreen(),
+//                            color.getColor().getBlue());
+
+                    int red = Math.round(color.getColor().getRed());
+                    int green = Math.round(color.getColor().getGreen());
+                    int blue = Math.round(color.getColor().getBlue());
+                    String hex = String.format("#%02X%02X%02X", red, green, blue);
+
+                    Log.i(TAG, "generated color " + hex);
                 }
-                Log.i(TAG, "generated color " + colors.toString());
             }
         }
     }
