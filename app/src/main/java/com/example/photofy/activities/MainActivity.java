@@ -74,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void done(ParseException e) {
                 if (e != null) {
+                    Toast.makeText(MainActivity.this, R.string.logout_error_toast, Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Issue with logout", e);
-                    return;
                 } else {
                     goLoginActivity();
                     Toast.makeText(MainActivity.this, R.string.logout_toast, Toast.LENGTH_SHORT).show();

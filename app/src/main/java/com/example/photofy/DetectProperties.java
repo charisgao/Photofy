@@ -11,6 +11,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.vision.v1.AnnotateImageRequest;
 import com.google.cloud.vision.v1.AnnotateImageResponse;
+import com.google.cloud.vision.v1.BatchAnnotateImagesRequest;
 import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
 import com.google.cloud.vision.v1.ColorInfo;
 import com.google.cloud.vision.v1.DominantColorsAnnotation;
@@ -23,7 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DetectProperties {
 
@@ -31,7 +31,6 @@ public class DetectProperties {
 
     private Context context;
     private Photo picture;
-    private AtomicBoolean alive = new AtomicBoolean(true);
 
     public DetectProperties(Photo picture, Context context) {
         this.picture = picture;
