@@ -23,6 +23,8 @@ import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.cloud.vision.v1.ImageAnnotatorSettings;
 import com.google.cloud.vision.v1.ImageSource;
+import com.parse.ParseException;
+import com.parse.SaveCallback;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,7 +41,7 @@ public class DetectProperties {
     private Context context;
     private Photo picture;
     private String path;
-    private static GoogleCredentials credentials;
+    private GoogleCredentials credentials;
 
     public DetectProperties(Photo picture, String path, Context context) {
         this.picture = picture;
@@ -76,7 +78,7 @@ public class DetectProperties {
     }
 
     // Detects image properties such as color frequency from the specified remote image
-    public static void detectPropertiesGcs(String gcsPath) throws IOException {
+    public void detectPropertiesGcs(String gcsPath) throws IOException {
 
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
@@ -119,6 +121,13 @@ public class DetectProperties {
                     int green = Math.round(color.getColor().getGreen());
                     int blue = Math.round(color.getColor().getBlue());
                     String hex = String.format("#%02X%02X%02X", red, green, blue);
+
+                    picture.setColor(hex);
+                    picture.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                        }
+                    });
 
                     Log.i(TAG, "generated color " + hex);
                 }
