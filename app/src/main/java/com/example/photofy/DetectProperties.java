@@ -8,13 +8,10 @@ import android.util.Log;
 import com.example.photofy.models.Photo;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.vision.v1.AnnotateImageRequest;
 import com.google.cloud.vision.v1.AnnotateImageResponse;
-import com.google.cloud.vision.v1.BatchAnnotateImagesRequest;
 import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
 import com.google.cloud.vision.v1.ColorInfo;
 import com.google.cloud.vision.v1.DominantColorsAnnotation;
@@ -25,9 +22,6 @@ import com.google.cloud.vision.v1.ImageAnnotatorSettings;
 import com.google.cloud.vision.v1.ImageSource;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,22 +58,23 @@ public class DetectProperties {
     }
 
     public void authExplicit(String jsonPath, Context context) throws IOException {
-        Log.i(TAG, jsonPath);
+        // Authorize Google credentials
         credentials = GoogleCredentials.fromStream(context.getAssets().open(jsonPath))
                 .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
 
+        // Upload captured image to Google Cloud storage
         String bucketName = "photofy-images0";
         String objectName = "image-" + picture.getImage().getName();
         UploadObject.uploadObject(storage, bucketName, objectName, path);
 
+        // Get GCS path for image from bucket
         String gcsPath = "gs://" + bucketName + "/" + objectName;
         detectPropertiesGcs(gcsPath);
     }
 
-    // Detects image properties such as color frequency from the specified remote image
+    // Detects most dominant color from the specified remote image
     public void detectPropertiesGcs(String gcsPath) throws IOException {
-
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
         ImageSource imgSource = ImageSource.newBuilder().setGcsImageUri(gcsPath).build();
@@ -110,18 +105,13 @@ public class DetectProperties {
 
                 DominantColorsAnnotation colors = res.getImagePropertiesAnnotation().getDominantColors();
                 for (ColorInfo color : colors.getColorsList()) {
-//                    System.out.format(
-//                            "fraction: %f%nr: %f, g: %f, b: %f%n",
-//                            color.getPixelFraction(),
-//                            color.getColor().getRed(),
-//                            color.getColor().getGreen(),
-//                            color.getColor().getBlue());
 
                     int red = Math.round(color.getColor().getRed());
                     int green = Math.round(color.getColor().getGreen());
                     int blue = Math.round(color.getColor().getBlue());
-                    String hex = String.format("#%02X%02X%02X", red, green, blue);
 
+                    // Save dominant color hex code in Parse
+                    String hex = String.format("#%02X%02X%02X", red, green, blue);
                     picture.setColor(hex);
                     picture.saveInBackground(new SaveCallback() {
                         @Override
