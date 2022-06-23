@@ -11,4 +11,6 @@
     <string name="open_camera">Open camera</string>
     <string name="capture_image_button">capture image button</string>
     <string name="signup">Sign up</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

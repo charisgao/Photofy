@@ -93,8 +93,13 @@ public class ComposeFragment extends Fragment {
                         Photo picture = bundle.getParcelable("image");
 
                         if (getColor == null) {
-                            getColor = new DetectProperties(picture, getContext());
+                            getColor = new DetectProperties(picture, path, getContext());
                         }
+                        SongRecommendationsFragment songRecommendationsFragment = new SongRecommendationsFragment();
+                        ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.flContainer, songRecommendationsFragment)
+                                .addToBackStack(null)
+                                .commit();
                     }
                 });
             }

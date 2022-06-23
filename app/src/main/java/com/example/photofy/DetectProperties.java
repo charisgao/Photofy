@@ -6,7 +6,10 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.photofy.models.Photo;
+import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.vision.v1.AnnotateImageRequest;
@@ -18,6 +21,7 @@ import com.google.cloud.vision.v1.DominantColorsAnnotation;
 import com.google.cloud.vision.v1.Feature;
 import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
+import com.google.cloud.vision.v1.ImageAnnotatorSettings;
 import com.google.cloud.vision.v1.ImageSource;
 
 import java.io.IOException;
@@ -31,25 +35,41 @@ public class DetectProperties {
 
     private Context context;
     private Photo picture;
+    private String path;
+    private static GoogleCredentials credentials;
 
-    public DetectProperties(Photo picture, Context context) {
+    public DetectProperties(Photo picture, String path, Context context) {
         this.picture = picture;
         this.context = context;
+        this.path = path;
 
-        try {
-            authExplicit(googleCredentials, context);
-        } catch (IOException e) {
-            Log.e(TAG, "Credentials error " + e);
-        }
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try  {
+                    authExplicit(googleCredentials, context);
+                } catch (Exception e) {
+                    Log.e(TAG, "Credentials error " + e);
+                }
+            }
+        });
+
+        thread.start();
     }
 
     public void authExplicit(String jsonPath, Context context) throws IOException {
-
-        GoogleCredentials credentials = GoogleCredentials.fromStream(context.getAssets().open(jsonPath))
+        Log.i(TAG, jsonPath);
+        credentials = GoogleCredentials.fromStream(context.getAssets().open(jsonPath))
                 .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-        String filePath = picture.getImage().getUrl();
-        detectPropertiesGcs(filePath);
+
+        String bucketName = "photofy-images0";
+        String objectName = "image-" + picture.getImage().getName();
+        UploadObject.uploadObject(storage, bucketName, objectName, path);
+
+        String gcsPath = "gs://" + bucketName + "/" + objectName;
+        detectPropertiesGcs(gcsPath);
     }
 
     // Detects image properties such as color frequency from the specified remote image
@@ -64,10 +84,15 @@ public class DetectProperties {
                 AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
         requests.add(request);
 
+        ImageAnnotatorSettings imageAnnotatorSettings =
+                ImageAnnotatorSettings.newBuilder()
+                        .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
+                        .build();
+
         // Initialize client that will be used to send requests. This client only needs to be created
         // once, and can be reused for multiple requests. After completing all of your requests, call
         // the "close" method on the client to safely clean up any remaining background resources.
-        try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
+        try (ImageAnnotatorClient client = ImageAnnotatorClient.create(imageAnnotatorSettings)) {
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
 
             List<AnnotateImageResponse> responses = response.getResponsesList();
@@ -87,6 +112,7 @@ public class DetectProperties {
                             color.getColor().getGreen(),
                             color.getColor().getBlue());
                 }
+                Log.i(TAG, "generated color " + colors.toString());
             }
         }
     }
