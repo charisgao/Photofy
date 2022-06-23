@@ -13,10 +13,10 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
 
 import android.os.Environment;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,37 +84,37 @@ public class CameraFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 File file = getPhotoFile();
+                Bundle result = new Bundle();
+
                 ImageCapture.OutputFileOptions outputFileOptions =
                         new ImageCapture.OutputFileOptions.Builder(file).build();
-                imageCapture.takePicture(outputFileOptions, executor,
-                        new ImageCapture.OnImageSavedCallback() {
-                            @Override
-                            public void onImageSaved(ImageCapture.OutputFileResults outputFileResults) {
-                                Image picture = new Image();
-                                picture.setUser(ParseUser.getCurrentUser());
-                                picture.setImage(new ParseFile(file));
-                                picture.saveInBackground(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-//                                        // TODO: fix bundle and fragment, need to show image before picture completely finishes saving
-//                                        CameraResultFragment cameraResultFragment = new CameraResultFragment();
-//                                        Bundle bundle = new Bundle();
-//                                        bundle.putParcelable("image", picture);
-//                                        cameraResultFragment.setArguments(bundle);
-//                                        ((MainActivity) getContext()).getSupportFragmentManager()
-//                                                .beginTransaction()
-//                                                .replace(R.id.flContainer, cameraResultFragment)
-//                                                .addToBackStack(null)
-//                                                .commit();
-                                    }
-                                });
-                                Log.i(TAG, "Image saved successfully");
-                            }
-                            @Override
-                            public void onError(ImageCaptureException error) {
-                                Log.e(TAG, "Error while capturing camera image", error);
-                            }
+                imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback() {
+                        @Override
+                        public void onImageSaved(ImageCapture.OutputFileResults outputFileResults) {
+                            Image picture = new Image();
+                            picture.setUser(ParseUser.getCurrentUser());
+                            picture.setImage(new ParseFile(file));
+                            picture.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                }
+                            });
+                            result.putString("bundleKey", file.getAbsolutePath());
+                            FragmentManager manager = ((MainActivity) getContext()).getSupportFragmentManager();
+                            manager.setFragmentResult("requestKey", result);
+                            ComposeFragment composeFragment = new ComposeFragment();
+                            manager.beginTransaction()
+                                    .replace(R.id.flContainer, composeFragment)
+                                    .addToBackStack(null)
+                                    .commit();
+
+                            Log.i(TAG, "Image saved successfully");
                         }
+                        @Override
+                        public void onError(ImageCaptureException error) {
+                            Log.e(TAG, "Error while capturing camera image", error);
+                        }
+                    }
                 );
             }
         });
@@ -148,6 +148,6 @@ public class CameraFragment extends Fragment {
         }
 
         // Return the file target for the photo based on timestamp
-        return new File(mediaStorageDir.getPath() + File.separator + "Image_" + dateFormat.format(new Date()) + ".jpg");
+        return new File(mediaStorageDir.getPath() + File.separator + dateFormat.format(new Date()) + ".jpg");
     }
 }

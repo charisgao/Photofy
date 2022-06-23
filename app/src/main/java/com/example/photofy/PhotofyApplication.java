@@ -15,6 +15,7 @@ public class PhotofyApplication extends Application {
     public static final String TAG = "PhotofyApplication";
 
     private String clientKey;
+    public static String spotifyKey;
     final String APP_ID = "zWEATxbbLsSFXeCWqTMXKWP0j2akWwV9cVZ86Q3p";
     final String SERVER = "https://parseapi.back4app.com";
 
@@ -29,6 +30,7 @@ public class PhotofyApplication extends Application {
             ApplicationInfo applicationInfo = getApplicationContext().getPackageManager().getApplicationInfo(getApplicationContext().getPackageName(), PackageManager.GET_META_DATA);
             Bundle bundle = applicationInfo.metaData;
             clientKey = bundle.getString("clientKey");
+            spotifyKey = bundle.getString("spotifyClientId");
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, "Client key not found " + e);
         }

@@ -2,9 +2,11 @@
     <string name="app_name">Photofy</string>
     <string name="preview_area">preview area</string>
     <string name="captured_image">captured image</string>
-    <string name="login_toast">"Successfully logged in!"</string>
+    <string name="login_toast">Successfully logged in!</string>
+    <string name="logout_toast">Successfully logged out!</string>
     <string name="login">Login</string>
     <string name="username_hint">username</string>
     <string name="password_hint">password</string>
     <string name="open_camera">Open camera</string>
+    <string name="capture_image_button">capture image button</string>
 </resources>
