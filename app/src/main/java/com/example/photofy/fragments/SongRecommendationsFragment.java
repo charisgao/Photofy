@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 
 // Fragment that shows and displays the Spotify song associated with the image
@@ -44,6 +45,7 @@ public class SongRecommendationsFragment extends Fragment {
     public final Color brown = Color.valueOf(158,79,69); //M
 
     private HashMap<Color, String> colorToMood;
+    private HashMap<String, String> moodToGenre;
     private final OkHttpClient mOkHttpClient = new OkHttpClient();
 
     private Photo image;
@@ -89,9 +91,29 @@ public class SongRecommendationsFragment extends Fragment {
             put(brown, "triumphant");
         }};
 
+        // separate hash map to map to genre, possible stretch goal is to use other features besides color to determine genre
+        moodToGenre = new HashMap<String, String>() {{
+            put("amusing", "novelty");
+            put("annoyed", "synthpop"); //hyperpop
+            put("anxious", "industrial");
+            put("beautiful", "classical");
+            put("calm", "ambient");
+            put("dreamy", "soul");
+            put("energizing", "dance pop");
+            put("desirous", "indie pop");
+            put("indignant", "rock");
+            put("joyful", "r&b");
+            put("sad", "sad lo-fi");
+            put("scary", "horror punk");
+            put("triumphant", "epicore");
+        }};
+
         int color = Color.parseColor(image.getColor());
         Color dominantColor = Color.valueOf(Color.red(color), Color.green(color), Color.blue(color));
-        getClosestColor(dominantColor);
+        Color closestColor = getClosestColor(dominantColor);
+        String mood = colorToMood.get(closestColor);
+        String genre = moodToGenre.get(mood);
+        Log.i(TAG, genre);
     }
 
     public Color getClosestColor(Color dominantColor) {
@@ -101,7 +123,8 @@ public class SongRecommendationsFragment extends Fragment {
             distances.put(color, distance);
         }
         Color closest = Collections.min(distances.entrySet(), Map.Entry.comparingByValue()).getKey();
-        Log.i(TAG, closest.red() + "," + closest.green() + "," + closest.blue());
+        Log.i(TAG, closest.toString());
         return closest;
     }
+
 }
