@@ -3,8 +3,13 @@ package com.example.photofy;
 import static com.example.photofy.PhotofyApplication.googleCredentials;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.ArrayRes;
+
+import com.example.photofy.activities.MainActivity;
+import com.example.photofy.fragments.SongRecommendationsFragment;
 import com.example.photofy.models.Photo;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -20,6 +25,7 @@ import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.cloud.vision.v1.ImageAnnotatorSettings;
 import com.google.cloud.vision.v1.ImageSource;
+import com.google.cloud.vision.v1.LocalizedObjectAnnotation;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
 
@@ -35,12 +41,16 @@ public class DetectProperties {
     private Context context;
     private Photo picture;
     private String path;
+    private String spotifyToken;
     private GoogleCredentials credentials;
+    private List<String> objects;
 
-    public DetectProperties(Photo picture, String path, Context context) {
+    public DetectProperties(Photo picture, String path, String token, Context context) {
         this.picture = picture;
         this.context = context;
         this.path = path;
+        spotifyToken = token;
+        objects = new ArrayList<String>();
 
         Thread thread = new Thread(new Runnable() {
 
@@ -70,6 +80,8 @@ public class DetectProperties {
 
         // Get GCS path for image from bucket
         String gcsPath = "gs://" + bucketName + "/" + objectName;
+//        //TESTING
+//        String gcsPath = "gs://cloud-samples-data/vision/image_properties/bali.jpeg";
         detectPropertiesGcs(gcsPath);
     }
 
@@ -79,10 +91,10 @@ public class DetectProperties {
 
         ImageSource imgSource = ImageSource.newBuilder().setGcsImageUri(gcsPath).build();
         Image img = Image.newBuilder().setSource(imgSource).build();
-        Feature feat = Feature.newBuilder().setType(Feature.Type.IMAGE_PROPERTIES).setMaxResults(1).build();
-        AnnotateImageRequest request =
-                AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
-        requests.add(request);
+        Feature feat1 = Feature.newBuilder().setType(Feature.Type.IMAGE_PROPERTIES).setMaxResults(1).build();
+        AnnotateImageRequest request1 =
+                AnnotateImageRequest.newBuilder().addFeatures(feat1).setImage(img).build();
+        requests.add(request1);
 
         ImageAnnotatorSettings imageAnnotatorSettings =
                 ImageAnnotatorSettings.newBuilder()
@@ -94,8 +106,8 @@ public class DetectProperties {
         // the "close" method on the client to safely clean up any remaining background resources.
         try (ImageAnnotatorClient client = ImageAnnotatorClient.create(imageAnnotatorSettings)) {
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
-
             List<AnnotateImageResponse> responses = response.getResponsesList();
+            client.close();
 
             for (AnnotateImageResponse res : responses) {
                 if (res.hasError()) {
@@ -104,24 +116,33 @@ public class DetectProperties {
                 }
 
                 DominantColorsAnnotation colors = res.getImagePropertiesAnnotation().getDominantColors();
-                for (ColorInfo color : colors.getColorsList()) {
+                ColorInfo color = colors.getColorsList().get(0);
 
-                    int red = Math.round(color.getColor().getRed());
-                    int green = Math.round(color.getColor().getGreen());
-                    int blue = Math.round(color.getColor().getBlue());
+                int red = Math.round(color.getColor().getRed());
+                int green = Math.round(color.getColor().getGreen());
+                int blue = Math.round(color.getColor().getBlue());
 
-                    // Save dominant color hex code in Parse
-                    String hex = String.format("#%02X%02X%02X", red, green, blue);
-                    picture.setColor(hex);
-                    picture.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                        }
-                    });
-
-                    Log.i(TAG, "generated color " + hex);
-                }
+                // Save dominant color hex code in Parse
+                String hex = String.format("#%02X%02X%02X", red, green, blue);
+                picture.setColor(hex);
+                Log.i(TAG, "generated color " + hex);
+                picture.save();
+                goToRecommendationsFragment();
             }
+        } catch (ParseException e) {
+            Log.e(TAG, "color error " + e);
         }
+    }
+
+    private void goToRecommendationsFragment() {
+        SongRecommendationsFragment songRecommendationsFragment = new SongRecommendationsFragment();
+        Bundle songBundle = new Bundle();
+        songBundle.putParcelable("photo", picture);
+        songBundle.putString("token", spotifyToken);
+        songRecommendationsFragment.setArguments(songBundle);
+        ((MainActivity) context).getSupportFragmentManager().beginTransaction()
+                .replace(R.id.flContainer, songRecommendationsFragment)
+                .addToBackStack(null)
+                .commit();
     }
 }

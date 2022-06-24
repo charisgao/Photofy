@@ -40,6 +40,7 @@ public class ComposeFragment extends Fragment {
     private Button btnGetColors;
 
     private DetectProperties getColor;
+    private String spotifyToken;
 
     public ComposeFragment() {
         // Required empty public constructor
@@ -55,6 +56,12 @@ public class ComposeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Bundle bundle = this.getArguments();
+
+        if (bundle != null) {
+            spotifyToken = bundle.getString("token");
+        }
 
         btnEnableCamera = view.findViewById(R.id.btnEnableCamera);
         ivCapturedImage = view.findViewById(R.id.ivCapturedImage);
@@ -93,13 +100,8 @@ public class ComposeFragment extends Fragment {
                         Photo picture = bundle.getParcelable("image");
 
                         if (getColor == null) {
-                            getColor = new DetectProperties(picture, path, getContext());
+                            getColor = new DetectProperties(picture, path, spotifyToken, getContext());
                         }
-                        SongRecommendationsFragment songRecommendationsFragment = new SongRecommendationsFragment();
-                        ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.flContainer, songRecommendationsFragment)
-                                .addToBackStack(null)
-                                .commit();
                     }
                 });
             }

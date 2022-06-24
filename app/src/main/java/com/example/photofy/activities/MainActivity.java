@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -42,15 +43,20 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment fragment;
+                Fragment fragment = null;
                 switch(item.getItemId()) {
                     case R.id.action_home:
                         // TODO: update fragment
+                        fragment = new ComposeFragment();
                     case R.id.action_compose:
+                        fragment = new ComposeFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("token", spotifyToken);
+                        fragment.setArguments(bundle);
                     case R.id.action_profile:
                         // TODO: update fragment
-                    default:
                         fragment = new ComposeFragment();
+                    default:
                         break;
                 }
                 fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();

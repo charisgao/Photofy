@@ -1,58 +1,56 @@
 package com.example.photofy.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.photofy.R;
+import com.example.photofy.models.Photo;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import okhttp3.OkHttpClient;
 
 // Fragment that shows and displays the Spotify song associated with the image
 public class SongRecommendationsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    public static final String TAG = "SongRecommendationsFragment";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public final Color blue = Color.valueOf(0,0,255); //A
+    public final Color red = Color.valueOf(255,0,0); //B
+    public final Color yellow = Color.valueOf(255,211,1); //C
+    public final Color peach = Color.valueOf(255,192,132); //D
+    public final Color pink = Color.valueOf(255,27,185); //E
+    public final Color green = Color.valueOf(1,255,0); //F
+    public final Color magenta = Color.valueOf(211,17,255); //G
+    public final Color purple = Color.valueOf(132,132,255); //H
+    public final Color lightpink = Color.valueOf(245,158,220); //I
+    public final Color cyan = Color.valueOf(1,255,193); //J
+    public final Color aqua = Color.valueOf(0,132,149); //K
+    public final Color yellowgreen = Color.valueOf(204,204,51); //L
+    public final Color brown = Color.valueOf(158,79,69); //M
+
+    private HashMap<Color, String> colorToMood;
+    private final OkHttpClient mOkHttpClient = new OkHttpClient();
+
+    private Photo image;
+    private String spotifyToken;
 
     public SongRecommendationsFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SongRecommendationsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SongRecommendationsFragment newInstance(String param1, String param2) {
-        SongRecommendationsFragment fragment = new SongRecommendationsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -65,5 +63,45 @@ public class SongRecommendationsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Bundle bundle = this.getArguments();
+
+        if (bundle != null) {
+            image = bundle.getParcelable("photo");
+            spotifyToken = bundle.getString("token");
+        }
+
+        // color to mood mapping source: https://www.pnas.org/doi/10.1073/pnas.1910704117#sec-1, https://www.ocf.berkeley.edu/~acowen/music.html#
+        // if I have time later on, can expand to more colors through https://design-milk.com/color-coded-diaries-emotions-300-days/
+        colorToMood = new HashMap<Color, String>() {{
+            put(blue, "amusing");
+            put(red, "annoyed");
+            put(yellow, "anxious");
+            put(peach, "beautiful");
+            put (pink, "calm");
+            put(green, "dreamy");
+            put(magenta, "energizing");
+            put(purple, "desirous");
+            put(lightpink, "indignant");
+            put(cyan, "joyful");
+            put(aqua, "sad");
+            put(yellowgreen, "scary");
+            put(brown, "triumphant");
+        }};
+
+        int color = Color.parseColor(image.getColor());
+        Color dominantColor = Color.valueOf(Color.red(color), Color.green(color), Color.blue(color));
+        getClosestColor(dominantColor);
+    }
+
+    public Color getClosestColor(Color dominantColor) {
+        HashMap<Color, Double> distances = new HashMap<>();
+        for (Color color : colorToMood.keySet()) {
+            double distance = (Math.sqrt(Math.pow((color.red()-dominantColor.red()), 2) + Math.pow((color.green()- dominantColor.green()), 2) + Math.pow((color.blue()- dominantColor.blue()), 2)));
+            distances.put(color, distance);
+        }
+        Color closest = Collections.min(distances.entrySet(), Map.Entry.comparingByValue()).getKey();
+        Log.i(TAG, closest.red() + "," + closest.green() + "," + closest.blue());
+        return closest;
     }
 }
