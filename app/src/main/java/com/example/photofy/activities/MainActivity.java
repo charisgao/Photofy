@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String spotifyToken = getIntent().getStringExtra("token");
+//        String spotifyToken = getIntent().getStringExtra("token");
 
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         btnLogout = findViewById(R.id.btnLogout);
@@ -50,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new ComposeFragment();
                     case R.id.action_compose:
                         fragment = new ComposeFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("token", spotifyToken);
-                        fragment.setArguments(bundle);
+//                        Bundle bundle = new Bundle();
+////                        bundle.putString("token", spotifyToken);
+//                        fragment.setArguments(bundle);
                     case R.id.action_profile:
                         // TODO: update fragment
                         fragment = new ComposeFragment();

@@ -1,5 +1,6 @@
 package com.example.photofy.fragments;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -11,19 +12,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.photofy.R;
+import com.example.photofy.RecommendationsService;
 import com.example.photofy.models.Photo;
+import com.example.photofy.models.Song;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
 
 // Fragment that shows and displays the Spotify song associated with the image
 public class SongRecommendationsFragment extends Fragment {
@@ -46,10 +50,16 @@ public class SongRecommendationsFragment extends Fragment {
 
     private HashMap<Color, String> colorToMood;
     private HashMap<String, String> moodToGenre;
-    private final OkHttpClient mOkHttpClient = new OkHttpClient();
 
     private Photo image;
-    private String spotifyToken;
+//    private String spotifyToken;
+
+    private ImageView ivSongAlbumCover;
+    private TextView tvRecommendedSong;
+    private TextView tvRecommendedArtist;
+
+    private RecommendationsService recommendationsService;
+    private List<Song> recommendedSongs;
 
     public SongRecommendationsFragment() {
         // Required empty public constructor
@@ -70,8 +80,13 @@ public class SongRecommendationsFragment extends Fragment {
 
         if (bundle != null) {
             image = bundle.getParcelable("photo");
-            spotifyToken = bundle.getString("token");
+//            spotifyToken = bundle.getString("token");
         }
+
+        ivSongAlbumCover = view.findViewById(R.id.ivSongAlbumCover);
+        tvRecommendedSong = view.findViewById(R.id.tvRecommendedSong);
+        tvRecommendedArtist = view.findViewById(R.id.tvRecommendedArtist);
+
 
         // color to mood mapping source: https://www.pnas.org/doi/10.1073/pnas.1910704117#sec-1, https://www.ocf.berkeley.edu/~acowen/music.html#
         // if I have time later on, can expand to more colors through https://design-milk.com/color-coded-diaries-emotions-300-days/
@@ -114,6 +129,9 @@ public class SongRecommendationsFragment extends Fragment {
         String mood = colorToMood.get(closestColor);
         String genre = moodToGenre.get(mood);
         Log.i(TAG, genre);
+
+        recommendationsService = new RecommendationsService(getContext(), genre);
+        getRecommendations();
     }
 
     public Color getClosestColor(Color dominantColor) {
@@ -125,6 +143,13 @@ public class SongRecommendationsFragment extends Fragment {
         Color closest = Collections.min(distances.entrySet(), Map.Entry.comparingByValue()).getKey();
         Log.i(TAG, closest.toString());
         return closest;
+    }
+
+    private void getRecommendations() {
+        recommendedSongs = recommendationsService.getSongs();
+        for (int i = 0; i < recommendedSongs.size(); i++) {
+            Log.i(TAG, recommendedSongs.get(i).getSpotifyId());
+        }
     }
 
 }

@@ -12,7 +12,6 @@ public class Song extends ParseObject {
     public static final String KEY_ARTIST = "Artist";
     public static final String KEY_GENRES = "Genres";
     public static final String KEY_PREVIEW = "Preview";
-    public static final String KEY_LINK = "Link";
 
     public String getSpotifyId() {
         return getString(KEY_SPOTIFYID);
@@ -52,13 +51,5 @@ public class Song extends ParseObject {
 
     public void setPreview(String preview) {
         put(KEY_PREVIEW, preview);
-    }
-
-    public String getLink() {
-        return getString(KEY_LINK);
-    }
-
-    public void setLink(String link) {
-        put(KEY_LINK, link);
     }
 }

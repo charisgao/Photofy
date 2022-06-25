@@ -41,15 +41,13 @@ public class DetectProperties {
     private Context context;
     private Photo picture;
     private String path;
-    private String spotifyToken;
     private GoogleCredentials credentials;
     private List<String> objects;
 
-    public DetectProperties(Photo picture, String path, String token, Context context) {
+    public DetectProperties(Photo picture, String path, Context context) {
         this.picture = picture;
         this.context = context;
         this.path = path;
-        spotifyToken = token;
         objects = new ArrayList<String>();
 
         Thread thread = new Thread(new Runnable() {
@@ -138,7 +136,7 @@ public class DetectProperties {
         SongRecommendationsFragment songRecommendationsFragment = new SongRecommendationsFragment();
         Bundle songBundle = new Bundle();
         songBundle.putParcelable("photo", picture);
-        songBundle.putString("token", spotifyToken);
+//        songBundle.putString("token", spotifyToken);
         songRecommendationsFragment.setArguments(songBundle);
         ((MainActivity) context).getSupportFragmentManager().beginTransaction()
                 .replace(R.id.flContainer, songRecommendationsFragment)
