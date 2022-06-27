@@ -3,13 +3,13 @@ package com.example.photofy;
 import static com.example.photofy.PhotofyApplication.googleCredentials;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 
-import androidx.annotation.ArrayRes;
-
 import com.example.photofy.activities.MainActivity;
-import com.example.photofy.fragments.SongRecommendationsFragment;
+import com.example.photofy.fragments.LoadingFragment;
 import com.example.photofy.models.Photo;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -25,9 +25,7 @@ import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.cloud.vision.v1.ImageAnnotatorSettings;
 import com.google.cloud.vision.v1.ImageSource;
-import com.google.cloud.vision.v1.LocalizedObjectAnnotation;
 import com.parse.ParseException;
-import com.parse.SaveCallback;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,34 +36,18 @@ public class DetectProperties {
 
     public static final String TAG = "DetectProperties";
 
-    private Context context;
     private Photo picture;
     private String path;
     private GoogleCredentials credentials;
     private List<String> objects;
 
-    public DetectProperties(Photo picture, String path, Context context) {
+    public DetectProperties(Photo picture, String path) {
         this.picture = picture;
-        this.context = context;
         this.path = path;
         objects = new ArrayList<String>();
-
-        Thread thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try  {
-                    authExplicit(googleCredentials, context);
-                } catch (Exception e) {
-                    Log.e(TAG, "Credentials error " + e);
-                }
-            }
-        });
-
-        thread.start();
     }
 
-    public void authExplicit(String jsonPath, Context context) throws IOException {
+    public String authExplicit(String jsonPath, Context context) throws IOException {
         // Authorize Google credentials
         credentials = GoogleCredentials.fromStream(context.getAssets().open(jsonPath))
                 .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
@@ -77,10 +59,7 @@ public class DetectProperties {
         UploadObject.uploadObject(storage, bucketName, objectName, path);
 
         // Get GCS path for image from bucket
-        String gcsPath = "gs://" + bucketName + "/" + objectName;
-//        //TESTING
-//        String gcsPath = "gs://cloud-samples-data/vision/image_properties/bali.jpeg";
-        detectPropertiesGcs(gcsPath);
+        return "gs://" + bucketName + "/" + objectName;
     }
 
     // Detects most dominant color from the specified remote image
@@ -125,21 +104,9 @@ public class DetectProperties {
                 picture.setColor(hex);
                 Log.i(TAG, "generated color " + hex);
                 picture.save();
-                goToRecommendationsFragment();
             }
         } catch (ParseException e) {
             Log.e(TAG, "color error " + e);
         }
-    }
-
-    private void goToRecommendationsFragment() {
-        SongRecommendationsFragment songRecommendationsFragment = new SongRecommendationsFragment();
-        Bundle songBundle = new Bundle();
-        songBundle.putParcelable("photo", picture);
-        songRecommendationsFragment.setArguments(songBundle);
-        ((MainActivity) context).getSupportFragmentManager().beginTransaction()
-                .replace(R.id.flContainer, songRecommendationsFragment)
-                .addToBackStack(null)
-                .commit();
     }
 }

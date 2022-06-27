@@ -2,6 +2,7 @@ package com.example.photofy;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,6 +16,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.photofy.activities.MainActivity;
+import com.example.photofy.fragments.SongRecommendationsFragment;
 import com.example.photofy.models.Song;
 
 import org.json.JSONArray;
@@ -35,16 +38,17 @@ public class RecommendationsService {
     private StringBuilder endpoint = new StringBuilder("https://api.spotify.com/v1/recommendations?market=US");
     private List<Song> songs = new ArrayList<>();
 
+    private Context context;
     private String genre;
     private final SharedPreferences sharedPreferences;
     private final RequestQueue queue;
 
     public RecommendationsService(Context context, String genre) {
+        this.context = context;
         this.genre = genre;
         endpoint.append("&seed_genres=" + genre);
         sharedPreferences = context.getSharedPreferences("SPOTIFY", Context.MODE_PRIVATE);
         queue = Volley.newRequestQueue(context);
-        getRecommendations();
     }
 
     public List<Song> getSongs() {
