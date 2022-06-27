@@ -4,6 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_bg.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_simple_shiny.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_simple_shiny__1_.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_spectrum_gradient.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/splash_background.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_connect_spotify.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.18070652173913043" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1734375" />
