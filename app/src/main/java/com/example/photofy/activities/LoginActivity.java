@@ -8,8 +8,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.photofy.R;
+import com.google.android.material.textfield.TextInputEditText;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -18,10 +20,10 @@ public class LoginActivity extends AppCompatActivity {
 
     public static final String TAG = "LoginActivity";
 
-    private EditText etLoginUsername;
-    private EditText etLoginPassword;
+    private TextInputEditText etLoginUsername;
+    private TextInputEditText etLoginPassword;
+    private TextView tvSignup;
     private Button btnLogin;
-    private Button btnSignUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         etLoginUsername = findViewById(R.id.etLoginUsername);
         etLoginPassword = findViewById(R.id.etLoginPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        btnSignUp = findViewById(R.id.btnSignUp);
+        tvSignup = findViewById(R.id.btnSignUp);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
+        tvSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(LoginActivity.this, SignupActivity.class);

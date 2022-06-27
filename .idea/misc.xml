@@ -11,7 +11,7 @@
         <entry key="app/src/main/res/drawable/ic_spectrum_gradient.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/splash_background.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_connect_spotify.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_login.xml" value="0.18070652173913043" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.2568585603133493" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1734375" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.24320652173913043" />
         <entry key="app/src/main/res/layout/activity_spotify_login.xml" value="0.24320652173913043" />
