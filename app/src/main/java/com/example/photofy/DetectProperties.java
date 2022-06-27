@@ -1,15 +1,8 @@
 package com.example.photofy;
 
-import static com.example.photofy.PhotofyApplication.googleCredentials;
-
 import android.content.Context;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 
-import com.example.photofy.activities.MainActivity;
-import com.example.photofy.fragments.LoadingFragment;
 import com.example.photofy.models.Photo;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;

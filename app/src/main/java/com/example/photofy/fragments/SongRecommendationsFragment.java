@@ -1,7 +1,5 @@
 package com.example.photofy.fragments;
 
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,20 +13,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.photofy.R;
 import com.example.photofy.RecommendationsService;
-import com.example.photofy.activities.SpotifyLoginActivity;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Song;
 
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 // Fragment that shows and displays the Spotify song associated with the image
 public class SongRecommendationsFragment extends Fragment {

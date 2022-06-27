@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
 
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,8 +33,6 @@ import com.example.photofy.R;
 import com.example.photofy.models.Photo;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ComposeFragment extends Fragment {
 
@@ -106,6 +103,7 @@ public class ComposeFragment extends Fragment {
 
                         goToLoadingFragment();
 
+                        // TODO: Callback runnable?
                         Runnable r = new Runnable() {
                             @Override
                             public void run() {
@@ -124,6 +122,11 @@ public class ComposeFragment extends Fragment {
                                 RecommendationsService recommendationsService = new RecommendationsService(getContext(), genre);
                                 recommendationsService.getRecommendations();
                             }
+
+//                            @Override
+//                            public void callback() {
+//                                goToRecommendationsFragment();
+//                            }
                         };
                         CallbackExecutor callbackExecutor = new CallbackExecutor();
                         callbackExecutor.execute(r);
@@ -182,9 +185,8 @@ public class ComposeFragment extends Fragment {
                     public void run() {
                         try {
                             // block until the running thread is done
-                            goToRecommendationsFragment();
                             runner.join();
-                            ((CallbackRunnable)r).callback();
+                            ((CallbackRunnable) r).callback();
                         }
                         catch ( InterruptedException e ) {
                         }

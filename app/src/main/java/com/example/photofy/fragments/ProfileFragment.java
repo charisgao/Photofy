@@ -1,6 +1,5 @@
 package com.example.photofy.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,7 +14,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.photofy.R;
-import com.example.photofy.activities.MainActivity;
 import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
