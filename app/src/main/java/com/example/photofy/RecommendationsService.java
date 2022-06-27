@@ -3,12 +3,16 @@ package com.example.photofy;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.photofy.models.Song;
@@ -17,7 +21,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,68 +32,70 @@ public class RecommendationsService {
 
     public static final String TAG = "RecommendationsService";
 
-    private static final String ENDPOINT = "https://api.spotify.com/v1/recommendations";
+    private StringBuilder endpoint = new StringBuilder("https://api.spotify.com/v1/recommendations?market=US");
     private List<Song> songs = new ArrayList<>();
-    private SharedPreferences sharedPreferences;
-    private RequestQueue queue;
+
+    private String genre;
+    private final SharedPreferences sharedPreferences;
+    private final RequestQueue queue;
 
     public RecommendationsService(Context context, String genre) {
+        this.genre = genre;
+        endpoint.append("&seed_genres=" + genre);
         sharedPreferences = context.getSharedPreferences("SPOTIFY", Context.MODE_PRIVATE);
         queue = Volley.newRequestQueue(context);
-
-        JSONObject parameters = addParams(genre);
-        JsonObjectRequest jsonObjectRequest = getRecommendations(parameters);
-        queue.add(jsonObjectRequest);
+        getRecommendations();
     }
 
     public List<Song> getSongs() {
         return songs;
     }
 
-    public JSONObject addParams(String genre) {
-        JSONObject params = new JSONObject();
-        try {
-            params.put("seed_genres", genre);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return params;
-    }
-
-    public JsonObjectRequest getRecommendations(JSONObject params) {
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, ENDPOINT, params, new Response.Listener<JSONObject>() {
+    public void getRecommendations() {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, endpoint.toString(), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Log.i(TAG, "in response");
-                JSONArray jsonArray = response.optJSONArray("tracks");
-                for (int n = 0; n < jsonArray.length(); n++) {
-                    try {
+                try {
+                    JSONArray jsonArray = response.getJSONArray("tracks");
+                    for (int n = 0; n < jsonArray.length(); n++) {
                         JSONObject object = jsonArray.getJSONObject(n);
-                        String spotifyId = object.getJSONObject("linked_from").getString("id");
-                        Song song = new Song();
-                        song.setSpotifyId(spotifyId);
-                        songs.add(song);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        String previewUrl = object.getString("preview_url");
+                        if (previewUrl != null) {
+                            String spotifyId = object.getString("id");
+                            String songName = object.getString("name");
+                            String artistName = object.getJSONArray("artists").getJSONObject(0).getString("name");
+                            Song song = new Song();
+                            song.setSpotifyId(spotifyId);
+                            song.setSongName(songName);
+                            song.setArtist(artistName);
+                            song.setGenres(Arrays.asList(genre));
+                            song.setPreview(previewUrl);
+                            Log.i(TAG, "adding song " + songName);
+                            songs.add(song);
+                        }
                     }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "error getting songs");
+                Log.e(TAG, "error getting songs " + error.getMessage());
             }
         }) {
+            @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
+                HashMap<String, String> headers = new HashMap<String, String>();
+                Log.i(TAG, "trying to get token");
                 String token = sharedPreferences.getString("token", "");
                 String auth = "Bearer " + token;
                 headers.put("Authorization", auth);
-                headers.put("Content-Type", "application/json");
+                headers.put("Content-Type", "application/json; charset=utf-8");
                 return headers;
             }
         };
-
-        return request;
+        queue.add(request);
     }
 }

@@ -136,7 +136,6 @@ public class DetectProperties {
         SongRecommendationsFragment songRecommendationsFragment = new SongRecommendationsFragment();
         Bundle songBundle = new Bundle();
         songBundle.putParcelable("photo", picture);
-//        songBundle.putString("token", spotifyToken);
         songRecommendationsFragment.setArguments(songBundle);
         ((MainActivity) context).getSupportFragmentManager().beginTransaction()
                 .replace(R.id.flContainer, songRecommendationsFragment)

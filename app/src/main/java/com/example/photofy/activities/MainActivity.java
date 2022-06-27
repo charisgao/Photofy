@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -14,6 +16,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.example.photofy.R;
 import com.example.photofy.fragments.ComposeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -30,12 +34,20 @@ public class MainActivity extends AppCompatActivity {
     private Button btnLogout;
     final FragmentManager fragmentManager = getSupportFragmentManager();
 
+    private SharedPreferences.Editor editor;
+    private SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        String spotifyToken = getIntent().getStringExtra("token");
+        String spotifyToken = getIntent().getStringExtra("token");
+
+        sharedPreferences = this.getSharedPreferences("SPOTIFY", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        editor.putString("token", spotifyToken);
+        editor.apply();
 
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         btnLogout = findViewById(R.id.btnLogout);
@@ -50,9 +62,6 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new ComposeFragment();
                     case R.id.action_compose:
                         fragment = new ComposeFragment();
-//                        Bundle bundle = new Bundle();
-////                        bundle.putString("token", spotifyToken);
-//                        fragment.setArguments(bundle);
                     case R.id.action_profile:
                         // TODO: update fragment
                         fragment = new ComposeFragment();

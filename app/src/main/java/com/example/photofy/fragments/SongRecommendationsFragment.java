@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.photofy.R;
 import com.example.photofy.RecommendationsService;
+import com.example.photofy.activities.SpotifyLoginActivity;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Song;
 
@@ -150,6 +151,8 @@ public class SongRecommendationsFragment extends Fragment {
         for (int i = 0; i < recommendedSongs.size(); i++) {
             Log.i(TAG, recommendedSongs.get(i).getSpotifyId());
         }
+//        tvRecommendedSong.setText(recommendedSongs.get(0).getSongName());
+//        tvRecommendedArtist.setText(recommendedSongs.get(0).getArtist());
     }
 
 }

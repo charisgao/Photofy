@@ -29,10 +29,6 @@ public class SpotifyLoginActivity extends AppCompatActivity {
     private static final String CLIENT_ID = spotifyKey;
     private static final String REDIRECT_URI = "intent://";
 
-    private SharedPreferences.Editor editor;
-    private SharedPreferences sharedPreferences;
-    private RequestQueue queue;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +36,6 @@ public class SpotifyLoginActivity extends AppCompatActivity {
 
         authenticateUser();
 
-        sharedPreferences = this.getSharedPreferences("SPOTIFY", Context.MODE_PRIVATE);
-        queue = Volley.newRequestQueue(this);
     }
 
     @Override
@@ -56,11 +50,9 @@ public class SpotifyLoginActivity extends AppCompatActivity {
                 // Response was successful and contains auth token
                 case TOKEN:
                     // Save token in persistent storage with SharedPreferences
-                    editor = getSharedPreferences("SPOTIFY", Context.MODE_PRIVATE).edit();
-                    editor.putString("token", response.getAccessToken());
-                    editor.apply();
+                    String token = response.getAccessToken();
                     Toast.makeText(SpotifyLoginActivity.this, R.string.login_toast, Toast.LENGTH_SHORT).show();
-                    goMainActivity();
+                    goMainActivity(token);
                 case ERROR:
                     Log.e(TAG, "Something went wrong with Spotify authorization");
                 default:
@@ -83,8 +75,9 @@ public class SpotifyLoginActivity extends AppCompatActivity {
         AuthorizationClient.openLoginActivity(SpotifyLoginActivity.this, REQUEST_CODE, request);
     }
 
-    private void goMainActivity() {
+    private void goMainActivity(String token) {
         Intent i = new Intent (this, MainActivity.class);
+        i.putExtra("token", token);
         startActivity(i);
         finish();
     }

@@ -57,12 +57,6 @@ public class ComposeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        Bundle bundle = this.getArguments();
-//
-//        if (bundle != null) {
-//            spotifyToken = bundle.getString("token");
-//        }
-
         btnEnableCamera = view.findViewById(R.id.btnEnableCamera);
         ivCapturedImage = view.findViewById(R.id.ivCapturedImage);
 
