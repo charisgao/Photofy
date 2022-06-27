@@ -53,7 +53,6 @@ public class SongRecommendationsFragment extends Fragment {
     private HashMap<String, String> moodToGenre;
 
     private Photo image;
-//    private String spotifyToken;
 
     private ImageView ivSongAlbumCover;
     private TextView tvRecommendedSong;
@@ -132,7 +131,11 @@ public class SongRecommendationsFragment extends Fragment {
         Log.i(TAG, genre);
 
         recommendationsService = new RecommendationsService(getContext(), genre);
-        getRecommendations();
+
+        recommendedSongs = recommendationsService.getSongs();
+        for (int i = 0; i < recommendedSongs.size(); i++) {
+            Log.i(TAG, recommendedSongs.get(i).getSpotifyId());
+        }
     }
 
     public Color getClosestColor(Color dominantColor) {
@@ -147,10 +150,6 @@ public class SongRecommendationsFragment extends Fragment {
     }
 
     private void getRecommendations() {
-        recommendedSongs = recommendationsService.getSongs();
-        for (int i = 0; i < recommendedSongs.size(); i++) {
-            Log.i(TAG, recommendedSongs.get(i).getSpotifyId());
-        }
 //        tvRecommendedSong.setText(recommendedSongs.get(0).getSongName());
 //        tvRecommendedArtist.setText(recommendedSongs.get(0).getArtist());
     }
