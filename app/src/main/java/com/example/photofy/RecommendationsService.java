@@ -28,7 +28,7 @@ public class RecommendationsService {
     public static final String TAG = "RecommendationsService";
 
     private StringBuilder endpoint = new StringBuilder("https://api.spotify.com/v1/recommendations?market=US");
-    private List<Song> songs = new ArrayList<>();
+    private ArrayList<Song> songs = new ArrayList<>();
 
     private Context context;
     private String genre;
@@ -43,11 +43,11 @@ public class RecommendationsService {
         queue = Volley.newRequestQueue(context);
     }
 
-    public List<Song> getSongs() {
+    public ArrayList<Song> getSongs() {
         return songs;
     }
 
-    public void getRecommendations() {
+    public void getRecommendations(RecommendationsCallback recommendationsCallback) {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, endpoint.toString(), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -71,6 +71,7 @@ public class RecommendationsService {
                             songs.add(song);
                         }
                     }
+                    recommendationsCallback.callback();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

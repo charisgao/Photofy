@@ -27,11 +27,15 @@ import android.widget.ImageView;
 
 import com.example.photofy.ClosestColor;
 import com.example.photofy.DetectProperties;
+import com.example.photofy.RecommendationsCallback;
 import com.example.photofy.RecommendationsService;
 import com.example.photofy.activities.MainActivity;
 import com.example.photofy.R;
 import com.example.photofy.models.Photo;
+import com.example.photofy.models.Song;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 public class ComposeFragment extends Fragment {
@@ -45,10 +49,6 @@ public class ComposeFragment extends Fragment {
     private FragmentManager manager;
 
     private Button btnGetColors;
-
-    public interface CallbackRunnable extends Runnable {
-        public void callback();
-    }
 
     public ComposeFragment() {
         // Required empty public constructor
@@ -103,8 +103,9 @@ public class ComposeFragment extends Fragment {
 
                         goToLoadingFragment();
 
-                        // TODO: Callback runnable?
                         Runnable r = new Runnable() {
+                            RecommendationsService recommendationsService;
+
                             @Override
                             public void run() {
                                 DetectProperties getColor = new DetectProperties(picture, path);
@@ -119,17 +120,18 @@ public class ComposeFragment extends Fragment {
                                 String mood = alg.getMood(closestColor);
                                 String genre = alg.getGenre(mood);
                                 Log.i(TAG, genre);
-                                RecommendationsService recommendationsService = new RecommendationsService(getContext(), genre);
-                                recommendationsService.getRecommendations();
+                                recommendationsService = new RecommendationsService(getContext(), genre);
+                                recommendationsService.getRecommendations(new RecommendationsCallback() {
+                                    @Override
+                                    public void callback() {
+                                        ArrayList<Song> songs = recommendationsService.getSongs();
+                                        goToRecommendationsFragment(songs);
+                                    }
+                                });
                             }
-
-//                            @Override
-//                            public void callback() {
-//                                goToRecommendationsFragment();
-//                            }
                         };
-                        CallbackExecutor callbackExecutor = new CallbackExecutor();
-                        callbackExecutor.execute(r);
+                        Thread runner = new Thread(r);
+                        runner.start();
                     }
                 });
             }
@@ -162,38 +164,14 @@ public class ComposeFragment extends Fragment {
                 .commit();
     }
 
-    private void goToRecommendationsFragment() {
+    private void goToRecommendationsFragment(ArrayList<Song> songs) {
         SongRecommendationsFragment songRecommendationsFragment = new SongRecommendationsFragment();
         Bundle songBundle = new Bundle();
+        songBundle.putParcelableArrayList("songs", songs);
         songRecommendationsFragment.setArguments(songBundle);
         ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
                 .replace(R.id.flContainer, songRecommendationsFragment)
                 .addToBackStack(null)
                 .commit();
-    }
-
-    public class CallbackExecutor implements Executor {
-
-        @Override
-        public void execute(final Runnable r) {
-            final Thread runner = new Thread(r);
-            runner.start();
-            if ( r instanceof CallbackRunnable ) {
-                // create a thread to perform the callback
-                Thread callerbacker = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            // block until the running thread is done
-                            runner.join();
-                            ((CallbackRunnable) r).callback();
-                        }
-                        catch ( InterruptedException e ) {
-                        }
-                    }
-                });
-                callerbacker.start();
-            }
-        }
     }
 }
