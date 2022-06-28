@@ -1,5 +1,9 @@
 package com.example.photofy.fragments;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,13 +18,20 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.photofy.R;
+import com.example.photofy.activities.LoginActivity;
+import com.example.photofy.activities.MainActivity;
+import com.example.photofy.activities.SpotifyLoginActivity;
 import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.spotify.sdk.android.auth.AuthorizationClient;
 
 public class ProfileFragment extends Fragment {
 
     public static final String TAG = "ProfileFragment";
+
+    private static final int REQUEST_CODE = 1337;
+    private SharedPreferences.Editor editor;
 
     private Button btnLogout;
 
@@ -48,7 +59,6 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    // TODO: use AuthorizationClient clearCookies method to log out and clear all stored tokens for Spotify
     private void logout() {
         ParseUser.logOutInBackground(new LogOutCallback() {
             @Override
@@ -57,11 +67,23 @@ public class ProfileFragment extends Fragment {
                     Toast.makeText(getContext(), R.string.logout_error_toast, Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Issue with logout", e);
                 } else {
-                    // TODO: go to login activity
+                    // TODO: figure out how to log user out from Spotify
+                    // delete spotify token from shared preferences
+                    editor = (getContext().getSharedPreferences("SPOTIFY", Context.MODE_PRIVATE)).edit();
+                    editor.remove("token");
+                    editor.commit();
+
+                    goLoginActivity();
                     Toast.makeText(getContext(), R.string.logout_toast, Toast.LENGTH_SHORT).show();
                 }
             }
         });
         ParseUser currentUser = ParseUser.getCurrentUser();
+    }
+
+    private void goLoginActivity() {
+        Intent i = new Intent((MainActivity) getContext(), LoginActivity.class);
+        startActivity(i);
+        ((MainActivity) getContext()).finish();
     }
 }
