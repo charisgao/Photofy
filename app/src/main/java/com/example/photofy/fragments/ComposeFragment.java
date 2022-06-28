@@ -1,9 +1,12 @@
 package com.example.photofy.fragments;
 
+import static com.example.photofy.PhotofyApplication.googleCredentials;
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.os.Bundle;
 
@@ -22,10 +25,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.example.photofy.ClosestColor;
 import com.example.photofy.DetectProperties;
+import com.example.photofy.RecommendationsService;
 import com.example.photofy.activities.MainActivity;
 import com.example.photofy.R;
 import com.example.photofy.models.Photo;
+
+import java.util.concurrent.Executor;
 
 public class ComposeFragment extends Fragment {
 
@@ -39,8 +46,9 @@ public class ComposeFragment extends Fragment {
 
     private Button btnGetColors;
 
-    private DetectProperties getColor;
-//    private String spotifyToken;
+    public interface CallbackRunnable extends Runnable {
+        public void callback();
+    }
 
     public ComposeFragment() {
         // Required empty public constructor
@@ -93,9 +101,35 @@ public class ComposeFragment extends Fragment {
                     public void onClick(View v) {
                         Photo picture = bundle.getParcelable("image");
 
-                        if (getColor == null) {
-                            getColor = new DetectProperties(picture, path, getContext());
-                        }
+                        goToLoadingFragment();
+
+                        // TODO: Callback runnable?
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                DetectProperties getColor = new DetectProperties(picture, path);
+                                try  {
+                                    String gcsPath = getColor.authExplicit(googleCredentials, getContext());
+                                    getColor.detectPropertiesGcs(gcsPath);
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Credentials error " + e);
+                                }
+                                ClosestColor alg = new ClosestColor(picture, getContext());
+                                Color closestColor = alg.getClosestColor(alg.getDominantColor());
+                                String mood = alg.getMood(closestColor);
+                                String genre = alg.getGenre(mood);
+                                Log.i(TAG, genre);
+                                RecommendationsService recommendationsService = new RecommendationsService(getContext(), genre);
+                                recommendationsService.getRecommendations();
+                            }
+
+//                            @Override
+//                            public void callback() {
+//                                goToRecommendationsFragment();
+//                            }
+                        };
+                        CallbackExecutor callbackExecutor = new CallbackExecutor();
+                        callbackExecutor.execute(r);
                     }
                 });
             }
@@ -118,5 +152,48 @@ public class ComposeFragment extends Fragment {
 
     private void requestPermission() {
         ActivityCompat.requestPermissions((MainActivity) getContext(), REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+    }
+
+    private void goToLoadingFragment() {
+        LoadingFragment loadingFragment = new LoadingFragment();
+        ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
+                .replace(R.id.flContainer, loadingFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void goToRecommendationsFragment() {
+        SongRecommendationsFragment songRecommendationsFragment = new SongRecommendationsFragment();
+        Bundle songBundle = new Bundle();
+        songRecommendationsFragment.setArguments(songBundle);
+        ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
+                .replace(R.id.flContainer, songRecommendationsFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public class CallbackExecutor implements Executor {
+
+        @Override
+        public void execute(final Runnable r) {
+            final Thread runner = new Thread(r);
+            runner.start();
+            if ( r instanceof CallbackRunnable ) {
+                // create a thread to perform the callback
+                Thread callerbacker = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            // block until the running thread is done
+                            runner.join();
+                            ((CallbackRunnable) r).callback();
+                        }
+                        catch ( InterruptedException e ) {
+                        }
+                    }
+                });
+                callerbacker.start();
+            }
+        }
     }
 }

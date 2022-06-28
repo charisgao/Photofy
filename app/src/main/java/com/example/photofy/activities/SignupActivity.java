@@ -7,10 +7,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.example.photofy.R;
-import com.parse.LogInCallback;
+import com.google.android.material.textfield.TextInputEditText;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -19,9 +18,9 @@ public class SignupActivity extends AppCompatActivity {
 
     public static final String TAG = "SignupActivity";
 
-    private EditText etSignupEmail;
-    private EditText etSignupUsername;
-    private EditText etSignupPassword;
+    private TextInputEditText etSignupEmail;
+    private TextInputEditText etSignupUsername;
+    private TextInputEditText etSignupPassword;
     private Button btnSignup;
 
     @Override
@@ -30,10 +29,10 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
 
         // Connect visual components with logic
-        etSignupEmail = findViewById(R.id.etSignupEmail);
-        etSignupUsername = findViewById(R.id.etLoginUsername);
-        etSignupPassword = findViewById(R.id.etLoginPassword);
-        btnSignup = findViewById(R.id.btnSignup);
+        etSignupEmail = findViewById(R.id.etSignUpEmail);
+        etSignupUsername = findViewById(R.id.etSignUpUsername);
+        etSignupPassword = findViewById(R.id.etSignUpPassword);
+        btnSignup = findViewById(R.id.btnSignUp);
 
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
