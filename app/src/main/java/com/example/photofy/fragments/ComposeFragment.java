@@ -14,6 +14,9 @@ import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -60,12 +63,12 @@ public class ComposeFragment extends Fragment {
     public static final String TAG = "ComposeFragment";
     private static final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     private static final int PERMISSIONS_REQUEST_CODE = 1001;
-    public static final int GET_FROM_GALLERY = 3;
 
     private Button btnEnableCamera;
     private Button btnUploadImage;
     private ImageView ivCapturedImage;
     private FragmentManager manager;
+    private ActivityResultLauncher<String> galleryLauncher;
 
     private Photo picture;
     private String path;
@@ -133,6 +136,64 @@ public class ComposeFragment extends Fragment {
             }
         });
 
+        galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
+            @Override
+            public void onActivityResult(Uri selectedImage) {
+                if (selectedImage != null){
+                    try {
+                        ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), selectedImage);
+                        Bitmap bitmap = ImageDecoder.decodeBitmap(source);
+
+                        // Scale the image smaller
+                        Bitmap resizedBitmap = BitmapScaler.scaleToFitHeight(bitmap, 200);
+
+                        // Store smaller bitmap to disk
+                        // Configure byte output stream
+                        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                        // Compress the image further
+                        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
+                        // Create a new file for the resized bitmap
+                        File resizedFile = getPhotoFile();
+                        try {
+                            resizedFile.createNewFile();
+                            FileOutputStream fos = null;
+                            try {
+                                fos = new FileOutputStream(resizedFile);
+                                // Write the bytes of the bitmap to file
+                                fos.write(bytes.toByteArray());
+                                fos.close();
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        Photo photo = new Photo();
+                        photo.setUser(ParseUser.getCurrentUser());
+                        photo.setImage(new ParseFile(resizedFile));
+                        photo.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                            }
+                        });
+
+                        ivCapturedImage.setImageBitmap(resizedBitmap);
+                        btnEnableCamera.setVisibility(View.GONE);
+                        btnUploadImage.setVisibility(View.GONE);
+                        btnGetColors.setVisibility(View.VISIBLE);
+
+                        picture = photo;
+                        path = resizedFile.getAbsolutePath();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
         btnGetColors.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,88 +253,11 @@ public class ComposeFragment extends Fragment {
         ActivityCompat.requestPermissions((MainActivity) getContext(), REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
     }
 
-    private void goToLoadingFragment() {
-        LoadingFragment loadingFragment = new LoadingFragment();
-        ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
-                .replace(R.id.flContainer, loadingFragment)
-                .addToBackStack(null)
-                .commit();
-    }
-
-    private void goToRecommendationsFragment(ArrayList<Song> songs) {
-        SongRecommendationsFragment songRecommendationsFragment = new SongRecommendationsFragment();
-        Bundle songBundle = new Bundle();
-        songBundle.putParcelableArrayList("songs", songs);
-        songRecommendationsFragment.setArguments(songBundle);
-        ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
-                .replace(R.id.flContainer, songRecommendationsFragment)
-                .addToBackStack(null)
-                .commit();
-    }
-
     private void launchGallery() {
         Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
 
         if (i.resolveActivity(getContext().getPackageManager()) != null) {
-            startActivityForResult(i, GET_FROM_GALLERY);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == GET_FROM_GALLERY && resultCode == RESULT_OK) {
-            Uri selectedImage = data.getData();
-            try {
-                ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), selectedImage);
-                Bitmap bitmap = ImageDecoder.decodeBitmap(source);
-
-                // Scale the image smaller
-                Bitmap resizedBitmap = BitmapScaler.scaleToFitHeight(bitmap, 200);
-
-                // Store smaller bitmap to disk
-                // Configure byte output stream
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                // Compress the image further
-                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
-                // Create a new file for the resized bitmap
-                File resizedFile = getPhotoFile();
-                try {
-                    resizedFile.createNewFile();
-                    FileOutputStream fos = null;
-                    try {
-                        fos = new FileOutputStream(resizedFile);
-                        // Write the bytes of the bitmap to file
-                        fos.write(bytes.toByteArray());
-                        fos.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                Photo photo = new Photo();
-                photo.setUser(ParseUser.getCurrentUser());
-                photo.setImage(new ParseFile(resizedFile));
-                photo.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                    }
-                });
-
-                ivCapturedImage.setImageBitmap(resizedBitmap);
-                btnEnableCamera.setVisibility(View.GONE);
-                btnUploadImage.setVisibility(View.GONE);
-                btnGetColors.setVisibility(View.VISIBLE);
-
-                picture = photo;
-                path = resizedFile.getAbsolutePath();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            galleryLauncher.launch("image/*");
         }
     }
 
@@ -291,5 +275,24 @@ public class ComposeFragment extends Fragment {
 
         // Return the file target for the photo based on timestamp
         return new File(mediaStorageDir.getPath() + File.separator + dateFormat.format(new Date()) + ".jpg");
+    }
+
+    private void goToLoadingFragment() {
+        LoadingFragment loadingFragment = new LoadingFragment();
+        ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
+                .replace(R.id.flContainer, loadingFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void goToRecommendationsFragment(ArrayList<Song> songs) {
+        SongRecommendationsFragment songRecommendationsFragment = new SongRecommendationsFragment();
+        Bundle songBundle = new Bundle();
+        songBundle.putParcelableArrayList("songs", songs);
+        songRecommendationsFragment.setArguments(songBundle);
+        ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
+                .replace(R.id.flContainer, songRecommendationsFragment)
+                .addToBackStack(null)
+                .commit();
     }
 }

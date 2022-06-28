@@ -25,9 +25,10 @@ public class SongResultsActivity extends AppCompatActivity {
         tvResultsSongArtist = findViewById(R.id.tvResultsSongArtist);
 
         Song song = getIntent().getParcelableExtra("song");
+        song.saveInBackground();
+
         Log.i(TAG, song.getSongName());
         tvResultsSongName.setText(song.getSongName());
         tvResultsSongArtist.setText(song.getArtist());
-
     }
 }
