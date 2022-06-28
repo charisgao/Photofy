@@ -57,7 +57,7 @@ public class ProfileFragment extends Fragment {
                     Toast.makeText(getContext(), R.string.logout_error_toast, Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Issue with logout", e);
                 } else {
-                    // TODO: go to main activity
+                    // TODO: go to login activity
                     Toast.makeText(getContext(), R.string.logout_toast, Toast.LENGTH_SHORT).show();
                 }
             }

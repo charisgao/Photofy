@@ -14,6 +14,7 @@ import android.view.MenuItem;
 
 import com.example.photofy.R;
 import com.example.photofy.fragments.ComposeFragment;
+import com.example.photofy.fragments.HomeFragment;
 import com.example.photofy.fragments.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -48,8 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment = null;
                 switch(item.getItemId()) {
                     case R.id.action_home:
-                        // TODO: update fragment
-                        fragment = new ComposeFragment();
+                        fragment = new HomeFragment();
                         break;
                     case R.id.action_compose:
                         fragment = new ComposeFragment();
