@@ -5,28 +5,28 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.animation.AccelerateInterpolator;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.animation.Interpolator;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.photofy.R;
-import com.example.photofy.RecommendationsService;
 import com.example.photofy.SongAdapter;
 import com.example.photofy.activities.SongResultsActivity;
-import com.example.photofy.models.Photo;
 import com.example.photofy.models.Song;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 import com.yuyakaido.android.cardstackview.CardStackListener;
+import com.yuyakaido.android.cardstackview.CardStackView;
 import com.yuyakaido.android.cardstackview.Direction;
+import com.yuyakaido.android.cardstackview.Duration;
 import com.yuyakaido.android.cardstackview.StackFrom;
+import com.yuyakaido.android.cardstackview.SwipeAnimationSetting;
 import com.yuyakaido.android.cardstackview.SwipeableMethod;
 
 import java.util.ArrayList;
@@ -41,7 +41,9 @@ public class SongRecommendationsFragment extends Fragment {
     protected SongAdapter adapter;
     protected List<Song> recommendedSongs;
 
-    private RecyclerView csvSongs;
+    private CardStackView csvSongs;
+    private ImageButton ibAccept;
+    private ImageButton ibReject;
 
     public SongRecommendationsFragment() {
         // Required empty public constructor
@@ -60,6 +62,8 @@ public class SongRecommendationsFragment extends Fragment {
         Log.i(TAG, "in recommendations");
 
         csvSongs = view.findViewById(R.id.csvSongs);
+        ibAccept = view.findViewById(R.id.ibAccept);
+        ibReject = view.findViewById(R.id.ibReject);
 
         recommendedSongs = getArguments().getParcelableArrayList("songs");
         adapter = new SongAdapter(getContext(), recommendedSongs);
@@ -68,7 +72,7 @@ public class SongRecommendationsFragment extends Fragment {
         csvSongs.setAdapter(adapter);
 
         CardStackListener cardStackListener = new CardStackListener() {
-            boolean right = false;
+            int currentPos = 0;
             @Override
             public void onCardDragging(Direction direction, float ratio) {
             }
@@ -77,6 +81,9 @@ public class SongRecommendationsFragment extends Fragment {
             public void onCardSwiped(Direction direction) {
                 if (direction == Direction.Right) {
                     Toast.makeText(getActivity(), "Accepted", Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(getContext(), SongResultsActivity.class);
+                    i.putExtra("song", recommendedSongs.get(currentPos));
+                    startActivity(i);
                 } else if (direction == Direction.Left){
                     Toast.makeText(getActivity(), "Rejected", Toast.LENGTH_SHORT).show();
                 }
@@ -94,16 +101,11 @@ public class SongRecommendationsFragment extends Fragment {
 
             @Override
             public void onCardAppeared(View view, int position) {
-
+                currentPos = position;
             }
 
             @Override
             public void onCardDisappeared(View view, int position) {
-                if (right) {
-                    Intent i = new Intent(getContext(), SongResultsActivity.class);
-                    i.putExtra("song", recommendedSongs.get(position));
-                    startActivity(i);
-                }
             }
         };
 
@@ -113,5 +115,29 @@ public class SongRecommendationsFragment extends Fragment {
         cardStackLayoutManager.setTranslationInterval(4.0f);
         cardStackLayoutManager.setSwipeableMethod(SwipeableMethod.AutomaticAndManual);
         csvSongs.setLayoutManager(cardStackLayoutManager);
+
+        ibAccept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                        .setDirection(Direction.Right)
+                        .setDuration(Duration.Normal.duration)
+                        .build();
+                cardStackLayoutManager.setSwipeAnimationSetting(setting);
+                csvSongs.swipe();
+            }
+        });
+
+        ibReject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                        .setDirection(Direction.Left)
+                        .setDuration(Duration.Normal.duration)
+                        .build();
+                cardStackLayoutManager.setSwipeAnimationSetting(setting);
+                csvSongs.swipe();
+            }
+        });
     }
 }
