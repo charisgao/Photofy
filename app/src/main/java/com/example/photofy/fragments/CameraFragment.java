@@ -101,7 +101,7 @@ public class CameraFragment extends Fragment {
                                 }
                             });
                             result.putString("filePath", file.getAbsolutePath());
-                            result.putParcelable("image", picture);
+                            result.putParcelable("picture", picture);
                             FragmentManager manager = ((MainActivity) getContext()).getSupportFragmentManager();
                             manager.setFragmentResult("requestKey", result);
                             ComposeFragment composeFragment = new ComposeFragment();

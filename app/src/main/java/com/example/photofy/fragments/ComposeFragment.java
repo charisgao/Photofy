@@ -120,7 +120,7 @@ public class ComposeFragment extends Fragment {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
                 Log.i(TAG, "inFragmentResult");
-                picture = bundle.getParcelable("image");
+                picture = bundle.getParcelable("picture");
                 path = bundle.getString("filePath");
                 Bitmap bitmap = BitmapFactory.decodeFile(path);
 
@@ -287,9 +287,10 @@ public class ComposeFragment extends Fragment {
 
     private void goToRecommendationsFragment(ArrayList<Song> songs) {
         SongRecommendationsFragment songRecommendationsFragment = new SongRecommendationsFragment();
-        Bundle songBundle = new Bundle();
-        songBundle.putParcelableArrayList("songs", songs);
-        songRecommendationsFragment.setArguments(songBundle);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("picture", picture);
+        bundle.putParcelableArrayList("songs", songs);
+        songRecommendationsFragment.setArguments(bundle);
         ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
                 .replace(R.id.flContainer, songRecommendationsFragment)
                 .addToBackStack(null)

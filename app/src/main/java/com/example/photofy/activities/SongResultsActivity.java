@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.photofy.R;
+import com.example.photofy.models.Photo;
 import com.example.photofy.models.Song;
 
 public class SongResultsActivity extends AppCompatActivity {
@@ -24,6 +25,7 @@ public class SongResultsActivity extends AppCompatActivity {
         tvResultsSongName = findViewById(R.id.tvResultsSongName);
         tvResultsSongArtist = findViewById(R.id.tvResultsSongArtist);
 
+        Photo picture = getIntent().getParcelableExtra("picture");
         Song song = getIntent().getParcelableExtra("song");
         song.saveInBackground();
 

@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.photofy.R;
 import com.example.photofy.SongAdapter;
 import com.example.photofy.activities.SongResultsActivity;
+import com.example.photofy.models.Photo;
 import com.example.photofy.models.Song;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 import com.yuyakaido.android.cardstackview.CardStackListener;
@@ -39,6 +40,7 @@ public class SongRecommendationsFragment extends Fragment {
     public static final String TAG = "SongRecommendationsFragment";
 
     protected SongAdapter adapter;
+    protected Photo picture;
     protected List<Song> recommendedSongs;
 
     private CardStackView csvSongs;
@@ -65,6 +67,7 @@ public class SongRecommendationsFragment extends Fragment {
         ibAccept = view.findViewById(R.id.ibAccept);
         ibReject = view.findViewById(R.id.ibReject);
 
+        picture = getArguments().getParcelable("picture");
         recommendedSongs = getArguments().getParcelableArrayList("songs");
         adapter = new SongAdapter(getContext(), recommendedSongs);
 
@@ -82,6 +85,7 @@ public class SongRecommendationsFragment extends Fragment {
                 if (direction == Direction.Right) {
                     Toast.makeText(getActivity(), "Accepted", Toast.LENGTH_SHORT).show();
                     Intent i = new Intent(getContext(), SongResultsActivity.class);
+                    i.putExtra("picture", picture);
                     i.putExtra("song", recommendedSongs.get(currentPos));
                     startActivity(i);
                 } else if (direction == Direction.Left){
