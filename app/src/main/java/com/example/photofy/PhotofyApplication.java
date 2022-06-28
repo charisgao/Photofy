@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.photofy.models.Photo;
+import com.example.photofy.models.Song;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -26,6 +27,7 @@ public class PhotofyApplication extends Application {
         super.onCreate();
 
         ParseObject.registerSubclass(Photo.class);
+        ParseObject.registerSubclass(Song.class);
 
         try {
             ApplicationInfo applicationInfo = getApplicationContext().getPackageManager().getApplicationInfo(getApplicationContext().getPackageName(), PackageManager.GET_META_DATA);

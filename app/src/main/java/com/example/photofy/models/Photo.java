@@ -10,6 +10,7 @@ public class Photo extends ParseObject {
 
     public static final String KEY_IMAGE = "Photo";
     public static final String KEY_USER = "User";
+    public static final String KEY_COLOR = "Color";
 
     public ParseFile getImage() {
         return getParseFile(KEY_IMAGE);
@@ -25,5 +26,13 @@ public class Photo extends ParseObject {
 
     public void setUser(ParseUser user) {
         put(KEY_USER, user);
+    }
+
+    public String getColor() {
+        return getString(KEY_COLOR);
+    }
+
+    public void setColor(String hexColor) {
+        put(KEY_COLOR, hexColor);
     }
 }
