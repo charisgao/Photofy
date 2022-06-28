@@ -91,7 +91,7 @@ public class CameraFragment extends Fragment {
                         new ImageCapture.OutputFileOptions.Builder(file).build();
                 imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback() {
                         @Override
-                        public void onImageSaved(ImageCapture.OutputFileResults outputFileResults) {
+                        public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
                             Photo picture = new Photo();
                             picture.setUser(ParseUser.getCurrentUser());
                             picture.setImage(new ParseFile(file));
