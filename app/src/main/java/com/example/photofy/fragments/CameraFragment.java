@@ -40,6 +40,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+// TODO: need to make into an activity (do not need bottom navigation bar showing)
 public class CameraFragment extends Fragment {
 
     public static final String TAG = "CameraFragment";

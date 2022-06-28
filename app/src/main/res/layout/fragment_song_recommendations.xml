@@ -7,12 +7,14 @@
     android:layout_height="match_parent"
     tools:context=".fragments.SongRecommendationsFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvSongs"
+    <com.yuyakaido.android.cardstackview.CardStackView
+        android:id="@+id/csvSongs"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
