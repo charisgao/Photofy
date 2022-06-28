@@ -35,8 +35,6 @@ import com.example.photofy.models.Photo;
 import com.example.photofy.models.Song;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executor;
 
 public class ComposeFragment extends Fragment {
 
