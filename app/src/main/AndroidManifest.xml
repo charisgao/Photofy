@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.photofy" >
+    package="com.example.photofy">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- CameraX -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- CameraX -->
     <uses-feature android:name="android.hardware.camera.any" />
-    <uses-permission android:name="android.permission.CAMERA" />
 
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
@@ -26,44 +24,38 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Photofy"
         tools:targetApi="31">
-
         <activity
             android:name=".activities.LoginActivity"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.SpotifyLoginActivity"
             android:exported="true" />
-
         <activity
             android:name=".activities.SignupActivity"
             android:exported="true" />
-
         <activity
             android:name=".activities.MainActivity"
             android:exported="true" />
 
-        <!--retrieve Parse client key-->
+        <!-- retrieve Parse client key -->
         <meta-data
             android:name="clientKey"
             android:value="${CLIENT_KEY}" />
 
-        <!--retrieve Spotify client ID-->
+        <!-- retrieve Spotify client ID -->
         <meta-data
             android:name="spotifyClientId"
             android:value="${SPOTIFY_CLIENT_ID}" />
 
-        <!--retrieve Google credentials-->
+        <!-- retrieve Google credentials -->
         <meta-data
             android:name="googleCredentials"
             android:value="${GOOGLE_APPLICATION_CREDENTIALS}" />
-
     </application>
 
 </manifest>

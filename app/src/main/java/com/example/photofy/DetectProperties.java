@@ -1,7 +1,5 @@
 package com.example.photofy;
 
-import static com.example.photofy.PhotofyApplication.googleCredentials;
-
 import android.content.Context;
 import android.util.Log;
 
@@ -21,7 +19,6 @@ import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.cloud.vision.v1.ImageAnnotatorSettings;
 import com.google.cloud.vision.v1.ImageSource;
 import com.parse.ParseException;
-import com.parse.SaveCallback;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,32 +29,18 @@ public class DetectProperties {
 
     public static final String TAG = "DetectProperties";
 
-    private Context context;
     private Photo picture;
     private String path;
     private GoogleCredentials credentials;
+    private List<String> objects;
 
-    public DetectProperties(Photo picture, String path, Context context) {
+    public DetectProperties(Photo picture, String path) {
         this.picture = picture;
-        this.context = context;
         this.path = path;
-
-        Thread thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try  {
-                    authExplicit(googleCredentials, context);
-                } catch (Exception e) {
-                    Log.e(TAG, "Credentials error " + e);
-                }
-            }
-        });
-
-        thread.start();
+        objects = new ArrayList<String>();
     }
 
-    public void authExplicit(String jsonPath, Context context) throws IOException {
+    public String authExplicit(String jsonPath, Context context) throws IOException {
         // Authorize Google credentials
         credentials = GoogleCredentials.fromStream(context.getAssets().open(jsonPath))
                 .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
@@ -69,8 +52,7 @@ public class DetectProperties {
         UploadObject.uploadObject(storage, bucketName, objectName, path);
 
         // Get GCS path for image from bucket
-        String gcsPath = "gs://" + bucketName + "/" + objectName;
-        detectPropertiesGcs(gcsPath);
+        return "gs://" + bucketName + "/" + objectName;
     }
 
     // Detects most dominant color from the specified remote image
@@ -79,10 +61,10 @@ public class DetectProperties {
 
         ImageSource imgSource = ImageSource.newBuilder().setGcsImageUri(gcsPath).build();
         Image img = Image.newBuilder().setSource(imgSource).build();
-        Feature feat = Feature.newBuilder().setType(Feature.Type.IMAGE_PROPERTIES).setMaxResults(1).build();
-        AnnotateImageRequest request =
-                AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
-        requests.add(request);
+        Feature feat1 = Feature.newBuilder().setType(Feature.Type.IMAGE_PROPERTIES).setMaxResults(1).build();
+        AnnotateImageRequest request1 =
+                AnnotateImageRequest.newBuilder().addFeatures(feat1).setImage(img).build();
+        requests.add(request1);
 
         ImageAnnotatorSettings imageAnnotatorSettings =
                 ImageAnnotatorSettings.newBuilder()
@@ -94,8 +76,8 @@ public class DetectProperties {
         // the "close" method on the client to safely clean up any remaining background resources.
         try (ImageAnnotatorClient client = ImageAnnotatorClient.create(imageAnnotatorSettings)) {
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
-
             List<AnnotateImageResponse> responses = response.getResponsesList();
+            client.close();
 
             for (AnnotateImageResponse res : responses) {
                 if (res.hasError()) {
@@ -104,24 +86,20 @@ public class DetectProperties {
                 }
 
                 DominantColorsAnnotation colors = res.getImagePropertiesAnnotation().getDominantColors();
-                for (ColorInfo color : colors.getColorsList()) {
+                ColorInfo color = colors.getColorsList().get(0);
 
-                    int red = Math.round(color.getColor().getRed());
-                    int green = Math.round(color.getColor().getGreen());
-                    int blue = Math.round(color.getColor().getBlue());
+                int red = Math.round(color.getColor().getRed());
+                int green = Math.round(color.getColor().getGreen());
+                int blue = Math.round(color.getColor().getBlue());
 
-                    // Save dominant color hex code in Parse
-                    String hex = String.format("#%02X%02X%02X", red, green, blue);
-                    picture.setColor(hex);
-                    picture.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                        }
-                    });
-
-                    Log.i(TAG, "generated color " + hex);
-                }
+                // Save dominant color hex code in Parse
+                String hex = String.format("#%02X%02X%02X", red, green, blue);
+                picture.setColor(hex);
+                Log.i(TAG, "generated color " + hex);
+                picture.save();
             }
+        } catch (ParseException e) {
+            Log.e(TAG, "color error " + e);
         }
     }
 }
