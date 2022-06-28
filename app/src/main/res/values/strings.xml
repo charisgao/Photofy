@@ -15,6 +15,4 @@
     <string name="new_account">Don\'t have an account?</string>
     <string name="photofy">PHOTOFY</string>
     <string name="upload_image">Upload image</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
