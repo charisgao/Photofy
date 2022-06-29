@@ -15,7 +15,7 @@ import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder>{
 
-    public static final String TAG = "PostsAdapter";
+    public static final String TAG = "SongAdapter";
     private Context context;
     private List<Song> songs;
 
@@ -40,12 +40,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder>{
     @Override
     public int getItemCount() {
         return songs.size();
-    }
-
-    // Clean all elements of the recycler
-    public void clear() {
-        songs.clear();
-        notifyDataSetChanged();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
