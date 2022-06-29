@@ -7,6 +7,8 @@
         <entry key="app/src/main/res/drawable/ic_bg.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_gradient_background.xml" value="0.2905" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_pause_button.xml" value="0.3045" />
+        <entry key="app/src/main/res/drawable/ic_play_button.xml" value="0.3045" />
         <entry key="app/src/main/res/drawable/ic_simple_shiny.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_simple_shiny__1_.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_spectrum_gradient.xml" value="0.1" />
