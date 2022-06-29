@@ -9,12 +9,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.photofy.R;
@@ -34,9 +37,19 @@ public class ProfileFragment extends Fragment {
     private SharedPreferences.Editor editor;
 
     private Button btnLogout;
+    private ImageView ivProfilePicture;
+    private TextView tvProfileUsername;
+    private TextView tvProfileBiography;
+    private RecyclerView rvProfilePosts;
+
+    private ParseUser user = ParseUser.getCurrentUser();
 
     public ProfileFragment() {
         // Required empty public constructor
+    }
+
+    public ProfileFragment(ParseUser user) {
+        this.user = user;
     }
 
     @Override
@@ -51,6 +64,13 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         btnLogout = view.findViewById(R.id.btnLogout);
+        ivProfilePicture = view.findViewById(R.id.ivProfilePicture);
+        tvProfileUsername = view.findViewById(R.id.tvProfileUsername);
+        tvProfileBiography = view.findViewById(R.id.tvProfileBiography);
+        rvProfilePosts = view.findViewById(R.id.rvProfilePosts);
+
+        tvProfileUsername.setText(user.getUsername());
+
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
