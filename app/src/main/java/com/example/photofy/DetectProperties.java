@@ -51,24 +51,22 @@ public class DetectProperties {
         }
     }
 
-    public void findDominantColor(Photo picture, String path) throws IOException {
-        // Upload captured image to Google Cloud storage
-        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-        String bucketName = "photofy-images0";
-        String objectName = "image-" + picture.getImage().getName();
-        UploadObject.uploadObject(storage, bucketName, objectName, path);
-
-        // GCS path for image from bucket
-        String gcsPath = "gs://" + bucketName + "/" + objectName;
-
-        // Save generated dominant color
-        String hex = detectPropertiesGcs(gcsPath);
-        picture.setColor(hex);
-        Log.i(TAG, "generated color " + hex);
+    public String findDominantColor(Photo picture, String path) {
         try {
-            picture.save();
-        } catch (ParseException e) {
-            Log.e(TAG, "error with saving image " + e);
+            // Upload captured image to Google Cloud storage
+            Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+            String bucketName = "photofy-images0";
+            String objectName = "image-" + picture.getImage().getName();
+            UploadObject.uploadObject(storage, bucketName, objectName, path);
+
+            // GCS path for image from bucket
+            String gcsPath = "gs://" + bucketName + "/" + objectName;
+
+            String hexColor = detectPropertiesGcs(gcsPath);
+            return hexColor;
+        } catch (IOException e) {
+            Log.e(TAG, "problem with finding dominant color" + e);
+            return "";
         }
     }
 

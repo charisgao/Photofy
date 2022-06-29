@@ -211,14 +211,14 @@ public class ComposeFragment extends Fragment {
             @Override
             public void run() {
                 DetectProperties properties = new DetectProperties(googleCredentials, getContext());
-                try {
-                    properties.findDominantColor(picture, path);
-                } catch (IOException e) {
-                    Log.e(TAG, "problem with finding dominant color" + e);
-                }
+                String color = properties.findDominantColor(picture, path);
+
+                picture.setColor(color);
+                Log.i(TAG, "generated color " + color);
+                picture.saveInBackground();
 
                 ColorToGenre genreFinder = new ColorToGenre();
-                String genre = genreFinder.findGenreFromColor(picture.getColor());
+                String genre = genreFinder.findGenreFromColor(color);
                 Log.i(TAG, genre);
 
                 SharedPreferences sharedPreferences = getContext().getSharedPreferences("SPOTIFY", Context.MODE_PRIVATE);
