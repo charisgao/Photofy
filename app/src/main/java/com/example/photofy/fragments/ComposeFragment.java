@@ -1,14 +1,14 @@
 package com.example.photofy.fragments;
 
-import static android.app.Activity.RESULT_OK;
 import static com.example.photofy.PhotofyApplication.googleCredentials;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.ImageDecoder;
 import android.graphics.Matrix;
 import android.net.Uri;
@@ -32,10 +32,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.example.photofy.BitmapScaler;
-import com.example.photofy.ClosestColor;
+import com.example.photofy.ColorToGenre;
 import com.example.photofy.DetectProperties;
 import com.example.photofy.RecommendationsCallback;
 import com.example.photofy.RecommendationsService;
@@ -209,20 +210,24 @@ public class ComposeFragment extends Fragment {
 
             @Override
             public void run() {
-                DetectProperties getColor = new DetectProperties(picture, path);
-                try  {
-                    String gcsPath = getColor.authExplicit(googleCredentials, getContext());
-                    getColor.detectPropertiesGcs(gcsPath);
-                } catch (Exception e) {
-                    Log.e(TAG, "Credentials error " + e);
+                DetectProperties properties = new DetectProperties(googleCredentials, getContext());
+                try {
+                    properties.findDominantColor(picture, path);
+                } catch (IOException e) {
+                    Log.e(TAG, "problem with finding dominant color" + e);
                 }
-                ClosestColor alg = new ClosestColor(picture, getContext());
-                Color closestColor = alg.getClosestColor(alg.getDominantColor());
-                String mood = alg.getMood(closestColor);
-                String genre = alg.getGenre(mood);
+
+                ColorToGenre genreFinder = new ColorToGenre();
+                String genre = genreFinder.findGenreFromColor(picture.getColor());
                 Log.i(TAG, genre);
-                recommendationsService = new RecommendationsService(getContext(), genre);
-                recommendationsService.getRecommendations(new RecommendationsCallback() {
+
+                SharedPreferences sharedPreferences = getContext().getSharedPreferences("SPOTIFY", Context.MODE_PRIVATE);
+                String token = sharedPreferences.getString("token", "");
+
+                RequestQueue queue = Volley.newRequestQueue(getContext());
+                recommendationsService = new RecommendationsService(token, queue);
+
+                recommendationsService.getRecommendations(genre, new RecommendationsCallback() {
                     @Override
                     public void callback() {
                         ArrayList<Song> songs = recommendationsService.getSongs();
