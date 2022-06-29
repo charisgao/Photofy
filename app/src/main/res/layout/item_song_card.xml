@@ -18,8 +18,7 @@
             android:id="@+id/ivSongAlbumCover"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_musicnotes" />
+            android:scaleType="centerCrop" />
 
         <LinearLayout
             android:layout_width="match_parent"
