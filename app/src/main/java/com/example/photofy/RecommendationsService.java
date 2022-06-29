@@ -29,24 +29,20 @@ public class RecommendationsService {
     private StringBuilder endpoint = new StringBuilder("https://api.spotify.com/v1/recommendations?market=US");
     private ArrayList<Song> songs = new ArrayList<>();
 
-    private Context context;
-    private String genre;
-    private final SharedPreferences sharedPreferences;
+    private String token;
     private final RequestQueue queue;
 
-    public RecommendationsService(Context context, String genre) {
-        this.context = context;
-        this.genre = genre;
-        endpoint.append("&seed_genres=" + genre);
-        sharedPreferences = context.getSharedPreferences("SPOTIFY", Context.MODE_PRIVATE);
-        queue = Volley.newRequestQueue(context);
+    public RecommendationsService(String token, RequestQueue queue) {
+        this.token = token;
+        this.queue = queue;
     }
 
     public ArrayList<Song> getSongs() {
         return songs;
     }
 
-    public void getRecommendations(RecommendationsCallback recommendationsCallback) {
+    public void getRecommendations(String genre, RecommendationsCallback recommendationsCallback) {
+        endpoint.append("&seed_genres=" + genre);
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, endpoint.toString(), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -85,7 +81,6 @@ public class RecommendationsService {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
                 Log.i(TAG, "trying to get token");
-                String token = sharedPreferences.getString("token", "");
                 String auth = "Bearer " + token;
                 headers.put("Authorization", auth);
                 headers.put("Content-Type", "application/json; charset=utf-8");

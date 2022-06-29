@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 public class UploadObject {
 
     public static final String TAG = "UploadObject";
+
     public static void uploadObject(Storage storage, String bucketName, String objectName, String filePath) throws IOException {
         BlobId blobId = BlobId.of(bucketName, objectName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
