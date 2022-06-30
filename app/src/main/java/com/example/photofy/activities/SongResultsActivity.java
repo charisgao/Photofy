@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.photofy.R;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Post;
@@ -63,6 +64,9 @@ public class SongResultsActivity extends AppCompatActivity {
         song.saveInBackground();
 
         Log.i(TAG, song.getSongName());
+
+        Glide.with(this).load(photo.getImage().getUrl()).into(ivResultsCapturedImage);
+        Glide.with(this).load(song.getAlbumCover()).into(ivResultsSongImage);
         tvResultsSongName.setText(song.getSongName());
         tvResultsSongArtist.setText(song.getArtist());
 

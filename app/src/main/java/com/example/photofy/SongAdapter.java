@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.photofy.models.Song;
 import java.util.List;
 
@@ -59,8 +60,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder>{
 
         public void bind(Song song) {
             // Bind the song data to the view elements
+            Glide.with(context).load(song.getAlbumCover()).into(ivSongAlbumCover);
             tvRecommendedSong.setText(song.getSongName());
             tvRecommendedArtist.setText(song.getArtist());
+            tvRecommendedAlbum.setText(song.getAlbum());
         }
     }
 }

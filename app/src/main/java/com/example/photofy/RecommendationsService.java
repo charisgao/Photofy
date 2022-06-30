@@ -53,10 +53,15 @@ public class RecommendationsService {
                             String spotifyId = object.getString("id");
                             String songName = object.getString("name");
                             String artistName = object.getJSONArray("artists").getJSONObject(0).getString("name");
+                            String albumName = object.getJSONObject("album").getString("name");
+                            String albumUrl = object.getJSONObject("album").getJSONArray("images").getJSONObject(1).getString("url");
+
                             Song song = new Song();
                             song.setSpotifyId(spotifyId);
                             song.setSongName(songName);
                             song.setArtist(artistName);
+                            song.setAlbum(albumName);
+                            song.setAlbumCover(albumUrl);
                             song.setGenres(Arrays.asList(genre));
                             song.setPreview(previewUrl);
                             Log.i(TAG, "adding song " + songName);

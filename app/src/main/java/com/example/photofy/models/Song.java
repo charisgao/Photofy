@@ -10,6 +10,8 @@ public class Song extends ParseObject {
     public static final String KEY_SPOTIFYID = "SpotifyId";
     public static final String KEY_NAME = "Name";
     public static final String KEY_ARTIST = "Artist";
+    public static final String KEY_ALBUM = "Album";
+    public static final String KEY_ALBUMCOVER = "AlbumCover";
     public static final String KEY_GENRES = "Genres";
     public static final String KEY_PREVIEW = "Preview";
 
@@ -35,6 +37,22 @@ public class Song extends ParseObject {
 
     public void setArtist(String artist) {
         put(KEY_ARTIST, artist);
+    }
+
+    public String getAlbum() {
+        return getString(KEY_ALBUM);
+    }
+
+    public void setAlbum(String album) {
+        put(KEY_ALBUM, album);
+    }
+
+    public String getAlbumCover() {
+        return getString(KEY_ALBUMCOVER);
+    }
+
+    public void setAlbumCover(String albumUrl) {
+        put(KEY_ALBUMCOVER, albumUrl);
     }
 
     public List getGenres() {
