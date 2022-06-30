@@ -90,4 +90,7 @@ dependencies {
 
     // Card stack and swiping
     implementation 'com.github.yuyakaido:cardstackview:2.3.4'
+
+    // Lottie
+    implementation 'com.airbnb.android:lottie:5.2.0'
 }

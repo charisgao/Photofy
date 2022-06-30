@@ -1,18 +1,18 @@
 package com.example.photofy.fragments;
 
 import android.content.Intent;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.animation.AccelerateInterpolator;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -30,7 +30,7 @@ import com.yuyakaido.android.cardstackview.StackFrom;
 import com.yuyakaido.android.cardstackview.SwipeAnimationSetting;
 import com.yuyakaido.android.cardstackview.SwipeableMethod;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 // TODO: need to make into an activity (do not need bottom navigation bar showing)
@@ -40,7 +40,7 @@ public class SongRecommendationsFragment extends Fragment {
     public static final String TAG = "SongRecommendationsFragment";
 
     protected SongAdapter adapter;
-    protected Photo picture;
+    protected Photo photo;
     protected List<Song> recommendedSongs;
 
     private CardStackView csvSongs;
@@ -67,7 +67,7 @@ public class SongRecommendationsFragment extends Fragment {
         ibAccept = view.findViewById(R.id.ibAccept);
         ibReject = view.findViewById(R.id.ibReject);
 
-        picture = getArguments().getParcelable("picture");
+        photo = getArguments().getParcelable("photo");
         recommendedSongs = getArguments().getParcelableArrayList("songs");
         adapter = new SongAdapter(getContext(), recommendedSongs);
 
@@ -76,20 +76,21 @@ public class SongRecommendationsFragment extends Fragment {
 
         CardStackListener cardStackListener = new CardStackListener() {
             int currentPos = 0;
+            MediaPlayer mediaPlayer;
+
             @Override
             public void onCardDragging(Direction direction, float ratio) {
             }
 
             @Override
             public void onCardSwiped(Direction direction) {
+                mediaPlayer.release();
+                mediaPlayer = null;
                 if (direction == Direction.Right) {
-                    Toast.makeText(getActivity(), "Accepted", Toast.LENGTH_SHORT).show();
                     Intent i = new Intent(getContext(), SongResultsActivity.class);
-                    i.putExtra("picture", picture);
+                    i.putExtra("photo", photo);
                     i.putExtra("song", recommendedSongs.get(currentPos));
                     startActivity(i);
-                } else if (direction == Direction.Left){
-                    Toast.makeText(getActivity(), "Rejected", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -103,9 +104,25 @@ public class SongRecommendationsFragment extends Fragment {
 
             }
 
+            // TODO: next card loads too quickly so new song pops up even when swipe right
             @Override
             public void onCardAppeared(View view, int position) {
                 currentPos = position;
+
+                mediaPlayer = new MediaPlayer();
+                mediaPlayer.setAudioAttributes(new AudioAttributes
+                        .Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .build());
+                String url = recommendedSongs.get(currentPos).getPreview();
+                try {
+                    mediaPlayer.setDataSource(url);
+                    mediaPlayer.prepare();
+                    mediaPlayer.start();
+                } catch (IOException e) {
+                    Log.e(TAG, "error playing song preview " + e);
+                }
             }
 
             @Override

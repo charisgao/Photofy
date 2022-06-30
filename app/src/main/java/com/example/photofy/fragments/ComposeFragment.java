@@ -71,7 +71,7 @@ public class ComposeFragment extends Fragment {
     private FragmentManager manager;
     private ActivityResultLauncher<String> galleryLauncher;
 
-    private Photo picture;
+    private Photo photo;
     private String path;
 
     private Button btnGetColors;
@@ -121,7 +121,7 @@ public class ComposeFragment extends Fragment {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
                 Log.i(TAG, "inFragmentResult");
-                picture = bundle.getParcelable("picture");
+                photo = bundle.getParcelable("photo");
                 path = bundle.getString("filePath");
                 Bitmap bitmap = BitmapFactory.decodeFile(path);
 
@@ -170,10 +170,10 @@ public class ComposeFragment extends Fragment {
                             e.printStackTrace();
                         }
 
-                        Photo photo = new Photo();
-                        photo.setUser(ParseUser.getCurrentUser());
-                        photo.setImage(new ParseFile(resizedFile));
-                        photo.saveInBackground(new SaveCallback() {
+                        Photo picture = new Photo();
+                        picture.setUser(ParseUser.getCurrentUser());
+                        picture.setImage(new ParseFile(resizedFile));
+                        picture.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
                             }
@@ -184,7 +184,7 @@ public class ComposeFragment extends Fragment {
                         btnUploadImage.setVisibility(View.GONE);
                         btnGetColors.setVisibility(View.VISIBLE);
 
-                        picture = photo;
+                        photo = picture;
                         path = resizedFile.getAbsolutePath();
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
@@ -199,23 +199,23 @@ public class ComposeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 goToLoadingFragment();
-                runBackground(picture, path);
+                runBackground(photo, path);
             }
         });
     }
 
-    private void runBackground(Photo picture, String path) {
+    private void runBackground(Photo photo, String path) {
         Runnable r = new Runnable() {
             RecommendationsService recommendationsService;
 
             @Override
             public void run() {
                 DetectProperties properties = new DetectProperties(googleCredentials, getContext());
-                String color = properties.findDominantColor(picture, path);
+                String color = properties.findDominantColor(photo, path);
 
-                picture.setColor(color);
+                photo.setColor(color);
                 Log.i(TAG, "generated color " + color);
-                picture.saveInBackground();
+                photo.saveInBackground();
 
                 ColorToGenre genreFinder = new ColorToGenre();
                 String genre = genreFinder.findGenreFromColor(color);
@@ -293,7 +293,7 @@ public class ComposeFragment extends Fragment {
     private void goToRecommendationsFragment(ArrayList<Song> songs) {
         SongRecommendationsFragment songRecommendationsFragment = new SongRecommendationsFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable("picture", picture);
+        bundle.putParcelable("photo", photo);
         bundle.putParcelableArrayList("songs", songs);
         songRecommendationsFragment.setArguments(bundle);
         ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()

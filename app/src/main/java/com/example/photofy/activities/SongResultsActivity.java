@@ -42,7 +42,7 @@ public class SongResultsActivity extends AppCompatActivity {
         etCaption = findViewById(R.id.etCaption);
         btnPost = findViewById(R.id.btnPost);
 
-        Photo picture = getIntent().getParcelableExtra("picture");
+        Photo photo = getIntent().getParcelableExtra("photo");
         Song song = getIntent().getParcelableExtra("song");
         song.saveInBackground();
 
@@ -59,16 +59,16 @@ public class SongResultsActivity extends AppCompatActivity {
                     return;
                 }
                 ParseUser currentUser = ParseUser.getCurrentUser();
-                savePost(caption, currentUser, picture, song);
+                savePost(caption, currentUser, photo, song);
             }
         });
     }
 
-    private void savePost(String caption, ParseUser currentUser, Photo picture, Song song) {
+    private void savePost(String caption, ParseUser currentUser, Photo photo, Song song) {
         Post post = new Post();
         post.setCaption(caption);
         post.setUser(currentUser);
-        post.setPhoto(picture);
+        post.setPhoto(photo);
         post.setSong(song);
         post.saveInBackground(new SaveCallback() {
             @Override

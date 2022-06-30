@@ -92,16 +92,16 @@ public class CameraFragment extends Fragment {
                 imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback() {
                         @Override
                         public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-                            Photo picture = new Photo();
-                            picture.setUser(ParseUser.getCurrentUser());
-                            picture.setImage(new ParseFile(file));
-                            picture.saveInBackground(new SaveCallback() {
+                            Photo photo = new Photo();
+                            photo.setUser(ParseUser.getCurrentUser());
+                            photo.setImage(new ParseFile(file));
+                            photo.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
                                 }
                             });
                             result.putString("filePath", file.getAbsolutePath());
-                            result.putParcelable("picture", picture);
+                            result.putParcelable("photo", photo);
                             FragmentManager manager = ((MainActivity) getContext()).getSupportFragmentManager();
                             manager.setFragmentResult("requestKey", result);
                             ComposeFragment composeFragment = new ComposeFragment();
