@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +25,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.photofy.ProfileAdapter;
 import com.example.photofy.R;
+import com.example.photofy.activities.EditProfileActivity;
 import com.example.photofy.activities.LoginActivity;
 import com.example.photofy.activities.MainActivity;
 import com.example.photofy.activities.SpotifyLoginActivity;
@@ -55,6 +57,7 @@ public class ProfileFragment extends Fragment {
     private ImageView ivProfilePicture;
     private TextView tvProfileUsername;
     private TextView tvProfileBiography;
+    private Button btnEditProfile;
     private RecyclerView rvProfilePosts;
 
     private ParseUser user = ParseUser.getCurrentUser();
@@ -82,6 +85,7 @@ public class ProfileFragment extends Fragment {
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture);
         tvProfileUsername = view.findViewById(R.id.tvProfileUsername);
         tvProfileBiography = view.findViewById(R.id.tvProfileBiography);
+        btnEditProfile = view.findViewById(R.id.btnEditProfile);
         rvProfilePosts = view.findViewById(R.id.rvProfilePosts);
 
         user.fetchInBackground(new GetCallback<ParseObject>() {
@@ -92,11 +96,26 @@ public class ProfileFragment extends Fragment {
             }
         });
         tvProfileUsername.setText(user.getUsername());
+        tvProfileBiography.setText(user.getString("Biography"));
 
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 logout();
+            }
+        });
+
+        if (user.equals(ParseUser.getCurrentUser())) {
+            btnEditProfile.setVisibility(View.VISIBLE);
+        } else {
+            btnEditProfile.setVisibility(View.GONE);
+        }
+
+        btnEditProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getContext(), EditProfileActivity.class);
+                startActivity(i);
             }
         });
 

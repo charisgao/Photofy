@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <!-- CameraX -->
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -27,6 +26,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Photofy"
         tools:targetApi="31">
+
         <activity
             android:name=".activities.LoginActivity"
             android:exported="true">
@@ -47,6 +47,9 @@
             android:exported="true" />
         <activity
             android:name=".activities.SongResultsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.EditProfileActivity"
             android:exported="false" />
 
         <!-- retrieve Parse client key -->

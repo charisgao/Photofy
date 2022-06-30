@@ -70,6 +70,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                     Glide.with(context).load(photo.getImage().getUrl()).centerCrop().into(ivTakenImage);
                 }
             });
+            song.fetchInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject object, ParseException e) {
+                    Glide.with(context).load(song.getAlbumCover()).centerCrop().into(ivGeneratedSong);
+                }
+            });
         }
     }
 }
