@@ -92,7 +92,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void done(ParseObject object, ParseException e) {
                 ParseFile profilePic = user.getParseFile("Profile");
-                Glide.with(getContext()).load(profilePic.getUrl()).into(ivProfilePicture);
+                Glide.with(getContext()).load(profilePic.getUrl()).circleCrop().into(ivProfilePicture);
             }
         });
         tvProfileUsername.setText(user.getUsername());

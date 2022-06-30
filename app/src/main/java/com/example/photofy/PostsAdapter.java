@@ -106,7 +106,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                 }
             });
 
-            Glide.with(context).load(post.getUser().getParseFile("Profile").getUrl()).into(ivProfile);
+            Glide.with(context).load(post.getUser().getParseFile("Profile").getUrl()).circleCrop().into(ivProfile);
             tvUsername.setText(post.getUser().getUsername());
             tvCaption.setText(post.getCaption());
 
