@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -20,18 +21,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.photofy.ProfileAdapter;
 import com.example.photofy.R;
 import com.example.photofy.activities.LoginActivity;
 import com.example.photofy.activities.MainActivity;
 import com.example.photofy.activities.SpotifyLoginActivity;
+import com.example.photofy.models.Post;
+import com.parse.FindCallback;
 import com.parse.LogOutCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.spotify.sdk.android.auth.AuthorizationClient;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
     public static final String TAG = "ProfileFragment";
+
+    protected ProfileAdapter profileAdapter;
+    protected List<Post> profilePosts;
 
     private static final int REQUEST_CODE = 1337;
     private SharedPreferences.Editor editor;
@@ -77,6 +88,12 @@ public class ProfileFragment extends Fragment {
                 logout();
             }
         });
+
+        profilePosts = new ArrayList<>();
+        profileAdapter = new ProfileAdapter(getContext(), profilePosts);
+        rvProfilePosts.setAdapter(profileAdapter);
+        rvProfilePosts.setLayoutManager(new LinearLayoutManager(getContext()));
+        queryPosts();
     }
 
     private void logout() {
@@ -99,6 +116,28 @@ public class ProfileFragment extends Fragment {
             }
         });
         ParseUser currentUser = ParseUser.getCurrentUser();
+    }
+
+    protected void queryPosts() {
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.include(Post.KEY_USER);
+        query.whereEqualTo(Post.KEY_USER, user);
+        query.addDescendingOrder(Post.KEY_CREATED);
+
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> posts, ParseException e) {
+                // Check for errors
+                if (e != null) {
+                    Log.e(TAG, "Issue with getting posts", e);
+                    return;
+                }
+
+                // Save received posts to list and notify adapter of new data
+                profilePosts.addAll(posts);
+                profileAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private void goLoginActivity() {
