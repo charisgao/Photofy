@@ -68,6 +68,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView ivImage;
+
+        private ImageView ivProfile;
         private TextView tvUsername;
         private TextView tvCaption;
 
@@ -84,6 +86,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             super(itemView);
 
             ivImage = itemView.findViewById(R.id.ivImage);
+
+            ivProfile = itemView.findViewById(R.id.ivProfile);
             tvUsername = itemView.findViewById(R.id.tvUsername);
             tvCaption = itemView.findViewById(R.id.tvCaption);
 
@@ -101,6 +105,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                     Glide.with(context).load(photo.getImage().getUrl()).into(ivImage);
                 }
             });
+
+            Glide.with(context).load(post.getUser().getParseFile("Profile").getUrl()).into(ivProfile);
             tvUsername.setText(post.getUser().getUsername());
             tvCaption.setText(post.getCaption());
 

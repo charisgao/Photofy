@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.photofy.ProfileAdapter;
 import com.example.photofy.R;
 import com.example.photofy.activities.LoginActivity;
@@ -28,8 +29,11 @@ import com.example.photofy.activities.MainActivity;
 import com.example.photofy.activities.SpotifyLoginActivity;
 import com.example.photofy.models.Post;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.LogOutCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.spotify.sdk.android.auth.AuthorizationClient;
@@ -80,6 +84,13 @@ public class ProfileFragment extends Fragment {
         tvProfileBiography = view.findViewById(R.id.tvProfileBiography);
         rvProfilePosts = view.findViewById(R.id.rvProfilePosts);
 
+        user.fetchInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                ParseFile profilePic = user.getParseFile("Profile");
+                Glide.with(getContext()).load(profilePic.getUrl()).into(ivProfilePicture);
+            }
+        });
         tvProfileUsername.setText(user.getUsername());
 
         btnLogout.setOnClickListener(new View.OnClickListener() {
