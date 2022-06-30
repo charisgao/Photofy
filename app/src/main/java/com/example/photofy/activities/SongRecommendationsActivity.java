@@ -1,25 +1,17 @@
-package com.example.photofy.fragments;
+package com.example.photofy.activities;
 
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.example.photofy.R;
 import com.example.photofy.SongAdapter;
-import com.example.photofy.activities.MainActivity;
-import com.example.photofy.activities.SongResultsActivity;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Song;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
@@ -34,11 +26,9 @@ import com.yuyakaido.android.cardstackview.SwipeableMethod;
 import java.io.IOException;
 import java.util.List;
 
-// TODO: need to make into an activity (do not need bottom navigation bar showing)
-// Fragment that shows and displays the Spotify song associated with the image
-public class SongRecommendationsFragment extends Fragment {
+public class SongRecommendationsActivity extends AppCompatActivity {
 
-    public static final String TAG = "SongRecommendationsFragment";
+    public static final String TAG = "SongRecommendationsActivity";
 
     protected SongAdapter adapter;
     protected Photo photo;
@@ -48,29 +38,20 @@ public class SongRecommendationsFragment extends Fragment {
     private ImageButton ibAccept;
     private ImageButton ibReject;
 
-    public SongRecommendationsFragment() {
-        // Required empty public constructor
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_song_recommendations, container, false);
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_song_recommendations);
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
         Log.i(TAG, "in recommendations");
 
-        csvSongs = view.findViewById(R.id.csvSongs);
-        ibAccept = view.findViewById(R.id.ibAccept);
-        ibReject = view.findViewById(R.id.ibReject);
+        csvSongs = findViewById(R.id.csvSongs);
+        ibAccept = findViewById(R.id.ibAccept);
+        ibReject = findViewById(R.id.ibReject);
 
-        photo = getArguments().getParcelable("photo");
-        recommendedSongs = getArguments().getParcelableArrayList("songs");
-        adapter = new SongAdapter(getContext(), recommendedSongs);
+        photo = getIntent().getParcelableExtra("photo");
+        recommendedSongs = getIntent().getParcelableArrayListExtra("songs");
+        adapter = new SongAdapter(this, recommendedSongs);
 
         // Set the adapter on the Card Stack View
         csvSongs.setAdapter(adapter);
@@ -90,11 +71,11 @@ public class SongRecommendationsFragment extends Fragment {
                 mediaPlayer = null;
                 if (direction == Direction.Right) {
                     right = true;
-                    Intent i = new Intent(getContext(), SongResultsActivity.class);
+                    Intent i = new Intent(SongRecommendationsActivity.this, SongResultsActivity.class);
                     i.putExtra("photo", photo);
                     i.putExtra("song", recommendedSongs.get(currentPos));
                     startActivity(i);
-                    ((MainActivity) getContext()).finish();
+                    finish();
                 }
             }
 
@@ -136,7 +117,7 @@ public class SongRecommendationsFragment extends Fragment {
         };
 
         // Set the layout manager on the RV
-        CardStackLayoutManager cardStackLayoutManager = new CardStackLayoutManager(getContext(), cardStackListener);
+        CardStackLayoutManager cardStackLayoutManager = new CardStackLayoutManager(this, cardStackListener);
         cardStackLayoutManager.setStackFrom(StackFrom.Top);
         cardStackLayoutManager.setTranslationInterval(4.0f);
         cardStackLayoutManager.setSwipeableMethod(SwipeableMethod.AutomaticAndManual);

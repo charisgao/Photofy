@@ -9,8 +9,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-feature android:name="android.hardware.camera.any" />
-    <uses-permission android:name="android.permission.CAMERA" />
 
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
@@ -45,6 +45,9 @@
         <activity
             android:name=".activities.MainActivity"
             android:exported="true" />
+        <activity
+            android:name=".activities.SongRecommendationsActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.SongResultsActivity"
             android:exported="false" />

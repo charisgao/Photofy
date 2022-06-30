@@ -42,6 +42,7 @@ import com.example.photofy.RecommendationsCallback;
 import com.example.photofy.RecommendationsService;
 import com.example.photofy.activities.MainActivity;
 import com.example.photofy.R;
+import com.example.photofy.activities.SongRecommendationsActivity;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Song;
 import com.parse.ParseException;
@@ -231,7 +232,7 @@ public class ComposeFragment extends Fragment {
                     @Override
                     public void callback() {
                         ArrayList<Song> songs = recommendationsService.getSongs();
-                        goToRecommendationsFragment(songs);
+                        goToRecommendationsActivity(songs);
                     }
                 });
             }
@@ -290,15 +291,10 @@ public class ComposeFragment extends Fragment {
                 .commit();
     }
 
-    private void goToRecommendationsFragment(ArrayList<Song> songs) {
-        SongRecommendationsFragment songRecommendationsFragment = new SongRecommendationsFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("photo", photo);
-        bundle.putParcelableArrayList("songs", songs);
-        songRecommendationsFragment.setArguments(bundle);
-        ((MainActivity) getContext()).getSupportFragmentManager().beginTransaction()
-                .replace(R.id.flContainer, songRecommendationsFragment)
-                .addToBackStack(null)
-                .commit();
+    private void goToRecommendationsActivity(ArrayList<Song> songs) {
+        Intent i = new Intent(getContext(), SongRecommendationsActivity.class);
+        i.putExtra("photo", photo);
+        i.putParcelableArrayListExtra("songs", songs);
+        startActivity(i);
     }
 }
