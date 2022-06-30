@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.photofy.R;
 import com.example.photofy.SongAdapter;
+import com.example.photofy.activities.MainActivity;
 import com.example.photofy.activities.SongResultsActivity;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Song;
@@ -76,6 +77,7 @@ public class SongRecommendationsFragment extends Fragment {
 
         CardStackListener cardStackListener = new CardStackListener() {
             int currentPos = 0;
+            boolean right = false;
             MediaPlayer mediaPlayer;
 
             @Override
@@ -87,10 +89,12 @@ public class SongRecommendationsFragment extends Fragment {
                 mediaPlayer.release();
                 mediaPlayer = null;
                 if (direction == Direction.Right) {
+                    right = true;
                     Intent i = new Intent(getContext(), SongResultsActivity.class);
                     i.putExtra("photo", photo);
                     i.putExtra("song", recommendedSongs.get(currentPos));
                     startActivity(i);
+                    ((MainActivity) getContext()).finish();
                 }
             }
 
@@ -104,24 +108,25 @@ public class SongRecommendationsFragment extends Fragment {
 
             }
 
-            // TODO: next card loads too quickly so new song pops up even when swipe right
             @Override
             public void onCardAppeared(View view, int position) {
                 currentPos = position;
 
-                mediaPlayer = new MediaPlayer();
-                mediaPlayer.setAudioAttributes(new AudioAttributes
-                        .Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .build());
-                String url = recommendedSongs.get(currentPos).getPreview();
-                try {
-                    mediaPlayer.setDataSource(url);
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                } catch (IOException e) {
-                    Log.e(TAG, "error playing song preview " + e);
+                if (!right) {
+                    mediaPlayer = new MediaPlayer();
+                    mediaPlayer.setAudioAttributes(new AudioAttributes
+                            .Builder()
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .setUsage(AudioAttributes.USAGE_MEDIA)
+                            .build());
+                    String url = recommendedSongs.get(currentPos).getPreview();
+                    try {
+                        mediaPlayer.setDataSource(url);
+                        mediaPlayer.prepare();
+                        mediaPlayer.start();
+                    } catch (IOException e) {
+                        Log.e(TAG, "error playing song preview " + e);
+                    }
                 }
             }
 
