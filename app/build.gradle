@@ -92,6 +92,5 @@ dependencies {
     implementation 'com.github.yuyakaido:cardstackview:2.3.4'
 
     // Lottie
-    def lottieVersion = "5.2.0"
-    implementation "com.airbnb.android:lottie:$lottieVersion"
+    implementation 'com.airbnb.android:lottie:5.2.0'
 }

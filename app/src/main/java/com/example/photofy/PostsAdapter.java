@@ -20,14 +20,10 @@ import com.example.photofy.models.Photo;
 import com.example.photofy.models.Post;
 import com.example.photofy.models.Song;
 import com.parse.GetCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 
 import java.io.IOException;
-import java.sql.Time;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -98,11 +94,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         }
 
         public void bind(Post post) {
-            Photo picture = (Photo) post.getPhoto();
-            picture.fetchInBackground(new GetCallback<ParseObject>() {
+            Photo photo = (Photo) post.getPhoto();
+            photo.fetchInBackground(new GetCallback<ParseObject>() {
                 @Override
                 public void done(ParseObject object, ParseException e) {
-                    Glide.with(context).load(picture.getImage().getUrl()).into(ivImage);
+                    Glide.with(context).load(photo.getImage().getUrl()).into(ivImage);
                 }
             });
             tvUsername.setText(post.getUser().getUsername());

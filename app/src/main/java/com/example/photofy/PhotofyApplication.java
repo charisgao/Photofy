@@ -11,7 +11,6 @@ import com.example.photofy.models.Post;
 import com.example.photofy.models.Song;
 import com.parse.Parse;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 
 public class PhotofyApplication extends Application {
 

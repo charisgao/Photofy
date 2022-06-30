@@ -40,7 +40,7 @@ public class SongRecommendationsFragment extends Fragment {
     public static final String TAG = "SongRecommendationsFragment";
 
     protected SongAdapter adapter;
-    protected Photo picture;
+    protected Photo photo;
     protected List<Song> recommendedSongs;
 
     private CardStackView csvSongs;
@@ -67,7 +67,7 @@ public class SongRecommendationsFragment extends Fragment {
         ibAccept = view.findViewById(R.id.ibAccept);
         ibReject = view.findViewById(R.id.ibReject);
 
-        picture = getArguments().getParcelable("picture");
+        photo = getArguments().getParcelable("photo");
         recommendedSongs = getArguments().getParcelableArrayList("songs");
         adapter = new SongAdapter(getContext(), recommendedSongs);
 
@@ -88,7 +88,7 @@ public class SongRecommendationsFragment extends Fragment {
                 mediaPlayer = null;
                 if (direction == Direction.Right) {
                     Intent i = new Intent(getContext(), SongResultsActivity.class);
-                    i.putExtra("picture", picture);
+                    i.putExtra("photo", photo);
                     i.putExtra("song", recommendedSongs.get(currentPos));
                     startActivity(i);
                 }

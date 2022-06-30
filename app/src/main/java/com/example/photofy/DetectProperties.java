@@ -1,7 +1,5 @@
 package com.example.photofy;
 
-import static com.example.photofy.PhotofyApplication.googleCredentials;
-
 import android.content.Context;
 import android.util.Log;
 
@@ -20,7 +18,6 @@ import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.cloud.vision.v1.ImageAnnotatorSettings;
 import com.google.cloud.vision.v1.ImageSource;
-import com.parse.ParseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,12 +48,12 @@ public class DetectProperties {
         }
     }
 
-    public String findDominantColor(Photo picture, String path) {
+    public String findDominantColor(Photo photo, String path) {
         try {
             // Upload captured image to Google Cloud storage
             Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
             String bucketName = "photofy-images0";
-            String objectName = "image-" + picture.getImage().getName();
+            String objectName = "image-" + photo.getImage().getName();
             UploadObject.uploadObject(storage, bucketName, objectName, path);
 
             // GCS path for image from bucket
