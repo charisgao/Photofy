@@ -14,10 +14,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Consumer;
 
 public class RecommendationsService {
 
@@ -34,11 +32,7 @@ public class RecommendationsService {
         this.queue = queue;
     }
 
-    public ArrayList<Song> getSongs() {
-        return songs;
-    }
-
-    public void getRecommendations(String genre, RecommendationsCallback recommendationsCallback) {
+    public void getRecommendations(String genre, RecommendationsCallback recommendationsCallback, RecommendationsErrorCallback errorCallBack) {
         endpoint.append("&seed_genres=" + genre);
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, endpoint.toString(), null, new Response.Listener<JSONObject>() {
             @Override
@@ -47,28 +41,10 @@ public class RecommendationsService {
                 try {
                     JSONArray jsonArray = response.getJSONArray("tracks");
                     for (int n = 0; n < jsonArray.length(); n++) {
-                        JSONObject object = jsonArray.getJSONObject(n);
-                        String previewUrl = object.getString("preview_url");
-                        if (previewUrl != null) {
-                            String spotifyId = object.getString("id");
-                            String songName = object.getString("name");
-                            String artistName = object.getJSONArray("artists").getJSONObject(0).getString("name");
-                            String albumName = object.getJSONObject("album").getString("name");
-                            String albumUrl = object.getJSONObject("album").getJSONArray("images").getJSONObject(1).getString("url");
-
-                            Song song = new Song();
-                            song.setSpotifyId(spotifyId);
-                            song.setSongName(songName);
-                            song.setArtist(artistName);
-                            song.setAlbum(albumName);
-                            song.setAlbumCover(albumUrl);
-                            song.setGenres(Arrays.asList(genre));
-                            song.setPreview(previewUrl);
-                            Log.i(TAG, "adding song " + songName);
-                            songs.add(song);
-                        }
+                        Optional<Song> song = getSong(jsonArray.getJSONObject(n), genre);
+                        song.ifPresent(song1 -> songs.add(song1));
                     }
-                    recommendationsCallback.callback();
+                    recommendationsCallback.callback(songs);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -90,5 +66,28 @@ public class RecommendationsService {
             }
         };
         queue.add(request);
+    }
+
+    private Optional<Song> getSong(JSONObject object, String genre) throws JSONException {
+        String previewUrl = object.getString("preview_url");
+        if (previewUrl == null) {
+            return Optional.empty();
+        }
+        String spotifyId = object.getString("id");
+        String songName = object.getString("name");
+        String artistName = object.getJSONArray("artists").getJSONObject(0).getString("name");
+        String albumName = object.getJSONObject("album").getString("name");
+        String albumUrl = object.getJSONObject("album").getJSONArray("images").getJSONObject(1).getString("url");
+
+        Song song = new Song();
+        song.setSpotifyId(spotifyId);
+        song.setSongName(songName);
+        song.setArtist(artistName);
+        song.setAlbum(albumName);
+        song.setAlbumCover(albumUrl);
+        song.setGenres(Arrays.asList(genre));
+        song.setPreview(previewUrl);
+        Log.i(TAG, "adding song " + songName);
+        return Optional.of(song);
     }
 }

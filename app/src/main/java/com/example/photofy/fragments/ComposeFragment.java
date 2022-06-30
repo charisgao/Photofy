@@ -35,13 +35,8 @@ import android.widget.ImageView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.example.photofy.BitmapScaler;
-import com.example.photofy.ColorToGenre;
-import com.example.photofy.DetectProperties;
-import com.example.photofy.RecommendationsCallback;
-import com.example.photofy.RecommendationsService;
+import com.example.photofy.*;
 import com.example.photofy.activities.MainActivity;
-import com.example.photofy.R;
 import com.example.photofy.activities.SongRecommendationsActivity;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Song;
@@ -58,6 +53,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class ComposeFragment extends Fragment {
@@ -76,6 +72,7 @@ public class ComposeFragment extends Fragment {
     private String path;
 
     private Button btnGetColors;
+    private ColorToGenre genreFinder = new ColorToGenre();
 
     public ComposeFragment() {
         // Required empty public constructor
@@ -218,7 +215,6 @@ public class ComposeFragment extends Fragment {
                 Log.i(TAG, "generated color " + color);
                 photo.saveInBackground();
 
-                ColorToGenre genreFinder = new ColorToGenre();
                 String genre = genreFinder.findGenreFromColor(color);
                 Log.i(TAG, genre);
 
@@ -230,9 +226,13 @@ public class ComposeFragment extends Fragment {
 
                 recommendationsService.getRecommendations(genre, new RecommendationsCallback() {
                     @Override
-                    public void callback() {
-                        ArrayList<Song> songs = recommendationsService.getSongs();
+                    public void callback(ArrayList<Song> songs) {
                         goToRecommendationsActivity(songs);
+                    }
+                }, new RecommendationsErrorCallback() {
+                    @Override
+                    public void callback(String errorMessage) {
+                        //goToErrorFragment(errorMessage);
                     }
                 });
             }
