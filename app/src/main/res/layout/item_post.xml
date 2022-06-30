@@ -4,34 +4,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/black">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/ivImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutSong" />
 
     <LinearLayout
         android:id="@+id/linearLayoutSong"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginBottom="10dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="5dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/tvSongName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/black"
             android:textSize="16dp"
             tools:text="Song Title" />
 
@@ -40,21 +46,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="100"
-            android:progressTint="#FFFFFF"
-            android:thumbTint="#FFFFFF" />
+            android:progressTint="@color/black"
+            android:thumbTint="@color/black" />
 
         <TextView
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/black"
             android:textSize="16dp"
             tools:text="00:00/00:00" />
 
         <ImageButton
             android:id="@+id/ibPlay"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/white"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ic_play_button" />
     </LinearLayout>
@@ -63,9 +71,9 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -78,13 +86,14 @@
             android:paddingStart="5dp"
             android:paddingTop="5dp"
             android:paddingEnd="5dp"
-            android:shadowColor="@android:color/black"
+            android:shadowColor="@android:color/white"
             android:shadowDx="0"
             android:shadowDy="0"
             android:shadowRadius="15"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="charis" />
 
         <TextView
             android:id="@+id/tvCaption"
@@ -93,12 +102,13 @@
             android:paddingStart="5dp"
             android:paddingTop="5dp"
             android:paddingEnd="5dp"
-            android:shadowColor="@android:color/black"
+            android:shadowColor="@android:color/white"
             android:shadowDx="0"
             android:shadowDy="0"
             android:shadowRadius="15"
-            android:textColor="@android:color/white"
-            android:textSize="18sp" />
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            tools:text="caption of my post!" />
 
     </LinearLayout>
 
