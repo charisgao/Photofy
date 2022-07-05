@@ -3,18 +3,18 @@ package com.example.photofy.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -28,8 +28,8 @@ import com.example.photofy.R;
 import com.example.photofy.activities.EditProfileActivity;
 import com.example.photofy.activities.LoginActivity;
 import com.example.photofy.activities.MainActivity;
-import com.example.photofy.activities.SpotifyLoginActivity;
 import com.example.photofy.models.Post;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.LogOutCallback;
@@ -38,7 +38,6 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.spotify.sdk.android.auth.AuthorizationClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +52,7 @@ public class ProfileFragment extends Fragment {
     private static final int REQUEST_CODE = 1337;
     private SharedPreferences.Editor editor;
 
-    private Button btnLogout;
+    private MaterialToolbar tbProfile;
     private ImageView ivProfilePicture;
     private TextView tvProfileUsername;
     private TextView tvProfileBiography;
@@ -81,12 +80,29 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        btnLogout = view.findViewById(R.id.btnLogout);
+        tbProfile = view.findViewById(R.id.tbProfile);
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture);
         tvProfileUsername = view.findViewById(R.id.tvProfileUsername);
         tvProfileBiography = view.findViewById(R.id.tvProfileBiography);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         rvProfilePosts = view.findViewById(R.id.rvProfilePosts);
+
+        tbProfile.inflateMenu(R.menu.menu_profile_toolbar);
+        tbProfile.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.miLogout:
+                        logout();
+                        return true;
+                    case R.id.miSettings:
+                        return true;
+                    default:
+                        return ProfileFragment.super.onOptionsItemSelected(item);
+                }
+            }
+        });
+
 
         user.fetchInBackground(new GetCallback<ParseObject>() {
             @Override
@@ -97,13 +113,6 @@ public class ProfileFragment extends Fragment {
         });
         tvProfileUsername.setText(user.getUsername());
         tvProfileBiography.setText(user.getString("Biography"));
-
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                logout();
-            }
-        });
 
         if (user.equals(ParseUser.getCurrentUser())) {
             btnEditProfile.setVisibility(View.VISIBLE);

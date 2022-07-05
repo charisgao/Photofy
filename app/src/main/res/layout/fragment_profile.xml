@@ -7,22 +7,25 @@
     android:layout_height="match_parent"
     tools:context=".fragments.ProfileFragment">
 
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="wrap_content"
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/tbProfile"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="LOGOUT"
-        app:layout_constraintBottom_toTopOf="@+id/rvProfilePosts"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/ivProfilePicture"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tbProfile"
         tools:src="@tools:sample/avatars" />
 
     <TextView
@@ -56,7 +59,7 @@
         android:layout_marginBottom="10dp"
         android:minWidth="0dp"
         android:minHeight="0dp"
-        android:text="Edit Profile"
+        android:text="@string/edit_profile"
         app:layout_constraintBottom_toTopOf="@+id/rvProfilePosts"
         app:layout_constraintStart_toEndOf="@+id/ivProfilePicture" />
 
