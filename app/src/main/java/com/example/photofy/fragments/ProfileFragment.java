@@ -126,6 +126,7 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 Intent i = new Intent(getContext(), EditProfileActivity.class);
                 startActivity(i);
+                getActivity().overridePendingTransition(R.anim.bottom_up, R.anim.stationary);
             }
         });
 
