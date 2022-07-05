@@ -1,5 +1,7 @@
 package com.example.photofy.fragments;
 
+import static com.example.photofy.PhotofyApplication.spotifyKey;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,6 +20,9 @@ import com.example.photofy.models.Post;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.spotify.android.appremote.api.ConnectionParams;
+import com.spotify.android.appremote.api.Connector;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +31,14 @@ public class HomeFragment extends Fragment {
 
     public static final String TAG = "HomeFragment";
 
-    protected PostsAdapter adapter;
-    protected List<Post> allPosts;
+    private static final String CLIENT_ID = spotifyKey;
+    private static final String REDIRECT_URI = "intent://";
+    public static SpotifyAppRemote mSpotifyAppRemote;
 
     private ViewPager2 viewpagerPosts;
+
+    protected PostsAdapter adapter;
+    protected List<Post> allPosts;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -54,7 +63,49 @@ public class HomeFragment extends Fragment {
         // Set the adapter on the ViewPager2
         viewpagerPosts.setAdapter(adapter);
 
+        connectSpotifyAppRemote();
+
         queryPosts();
+    }
+
+    private void connectSpotifyAppRemote() {
+        ConnectionParams connectionParams =
+                new ConnectionParams.Builder(CLIENT_ID)
+                        .setRedirectUri(REDIRECT_URI)
+                        .showAuthView(true)
+                        .build();
+
+        Connector.ConnectionListener connectionListener = new Connector.ConnectionListener() {
+            @Override
+            public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                mSpotifyAppRemote = spotifyAppRemote;
+            }
+
+            @Override
+            public void onFailure(Throwable error) {
+                Log.e(TAG, "SpotifyAppRemote connection error");
+            }
+        };
+
+        SpotifyAppRemote.connect(getContext(), connectionParams, connectionListener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        connectSpotifyAppRemote();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
     }
 
     protected void queryPosts() {

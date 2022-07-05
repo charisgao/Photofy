@@ -62,8 +62,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder>{
             // Bind the song data to the view elements
             Glide.with(context).load(song.getAlbumCover()).into(ivSongAlbumCover);
             tvRecommendedSong.setText(song.getSongName());
-            tvRecommendedArtist.setText(song.getArtist());
-            tvRecommendedAlbum.setText(song.getAlbum());
+            tvRecommendedArtist.setText(song.getArtistName());
+            tvRecommendedAlbum.setText(song.getAlbumName());
         }
     }
 }

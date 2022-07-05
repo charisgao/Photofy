@@ -1,7 +1,8 @@
 package com.example.photofy;
 
+import static com.example.photofy.fragments.HomeFragment.mSpotifyAppRemote;
+
 import android.content.Context;
-import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,8 +23,9 @@ import com.example.photofy.models.Song;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.spotify.protocol.client.CallResult;
+import com.spotify.protocol.types.PlayerState;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -115,48 +117,62 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                 @Override
                 public void done(ParseObject object, ParseException e) {
                     tvSongName.setText(song.getSongName());
-                    String url = song.getPreview();
-                    mediaPlayer = new MediaPlayer();
-                    createMediaPlayer(url);
+                    song.getSpotifyId();
+                    setupSeekBar(song.getDuration());
                 }
             });
 
             ibPlay.setOnClickListener(new View.OnClickListener() {
+                int count = 0;
                 @Override
                 public void onClick(View v) {
-                    if (mediaPlayer != null) {
-                        if (mediaPlayer.isPlaying()) {
-                            mediaPlayer.pause();
-                            ibPlay.setImageResource(R.drawable.ic_play_button);
-                            timer.shutdown();
-                        } else {
-                            mediaPlayer.start();
-                            ibPlay.setImageResource(R.drawable.ic_pause_button);
+                    mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(new CallResult.ResultCallback<PlayerState>() {
+                        @Override
+                        public void onResult(PlayerState status) {
+                            if (status.isPaused) {
+                                if (count == 0) {
+                                    mSpotifyAppRemote.getPlayerApi().play("spotify:track:" + song.getSpotifyId());
+                                    ibPlay.setImageResource(R.drawable.ic_pause_button);
+                                    count++;
+                                } else {
+                                    mSpotifyAppRemote.getPlayerApi().resume();
+                                    ibPlay.setImageResource(R.drawable.ic_pause_button);
+                                    count++;
+                                }
 
                             timer = Executors.newScheduledThreadPool(1);
                             timer.scheduleAtFixedRate(new Runnable() {
                                 @Override
                                 public void run() {
                                     if (!seekBar.isPressed()) {
-                                        seekBar.setProgress(mediaPlayer.getCurrentPosition());
+                                        seekBar.setProgress((int) status.playbackPosition);
                                     }
                                 }
                             }, 10, 10, TimeUnit.MILLISECONDS);
+
+                            } else {
+                                mSpotifyAppRemote.getPlayerApi().pause();
+                                ibPlay.setImageResource(R.drawable.ic_play_button);
+                                timer.shutdown();
+                            }
                         }
-                    }
+                    });
                 }
             });
 
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    if (mediaPlayer != null) {
-                        int millis = mediaPlayer.getCurrentPosition();
-                        long total_secs = TimeUnit.SECONDS.convert(millis, TimeUnit.MILLISECONDS);
-                        long mins = TimeUnit.MINUTES.convert(total_secs, TimeUnit.SECONDS);
-                        String secs = new DecimalFormat("00").format(total_secs - (mins * 60));
-                        tvTime.setText(mins + ":" + secs + " / " + duration);
-                    }
+                    mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(new CallResult.ResultCallback<PlayerState>() {
+                        @Override
+                        public void onResult(PlayerState data) {
+                            int millis = (int) data.playbackPosition;
+                            long total_secs = TimeUnit.SECONDS.convert(millis, TimeUnit.MILLISECONDS);
+                            long mins = TimeUnit.MINUTES.convert(total_secs, TimeUnit.SECONDS);
+                            String secs = new DecimalFormat("00").format(total_secs - (mins * 60));
+                            tvTime.setText(mins + ":" + secs + " / " + duration);
+                        }
+                    });
                 }
 
                 @Override
@@ -166,59 +182,18 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
-                    if (mediaPlayer != null) {
-                        mediaPlayer.seekTo(seekBar.getProgress());
-                    }
+                    mSpotifyAppRemote.getPlayerApi().seekTo(seekBar.getProgress());
                 }
             });
         }
 
-        // TODO: update with full song URL
-        private void createMediaPlayer(String url) {
-            mediaPlayer.setAudioAttributes(new AudioAttributes
-                    .Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .build());
-            try {
-                mediaPlayer.setDataSource(url);
-                mediaPlayer.prepare();
-                setupSeekBar();
-                Log.i(TAG, "set up music");
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        releaseMediaPlayer();
-                        Log.i(TAG, "reached completion");
-                    }
-                });
-            }
-            catch (IOException e) {
-                Log.e(TAG, "error playing song " + e);
-            }
-        }
-
-        private void setupSeekBar() {
-            int millis = mediaPlayer.getDuration();
+        private void setupSeekBar(int millis) {
             long total_secs = TimeUnit.SECONDS.convert(millis, TimeUnit.MILLISECONDS);
             long mins = TimeUnit.MINUTES.convert(total_secs, TimeUnit.SECONDS);
             String secs = new DecimalFormat("00").format(total_secs - (mins * 60));
             duration = mins + ":" + secs;
             tvTime.setText("00:00 / " + duration);
             seekBar.setMax(millis);
-            seekBar.setProgress(0);
-        }
-
-        private void releaseMediaPlayer() {
-            if (timer != null) {
-                timer.shutdown();
-            }
-            if (mediaPlayer != null) {
-                mediaPlayer.release();
-                mediaPlayer = null;
-            }
-            tvTime.setText("00:00 / " + duration);
-            seekBar.setMax(100);
             seekBar.setProgress(0);
         }
     }

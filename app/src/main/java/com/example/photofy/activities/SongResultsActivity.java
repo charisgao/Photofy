@@ -70,7 +70,7 @@ public class SongResultsActivity extends AppCompatActivity {
         Glide.with(this).load(photo.getImage().getUrl()).into(ivResultsCapturedImage);
         Glide.with(this).load(song.getAlbumCover()).into(ivResultsSongImage);
         tvResultsSongName.setText(song.getSongName());
-        tvResultsSongArtist.setText(song.getArtist());
+        tvResultsSongArtist.setText(song.getArtistName());
 
         btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,10 +108,11 @@ public class SongResultsActivity extends AppCompatActivity {
             @Override
             public void onFailure(Throwable error) {
                 if (error instanceof NotLoggedInException || error instanceof UserNotAuthorizedException) {
-                    // TODO: Show login button and trigger the login flow from auth library when clicked
+                    // trigger Spotify login
+                    Intent i = new Intent(SongResultsActivity.this, SpotifyLoginActivity.class);
+                    startActivity(i);
                 } else if (error instanceof CouldNotFindSpotifyApp) {
                     // prompt user to download Spotify from Google Play Store
-                    final String appPackageName = getPackageName();
                     Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.spotify.music"));
                     startActivity(i);
                 }
@@ -123,12 +124,6 @@ public class SongResultsActivity extends AppCompatActivity {
 
     private void connected() {
         mSpotifyAppRemote.getPlayerApi().play("spotify:track:" + song.getSpotifyId());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
     }
 
     private void savePost(String caption, ParseUser currentUser, Photo photo, Song song) {
@@ -150,6 +145,7 @@ public class SongResultsActivity extends AppCompatActivity {
                 ivResultsSongImage.setImageResource(0);
 
                 SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+                mSpotifyAppRemote = null;
 
                 Intent i = new Intent(SongResultsActivity.this, MainActivity.class);
                 startActivity(i);

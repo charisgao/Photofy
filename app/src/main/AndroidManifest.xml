@@ -47,10 +47,10 @@
             android:exported="true" />
         <activity
             android:name=".activities.SongRecommendationsActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".activities.SongResultsActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".activities.EditProfileActivity"
             android:exported="false" />

@@ -76,7 +76,7 @@ public class RecommendationsService {
 
     private Optional<Song> getSong(JSONObject object, String genre) throws JSONException {
         String previewUrl = object.getString("preview_url");
-        if (previewUrl.isEmpty()) {
+        if (previewUrl == null) {
             return Optional.empty();
         }
         String spotifyId = object.getString("id");
@@ -84,15 +84,17 @@ public class RecommendationsService {
         String artistName = object.getJSONArray("artists").getJSONObject(0).getString("name");
         String albumName = object.getJSONObject("album").getString("name");
         String albumUrl = object.getJSONObject("album").getJSONArray("images").getJSONObject(1).getString("url");
+        int duration = object.getInt("duration_ms");
 
         Song song = new Song();
         song.setSpotifyId(spotifyId);
         song.setSongName(songName);
-        song.setArtist(artistName);
-        song.setAlbum(albumName);
+        song.setArtistName(artistName);
+        song.setAlbumName(albumName);
         song.setAlbumCover(albumUrl);
         song.setGenres(Arrays.asList(genre));
         song.setPreview(previewUrl);
+        song.setDuration(duration);
         Log.i(TAG, "adding song " + songName);
         return Optional.of(song);
     }
