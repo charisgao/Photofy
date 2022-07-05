@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -54,7 +56,6 @@ public class ProfileFragment extends Fragment {
 
     private MaterialToolbar tbProfile;
     private ImageView ivProfilePicture;
-    private TextView tvProfileUsername;
     private TextView tvProfileBiography;
     private Button btnEditProfile;
     private RecyclerView rvProfilePosts;
@@ -82,12 +83,14 @@ public class ProfileFragment extends Fragment {
 
         tbProfile = view.findViewById(R.id.tbProfile);
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture);
-        tvProfileUsername = view.findViewById(R.id.tvProfileUsername);
         tvProfileBiography = view.findViewById(R.id.tvProfileBiography);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         rvProfilePosts = view.findViewById(R.id.rvProfilePosts);
 
         tbProfile.inflateMenu(R.menu.menu_profile_toolbar);
+        SpannableStringBuilder username = new SpannableStringBuilder(user.getUsername());
+        username.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, username.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        tbProfile.setTitle(username);
         tbProfile.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -103,7 +106,6 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-
         user.fetchInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject object, ParseException e) {
@@ -111,7 +113,6 @@ public class ProfileFragment extends Fragment {
                 Glide.with(getContext()).load(profilePic.getUrl()).circleCrop().into(ivProfilePicture);
             }
         });
-        tvProfileUsername.setText(user.getUsername());
         tvProfileBiography.setText(user.getString("Biography"));
 
         if (user.equals(ParseUser.getCurrentUser())) {

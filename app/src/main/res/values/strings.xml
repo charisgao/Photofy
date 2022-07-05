@@ -16,4 +16,6 @@
     <string name="photofy">PHOTOFY</string>
     <string name="upload_image">Upload image</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="logout">Logout</string>
+    <string name="settings">Settings</string>
 </resources>
