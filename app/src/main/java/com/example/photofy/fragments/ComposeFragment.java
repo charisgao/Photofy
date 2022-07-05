@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -185,9 +186,9 @@ public class ComposeFragment extends Fragment {
                         photo = picture;
                         path = resizedFile.getAbsolutePath();
                     } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "File not found error through gallery " + e);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "IOException with gallery " + e);
                     }
                 }
             }
@@ -232,7 +233,7 @@ public class ComposeFragment extends Fragment {
                 }, new RecommendationsErrorCallback() {
                     @Override
                     public void callback(String errorMessage) {
-                        //goToErrorFragment(errorMessage);
+                        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 });
             }

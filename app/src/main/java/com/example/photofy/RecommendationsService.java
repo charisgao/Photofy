@@ -32,7 +32,7 @@ public class RecommendationsService {
         this.queue = queue;
     }
 
-    public void getRecommendations(String genre, RecommendationsCallback recommendationsCallback, RecommendationsErrorCallback errorCallBack) {
+    public void getRecommendations(String genre, RecommendationsCallback recommendationsCallback, RecommendationsErrorCallback errorCallback) {
         endpoint.append("&seed_genres=" + genre);
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, endpoint.toString(), null, new Response.Listener<JSONObject>() {
             @Override
@@ -46,7 +46,7 @@ public class RecommendationsService {
                     }
                     recommendationsCallback.callback(songs);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    errorCallback.callback("Error with parsing through songs");
                 }
             }
         }, new Response.ErrorListener() {
@@ -70,7 +70,7 @@ public class RecommendationsService {
 
     private Optional<Song> getSong(JSONObject object, String genre) throws JSONException {
         String previewUrl = object.getString("preview_url");
-        if (previewUrl == null) {
+        if (previewUrl.isEmpty()) {
             return Optional.empty();
         }
         String spotifyId = object.getString("id");
