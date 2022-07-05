@@ -24,6 +24,8 @@ public class ColorToGenre {
     private final static Color AQUA = Color.valueOf(0,132,149); //K
     private final static Color YELLOWGREEN = Color.valueOf(204,204,51); //L
     private final static Color BROWN = Color.valueOf(158,79,69); //M
+    private final static Color BLACK = Color.valueOf(0,0,0);
+    private final static Color WHITE = Color.valueOf(255,255,255);
 
     // color to mood mapping source: https://www.pnas.org/doi/10.1073/pnas.1910704117#sec-1, https://www.ocf.berkeley.edu/~acowen/music.html#
     // if I have time later on, can expand to more colors through https://design-milk.com/color-coded-diaries-emotions-300-days/
@@ -41,29 +43,30 @@ public class ColorToGenre {
         put(AQUA, "sad");
         put(YELLOWGREEN, "scary");
         put(BROWN, "triumphant");
+        put(BLACK, "fear");
     }};
 
     // separate hash map to map to genre, possible stretch goal is to use other features besides color to determine genre
     private final static Map<String, String> MOOD_TO_GENRE = new HashMap<String, String>() {{
-        put("amusing", "novelty");
-        put("annoyed", "synthpop"); //hyperpop
+        put("amusing", "hip hop"); //
+        put("annoyed", "hyperpop"); //
         put("anxious", "industrial");
         put("beautiful", "classical");
         put("calm", "ambient");
         put("dreamy", "soul");
-        put("energizing", "dance pop");
-        put("desirous", "indie pop");
+        put("energizing", "dance pop"); //
+        put("desirous", "indie pop"); //
         put("indignant", "rock");
-        put("joyful", "r&b");
-        put("sad", "sad lo-fi");
-        put("scary", "horror punk");
-        put("triumphant", "epicore");
+        put("joyful", "jazz");
+        put("sad", "sad lo-fi"); //
+        put("scary", "horror punk"); //
+        put("triumphant", "alternative");
+        put("fear", "metal");
     }};
 
     private Color getDominantColor(String imageColor) {
         int color = Color.parseColor(imageColor);
-        Color dominantColor = Color.valueOf(Color.red(color), Color.green(color), Color.blue(color));
-        return dominantColor;
+        return Color.valueOf(Color.red(color), Color.green(color), Color.blue(color));
     }
 
     private Color getClosestColor(String imageColor) {

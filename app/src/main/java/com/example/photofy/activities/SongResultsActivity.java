@@ -148,6 +148,12 @@ public class SongResultsActivity extends AppCompatActivity {
                 etCaption.setText("");
                 ivResultsCapturedImage.setImageResource(0);
                 ivResultsSongImage.setImageResource(0);
+
+                SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+
+                Intent i = new Intent(SongResultsActivity.this, MainActivity.class);
+                startActivity(i);
+                finish();
             }
         });
     }

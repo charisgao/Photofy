@@ -15,13 +15,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.*;
-import java.util.function.Consumer;
+
+import okhttp3.HttpUrl;
 
 public class RecommendationsService {
 
     public static final String TAG = "RecommendationsService";
 
-    private StringBuilder endpoint = new StringBuilder("https://api.spotify.com/v1/recommendations?market=US");
     private ArrayList<Song> songs = new ArrayList<>();
 
     private String token;
@@ -32,9 +32,15 @@ public class RecommendationsService {
         this.queue = queue;
     }
 
+    private String getUrl(String genre){
+        HttpUrl.Builder url = HttpUrl.parse("https://api.spotify.com/v1/recommendations").newBuilder();
+        url.addQueryParameter("market", "US");
+        url.addQueryParameter("seed_genres", genre);
+        return url.build().toString();
+    }
+
     public void getRecommendations(String genre, RecommendationsCallback recommendationsCallback, RecommendationsErrorCallback errorCallback) {
-        endpoint.append("&seed_genres=" + genre);
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, endpoint.toString(), null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getUrl(genre), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Log.i(TAG, "in response");
@@ -56,7 +62,7 @@ public class RecommendationsService {
             }
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 HashMap<String, String> headers = new HashMap<String, String>();
                 Log.i(TAG, "trying to get token");
                 String auth = "Bearer " + token;
