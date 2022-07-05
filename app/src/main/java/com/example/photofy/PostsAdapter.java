@@ -81,7 +81,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         private ImageButton ibPlay;
 
         private String duration;
-        private MediaPlayer mediaPlayer;
         private ScheduledExecutorService timer;
 
         public ViewHolder(@NonNull View itemView) {
@@ -117,7 +116,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                 @Override
                 public void done(ParseObject object, ParseException e) {
                     tvSongName.setText(song.getSongName());
-                    song.getSpotifyId();
                     setupSeekBar(song.getDuration());
                 }
             });
@@ -132,24 +130,22 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                             if (status.isPaused) {
                                 if (count == 0) {
                                     mSpotifyAppRemote.getPlayerApi().play("spotify:track:" + song.getSpotifyId());
-                                    ibPlay.setImageResource(R.drawable.ic_pause_button);
-                                    count++;
                                 } else {
                                     mSpotifyAppRemote.getPlayerApi().resume();
-                                    ibPlay.setImageResource(R.drawable.ic_pause_button);
-                                    count++;
                                 }
+                                ibPlay.setImageResource(R.drawable.ic_pause_button);
+                                count++;
 
-                            timer = Executors.newScheduledThreadPool(1);
-                            timer.scheduleAtFixedRate(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (!seekBar.isPressed()) {
-                                        seekBar.setProgress((int) status.playbackPosition);
+                                // TODO: problem with updating seekbar
+                                timer = Executors.newScheduledThreadPool(1);
+                                timer.scheduleAtFixedRate(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (!seekBar.isPressed()) {
+                                            seekBar.setProgress((int) status.playbackPosition);
+                                        }
                                     }
-                                }
-                            }, 10, 10, TimeUnit.MILLISECONDS);
-
+                                }, 10, 10, TimeUnit.MILLISECONDS);
                             } else {
                                 mSpotifyAppRemote.getPlayerApi().pause();
                                 ibPlay.setImageResource(R.drawable.ic_play_button);

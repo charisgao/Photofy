@@ -145,7 +145,6 @@ public class ProfileFragment extends Fragment {
                     Log.e(TAG, "Issue with logout", e);
                 } else {
                     // TODO: figure out how to log user out from Spotify
-                    // delete spotify token from shared preferences
                     editor = (getContext().getSharedPreferences("SPOTIFY", Context.MODE_PRIVATE)).edit();
                     editor.remove("token");
                     editor.commit();
