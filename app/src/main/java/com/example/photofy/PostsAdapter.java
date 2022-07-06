@@ -14,15 +14,22 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.photofy.activities.MainActivity;
+import com.example.photofy.fragments.ProfileFragment;
+import com.example.photofy.models.Like;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Post;
 import com.example.photofy.models.Song;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.types.PlayerState;
 
@@ -79,6 +86,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         private ImageView ivProfile;
         private TextView tvUsername;
         private TextView tvCaption;
+        private ImageButton ibLike;
+        private ImageButton ibComment;
+        private TextView tvNumLikes;
+        private TextView tvNumComments;
 
         private TextView tvSongName;
         private SeekBar seekBar;
@@ -96,6 +107,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             ivProfile = itemView.findViewById(R.id.ivProfile);
             tvUsername = itemView.findViewById(R.id.tvUsername);
             tvCaption = itemView.findViewById(R.id.tvCaption);
+            ibLike = itemView.findViewById(R.id.ibLike);
+            ibComment = itemView.findViewById(R.id.ibComment);
+            tvNumLikes = itemView.findViewById(R.id.tvNumLikes);
+            tvNumComments = itemView.findViewById(R.id.tvNumComments);
 
             tvSongName = itemView.findViewById(R.id.tvSongName);
             seekBar = itemView.findViewById(R.id.seekBar);
@@ -115,6 +130,41 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             Glide.with(context).load(post.getUser().getParseFile("Profile").getUrl()).circleCrop().into(ivProfile);
             tvUsername.setText(post.getUser().getUsername());
             tvCaption.setText(post.getCaption());
+
+            bindLikeButton(post);
+
+            tvNumLikes.setText(Integer.toString(post.getNumLikes()));
+            tvNumComments.setText(Integer.toString(post.getNumComments()));
+
+            ibLike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (post.isLiked) {
+                        unlikePost(post);
+                        ibLike.setImageResource(R.drawable.ufi_heart);
+                    } else {
+                        likePost(post);
+                        ibLike.setImageResource(R.drawable.ufi_heart_active);
+                    }
+                    post.isLiked = !post.isLiked;
+                    int count = post.updateLikes();
+                    tvNumLikes.setText(Integer.toString(count));
+                }
+            });
+
+            ivProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    goOtherProfile(post);
+                }
+            });
+
+            tvUsername.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    goOtherProfile(post);
+                }
+            });
 
             Song song = (Song) post.getSong();
             song.fetchInBackground(new GetCallback<ParseObject>() {
@@ -193,6 +243,59 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             });
         }
 
+        private void bindLikeButton(Post post) {
+            ParseQuery<Like> query = ParseQuery.getQuery(Like.class);
+
+            // See if post is liked by the current user
+            query.whereEqualTo(Like.KEY_USER, ParseUser.getCurrentUser());
+            query.whereEqualTo(Like.KEY_POST, post);
+
+            query.findInBackground(new FindCallback<Like>() {
+                @Override
+                public void done(List<Like> objects, ParseException e) {
+                    // Check for errors
+                    if (e != null) {
+                        Log.e(TAG, "Issue with getting likes " + e);
+                        return;
+                    }
+                    if (!objects.isEmpty()) {
+                        post.isLiked = true;
+                        ibLike.setImageResource(R.drawable.ufi_heart_active);
+                    } else {
+                        post.isLiked = false;
+                        ibLike.setImageResource((R.drawable.ufi_heart));
+                    }
+                }
+            });
+        }
+
+        private void likePost(Post post) {
+            Like like = new Like();
+            like.setUser(ParseUser.getCurrentUser());
+            like.setPost(post);
+            like.saveInBackground();
+        }
+
+        private void unlikePost(Post post) {
+            ParseQuery<Like> query = ParseQuery.getQuery(Like.class);
+            query.whereEqualTo(Like.KEY_USER, ParseUser.getCurrentUser());
+            query.whereEqualTo(Like.KEY_POST, post);
+
+            query.findInBackground(new FindCallback<Like>() {
+                @Override
+                public void done(List<Like> objects, ParseException e) {
+                    // Check for errors
+                    if (e != null) {
+                        Log.e(TAG, "Issue with finding like to delete " + e);
+                        return;
+                    }
+                    if (!objects.isEmpty()) {
+                        objects.get(0).deleteInBackground();
+                    }
+                }
+            });
+        }
+
         private void setupSeekBar(int millis) {
             long total_secs = TimeUnit.SECONDS.convert(millis, TimeUnit.MILLISECONDS);
             long mins = TimeUnit.MINUTES.convert(total_secs, TimeUnit.SECONDS);
@@ -201,6 +304,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             tvTime.setText("00:00 / " + duration);
             seekBar.setMax(millis);
             seekBar.setProgress(0);
+        }
+
+        private void goOtherProfile(Post post) {
+            ProfileFragment otherProfileFragment = new ProfileFragment(post.getUser());
+            FragmentTransaction transaction =((MainActivity) context).getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.flContainer, otherProfileFragment).addToBackStack(null).commit();
         }
     }
 }
