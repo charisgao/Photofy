@@ -64,6 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:clickable="true"
         android:text="Change profile photo"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -71,50 +72,50 @@
         app:layout_constraintTop_toBottomOf="@+id/ivEditProfilePicture" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/etEditName"
+        android:id="@+id/tfEditNameLayout"
         style="?attr/colorOutline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        app:prefixText="Name"
         android:hint="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvChangePhoto">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etEditName"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/etEditUsername"
+        android:id="@+id/tfEditUsernameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:prefixText="Username"
         android:hint="Username"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etEditName">
+        app:layout_constraintTop_toBottomOf="@+id/tfEditNameLayout">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etEditUsername"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/etEditBio"
+        android:id="@+id/tfEditBioLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:prefixText="Bio"
         android:hint="Bio"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etEditUsername">
+        app:layout_constraintTop_toBottomOf="@+id/tfEditUsernameLayout">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etEditBio"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

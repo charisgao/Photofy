@@ -1,10 +1,16 @@
 package com.example.photofy.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -121,11 +127,30 @@ public class ProfileFragment extends Fragment {
             btnEditProfile.setVisibility(View.GONE);
         }
 
+        ActivityResultLauncher<Intent> editProfileLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
+                            String newUsername = data.getStringExtra("Username");
+                            String newBio = data.getStringExtra("Bio");
+                            Log.i(TAG, "got new info " + newUsername + " " + newBio);
+
+                            SpannableStringBuilder boldNewUsername = new SpannableStringBuilder(newUsername);
+                            boldNewUsername.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, newUsername.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            tbProfile.setTitle(boldNewUsername);
+                            tvProfileBiography.setText(newBio);
+                        }
+                    }
+                });
+
         btnEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getContext(), EditProfileActivity.class);
-                startActivity(i);
+                editProfileLauncher.launch(i);
                 getActivity().overridePendingTransition(R.anim.bottom_up, R.anim.stationary);
             }
         });
