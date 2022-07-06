@@ -52,13 +52,18 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Post post = posts.get(position);
+        Post post = posts.get(getItemViewType(position));
         holder.bind(post);
     }
 
     @Override
     public int getItemCount() {
         return posts.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
     // Clean all elements of the recycler
@@ -120,6 +125,23 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                 }
             });
 
+            timer = Executors.newScheduledThreadPool(1);
+            timer.scheduleAtFixedRate(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(TAG, "within run");
+                    mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(new CallResult.ResultCallback<PlayerState>() {
+                        @Override
+                        public void onResult(PlayerState status) {
+                            if (!seekBar.isPressed()) {
+                                seekBar.setProgress((int) status.playbackPosition);
+                                Log.i(TAG, "" + status.playbackPosition);
+                            }
+                        }
+                    });
+                }
+            }, 10, 100, TimeUnit.MILLISECONDS);
+
             ibPlay.setOnClickListener(new View.OnClickListener() {
                 int count = 0;
                 @Override
@@ -135,21 +157,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                                 }
                                 ibPlay.setImageResource(R.drawable.ic_pause_button);
                                 count++;
-
-                                // TODO: problem with updating seekbar
-                                timer = Executors.newScheduledThreadPool(1);
-                                timer.scheduleAtFixedRate(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (!seekBar.isPressed()) {
-                                            seekBar.setProgress((int) status.playbackPosition);
-                                        }
-                                    }
-                                }, 10, 10, TimeUnit.MILLISECONDS);
                             } else {
                                 mSpotifyAppRemote.getPlayerApi().pause();
                                 ibPlay.setImageResource(R.drawable.ic_play_button);
-                                timer.shutdown();
                             }
                         }
                     });
@@ -161,8 +171,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(new CallResult.ResultCallback<PlayerState>() {
                         @Override
-                        public void onResult(PlayerState data) {
-                            int millis = (int) data.playbackPosition;
+                        public void onResult(PlayerState status) {
+                            int millis = (int) status.playbackPosition;
                             long total_secs = TimeUnit.SECONDS.convert(millis, TimeUnit.MILLISECONDS);
                             long mins = TimeUnit.MINUTES.convert(total_secs, TimeUnit.SECONDS);
                             String secs = new DecimalFormat("00").format(total_secs - (mins * 60));
