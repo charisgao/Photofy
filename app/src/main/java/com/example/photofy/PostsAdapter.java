@@ -4,6 +4,7 @@ import static com.example.photofy.fragments.HomeFragment.mSpotifyAppRemote;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.photofy.activities.MainActivity;
+import com.example.photofy.fragments.CommentsFragment;
 import com.example.photofy.fragments.ProfileFragment;
 import com.example.photofy.models.Like;
 import com.example.photofy.models.Photo;
@@ -149,6 +151,24 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                     post.isLiked = !post.isLiked;
                     int count = post.updateLikes();
                     tvNumLikes.setText(Integer.toString(count));
+                }
+            });
+
+            ibComment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO: have comment screen only appear part way
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        Post post = posts.get(position);
+
+                        CommentsFragment commentsFragment = new CommentsFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("post", post);
+                        commentsFragment.setArguments(bundle);
+                        FragmentTransaction transaction =((MainActivity) context).getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.flContainer, commentsFragment).addToBackStack("Comments").commit();
+                    }
                 }
             });
 
