@@ -12,6 +12,7 @@
         <entry key="app/src/main/res/drawable/ic_simple_shiny.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_simple_shiny__1_.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_spectrum_gradient.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/rounded_top_corners.xml" value="0.2875" />
         <entry key="app/src/main/res/drawable/splash_background.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/thumbs_down.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/thumbs_up.xml" value="0.1" />
@@ -24,6 +25,7 @@
         <entry key="app/src/main/res/layout/activity_song_results.xml" value="0.30230560302734377" />
         <entry key="app/src/main/res/layout/activity_spotify_login.xml" value="0.24320652173913043" />
         <entry key="app/src/main/res/layout/card_stack_view.xml" value="0.24270833333333333" />
+        <entry key="app/src/main/res/layout/change_profile_bottom_sheet_dialog.xml" value="0.33242753623188404" />
         <entry key="app/src/main/res/layout/fragment_blank.xml" value="0.33697916666666666" />
         <entry key="app/src/main/res/layout/fragment_camera.xml" value="0.20416666666666666" />
         <entry key="app/src/main/res/layout/fragment_camera_result.xml" value="0.19630192502532928" />

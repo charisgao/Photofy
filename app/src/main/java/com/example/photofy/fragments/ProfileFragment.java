@@ -37,6 +37,7 @@ import com.example.photofy.activities.LoginActivity;
 import com.example.photofy.activities.MainActivity;
 import com.example.photofy.models.Post;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.parse.CountCallback;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.LogOutCallback;
@@ -61,7 +62,9 @@ public class ProfileFragment extends Fragment {
 
     private MaterialToolbar tbProfile;
     private ImageView ivProfilePicture;
+    private TextView tvProfileName;
     private TextView tvProfileBiography;
+    private TextView tvNumPosts;
     private Button btnEditProfile;
     private RecyclerView rvProfilePosts;
 
@@ -88,7 +91,9 @@ public class ProfileFragment extends Fragment {
 
         tbProfile = view.findViewById(R.id.tbProfile);
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture);
+        tvProfileName = view.findViewById(R.id.tvProfileName);
         tvProfileBiography = view.findViewById(R.id.tvProfileBiography);
+        tvNumPosts = view.findViewById(R.id.tvNumPosts);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         rvProfilePosts = view.findViewById(R.id.rvProfilePosts);
 
@@ -118,7 +123,9 @@ public class ProfileFragment extends Fragment {
                 Glide.with(getContext()).load(profilePic.getUrl()).circleCrop().into(ivProfilePicture);
             }
         });
+        tvProfileName.setText(user.getString("Name"));
         tvProfileBiography.setText(user.getString("Biography"));
+        setPostCount();
 
         if (user.equals(ParseUser.getCurrentUser())) {
             btnEditProfile.setVisibility(View.VISIBLE);
@@ -133,6 +140,7 @@ public class ProfileFragment extends Fragment {
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             Intent data = result.getData();
+                            String newName = data.getStringExtra("Name");
                             String newUsername = data.getStringExtra("Username");
                             String newBio = data.getStringExtra("Bio");
                             Log.i(TAG, "got new info " + newUsername + " " + newBio);
@@ -140,6 +148,7 @@ public class ProfileFragment extends Fragment {
                             SpannableStringBuilder boldNewUsername = new SpannableStringBuilder(newUsername);
                             boldNewUsername.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, newUsername.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                             tbProfile.setTitle(boldNewUsername);
+                            tvProfileName.setText(newName);
                             tvProfileBiography.setText(newBio);
                         }
                     }
@@ -159,6 +168,17 @@ public class ProfileFragment extends Fragment {
         rvProfilePosts.setAdapter(profileAdapter);
         rvProfilePosts.setLayoutManager(new LinearLayoutManager(getContext()));
         queryPosts();
+    }
+
+    private void setPostCount() {
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.whereEqualTo(Post.KEY_USER, user);
+        query.countInBackground(new CountCallback() {
+            @Override
+            public void done(int count, ParseException e) {
+                tvNumPosts.setText(String.valueOf(count));
+            }
+        });
     }
 
     private void logout() {

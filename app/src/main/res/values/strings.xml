@@ -18,7 +18,9 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="logout">Logout</string>
     <string name="settings">Settings</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="leave_a_comment_here">Leave a comment here</string>
+    <string name="cancel">Cancel</string>
+    <string name="remove_current_photo">Remove current photo</string>
+    <string name="take_photo">Take photo</string>
+    <string name="choose_from_library">Choose from library</string>
 </resources>

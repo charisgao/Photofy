@@ -190,7 +190,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             ibComment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO: have comment screen only appear part way
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         Post post = posts.get(position);
@@ -200,6 +199,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                         bundle.putParcelable("post", post);
                         commentsFragment.setArguments(bundle);
                         FragmentTransaction transaction =((MainActivity) context).getSupportFragmentManager().beginTransaction();
+                        transaction.setCustomAnimations(R.anim.stationary, R.anim.bottom_up);
                         transaction.replace(R.id.flComments, commentsFragment).addToBackStack("Comments").commit();
                     }
                 }
