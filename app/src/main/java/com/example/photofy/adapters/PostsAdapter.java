@@ -1,9 +1,8 @@
-package com.example.photofy;
+package com.example.photofy.adapters;
 
 import static com.example.photofy.fragments.HomeFragment.mSpotifyAppRemote;
 
 import android.content.Context;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +18,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.photofy.R;
 import com.example.photofy.activities.MainActivity;
 import com.example.photofy.fragments.CommentsFragment;
 import com.example.photofy.fragments.ProfileFragment;

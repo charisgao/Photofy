@@ -72,4 +72,14 @@ public class Post extends ParseObject {
 
         return getInt(KEY_LIKES);
     }
+
+    public int updateComments() {
+        put(KEY_COMMENTS, getInt(KEY_COMMENTS) + 1);
+        try {
+            save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return getInt(KEY_COMMENTS);
+    }
 }

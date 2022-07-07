@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.example.photofy.R;
-import com.example.photofy.SongAdapter;
+import com.example.photofy.adapters.SongAdapter;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Song;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;

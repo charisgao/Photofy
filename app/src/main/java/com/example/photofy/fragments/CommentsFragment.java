@@ -16,7 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.photofy.CommentsAdapter;
+import com.example.photofy.adapters.CommentsAdapter;
 import com.example.photofy.R;
 import com.example.photofy.models.Comment;
 import com.example.photofy.models.Post;
@@ -74,7 +74,12 @@ public class CommentsFragment extends Fragment {
         if (bundle != null) {
             post = bundle.getParcelable("post");
 
-            tvTotalNumComments.setText(Integer.toString(post.getNumComments()));
+            int count = post.getNumComments();
+            if (count == 1) {
+                tvTotalNumComments.setText(String.valueOf(count + " comment"));
+            } else {
+                tvTotalNumComments.setText(String.valueOf(count + " comments"));
+            }
         }
 
         fillComments();
@@ -83,13 +88,19 @@ public class CommentsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 newComment();
+
+                int count = post.updateComments();
+                if (count == 1) {
+                    tvTotalNumComments.setText(String.valueOf(count + " comment"));
+                } else {
+                    tvTotalNumComments.setText(String.valueOf(count + " comments"));
+                }
             }
         });
 
         ibClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: go back to post view
                 getActivity().getSupportFragmentManager().popBackStackImmediate();
             }
         });
@@ -99,7 +110,7 @@ public class CommentsFragment extends Fragment {
         ParseQuery<Comment> query = ParseQuery.getQuery(Comment.class);
         query.include(Comment.KEY_USER);
         query.whereEqualTo(Comment.KEY_POST, post);
-        query.addAscendingOrder(Comment.KEY_CREATED);
+        query.addDescendingOrder(Comment.KEY_CREATED);
         query.findInBackground(new FindCallback<Comment>() {
             @Override
             public void done(List<Comment> objects, ParseException e) {
@@ -120,5 +131,10 @@ public class CommentsFragment extends Fragment {
         comment.setPost(post);
         comment.setComment(etAddComment.getText().toString());
         comment.saveInBackground();
+        etAddComment.setText("");
+
+        comments.add(0, comment);
+        commentsAdapter.notifyItemInserted(0);
+        rvComments.smoothScrollToPosition(0);
     }
 }

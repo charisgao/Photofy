@@ -1,4 +1,4 @@
-package com.example.photofy;
+package com.example.photofy.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,7 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.photofy.R;
 import com.example.photofy.models.Comment;
+import com.parse.ParseUser;
 
 import java.util.List;
 
@@ -59,8 +61,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
         }
 
         public void bind(Comment comment) {
-            // TODO: load profile picture
-            tvCommentUsername.setText(comment.getUser().getUsername());
+            ParseUser user = comment.getUser();
+            Glide.with(context).load(user.getParseFile("Profile").getUrl()).circleCrop().into(ivCommentPicture);
+            tvCommentUsername.setText(user.getUsername());
             tvComment.setText(comment.getComment());
         }
     }

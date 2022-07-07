@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.photofy.PostsAdapter;
+import com.example.photofy.adapters.PostsAdapter;
 import com.example.photofy.R;
 import com.example.photofy.models.Post;
 import com.parse.FindCallback;
