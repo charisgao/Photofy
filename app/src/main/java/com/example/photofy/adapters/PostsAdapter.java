@@ -200,7 +200,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                         bundle.putParcelable("post", post);
                         commentsFragment.setArguments(bundle);
                         FragmentTransaction transaction =((MainActivity) context).getSupportFragmentManager().beginTransaction();
-                        transaction.replace(R.id.flContainer, commentsFragment).addToBackStack("Comments").commit();
+                        transaction.replace(R.id.flComments, commentsFragment).addToBackStack("Comments").commit();
                     }
                 }
             });

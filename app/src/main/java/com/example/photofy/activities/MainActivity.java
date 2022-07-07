@@ -67,10 +67,4 @@ public class MainActivity extends AppCompatActivity {
         // Set default selection
         bottomNavigationView.setSelectedItemId(R.id.action_home);
     }
-
-    private void goLoginActivity() {
-        Intent i = new Intent (this, LoginActivity.class);
-        startActivity(i);
-        finish();
-    }
 }
