@@ -172,11 +172,9 @@ public class EditProfileActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
-                        Glide.with(EditProfileActivity.this).load(resizedFile).circleCrop().into(ivEditProfilePicture);
+                        Glide.with(EditProfileActivity.this).load(selectedImage).circleCrop().into(ivEditProfilePicture);
 
                         ParseFile imageFile = new ParseFile(resizedFile);
-
-                        ParseUser.getCurrentUser().remove("Profile");
                         ParseUser.getCurrentUser().put("Profile", imageFile);
                         ParseUser.getCurrentUser().saveInBackground();
                     } catch (FileNotFoundException e) {
@@ -200,10 +198,13 @@ public class EditProfileActivity extends AppCompatActivity {
         btnPfpRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseUser.getCurrentUser().remove("Profile");
                 Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.defaultpfp);
                 Glide.with(EditProfileActivity.this).load(uri).circleCrop().into(ivEditProfilePicture);
-                ParseUser.getCurrentUser().put("Profile", new ParseFile(new File(uri.getPath())));
+
+                File file = new File(uri.getPath());
+                ParseFile defaultFile = new ParseFile(file);
+                ParseUser.getCurrentUser().put("Profile", defaultFile);
+
                 ParseUser.getCurrentUser().saveInBackground();
                 bottomSheetDialog.dismiss();
             }
