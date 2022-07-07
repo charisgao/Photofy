@@ -161,9 +161,10 @@ public class ComposeFragment extends Fragment {
                                 fos = new FileOutputStream(resizedFile);
                                 // Write the bytes of the bitmap to file
                                 fos.write(bytes.toByteArray());
-                                fos.close();
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
+                            } finally {
+                                fos.close();
                             }
                         } catch (IOException e) {
                             e.printStackTrace();

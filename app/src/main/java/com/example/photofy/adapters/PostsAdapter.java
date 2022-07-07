@@ -2,11 +2,9 @@ package com.example.photofy.adapters;
 
 import static com.example.photofy.fragments.HomeFragment.mSpotifyAppRemote;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -121,32 +119,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             seekBar = itemView.findViewById(R.id.seekBar);
             tvTime = itemView.findViewById(R.id.tvTime);
             ibPlay = itemView.findViewById(R.id.ibPlay);
-        }
 
-        @SuppressLint("ClickableViewAccessibility")
-        public void bind(Post post) {
-            Photo photo = (Photo) post.getPhoto();
-            photo.fetchInBackground(new GetCallback<ParseObject>() {
-                @Override
-                public void done(ParseObject object, ParseException e) {
-                    Glide.with(context).load(photo.getImage().getUrl()).into(ivImage);
-                }
-            });
-
-            Glide.with(context).load(post.getUser().getParseFile("Profile").getUrl()).circleCrop().into(ivProfile);
-            tvUsername.setText(post.getUser().getUsername());
-            tvCaption.setText(post.getCaption());
-
-            bindLikeButton(post);
-
-            tvNumLikes.setText(Integer.toString(post.getNumLikes()));
-            tvNumComments.setText(Integer.toString(post.getNumComments()));
-
-            ivImage.setOnTouchListener(new View.OnTouchListener() {
+            itemView.setOnTouchListener(new View.OnTouchListener() {
                 boolean firstTouch = false;
                 long time = System.currentTimeMillis();
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
+                    int position = getAdapterPosition();
+                    Post post = posts.get(position);
                     if(event.getAction() == MotionEvent.ACTION_DOWN){
                         if(firstTouch && (System.currentTimeMillis() - time) <= 300) {
                             if (post.isLiked) {
@@ -171,6 +151,25 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                     return true;
                 }
             });
+        }
+
+        public void bind(Post post) {
+            Photo photo = (Photo) post.getPhoto();
+            photo.fetchInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject object, ParseException e) {
+                    Glide.with(context).load(photo.getImage().getUrl()).into(ivImage);
+                }
+            });
+
+            Glide.with(context).load(post.getUser().getParseFile("Profile").getUrl()).circleCrop().into(ivProfile);
+            tvUsername.setText(post.getUser().getUsername());
+            tvCaption.setText(post.getCaption());
+
+            bindLikeButton(post);
+
+            tvNumLikes.setText(Integer.toString(post.getNumLikes()));
+            tvNumComments.setText(Integer.toString(post.getNumComments()));
 
             ibLike.setOnClickListener(new View.OnClickListener() {
                 @Override
