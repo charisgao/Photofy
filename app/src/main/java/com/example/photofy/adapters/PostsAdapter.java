@@ -2,10 +2,13 @@ package com.example.photofy.adapters;
 
 import static com.example.photofy.fragments.HomeFragment.mSpotifyAppRemote;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -44,8 +47,8 @@ import java.util.concurrent.TimeUnit;
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
     public static final String TAG = "PostsAdapter";
-    private Context context;
-    private List<Post> posts;
+    private final Context context;
+    private final List<Post> posts;
 
     public PostsAdapter(Context context, List<Post> posts) {
         this.context = context;
@@ -83,20 +86,20 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView ivImage;
+        private final ImageView ivImage;
 
-        private ImageView ivProfile;
-        private TextView tvUsername;
-        private TextView tvCaption;
-        private ImageButton ibLike;
-        private ImageButton ibComment;
-        private TextView tvNumLikes;
-        private TextView tvNumComments;
+        private final ImageView ivProfile;
+        private final TextView tvUsername;
+        private final TextView tvCaption;
+        private final ImageButton ibLike;
+        private final ImageButton ibComment;
+        private final TextView tvNumLikes;
+        private final TextView tvNumComments;
 
-        private TextView tvSongName;
-        private SeekBar seekBar;
-        private TextView tvTime;
-        private ImageButton ibPlay;
+        private final TextView tvSongName;
+        private final SeekBar seekBar;
+        private final TextView tvTime;
+        private final ImageButton ibPlay;
 
         private String duration;
         private ScheduledExecutorService timer;
@@ -120,6 +123,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             ibPlay = itemView.findViewById(R.id.ibPlay);
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         public void bind(Post post) {
             Photo photo = (Photo) post.getPhoto();
             photo.fetchInBackground(new GetCallback<ParseObject>() {
@@ -137,6 +141,36 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
             tvNumLikes.setText(Integer.toString(post.getNumLikes()));
             tvNumComments.setText(Integer.toString(post.getNumComments()));
+
+            ivImage.setOnTouchListener(new View.OnTouchListener() {
+                boolean firstTouch = false;
+                long time = System.currentTimeMillis();
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if(event.getAction() == MotionEvent.ACTION_DOWN){
+                        if(firstTouch && (System.currentTimeMillis() - time) <= 300) {
+                            if (post.isLiked) {
+                                unlikePost(post);
+                                ibLike.setImageResource(R.drawable.ufi_heart);
+                            } else {
+                                likePost(post);
+                                ibLike.setImageResource(R.drawable.ufi_heart_active);
+                            }
+                            post.isLiked = !post.isLiked;
+                            int count = post.updateLikes();
+                            tvNumLikes.setText(Integer.toString(count));
+                            Log.i(TAG, "double tap");
+                            firstTouch = false;
+                        } else {
+                            firstTouch = true;
+                            time = System.currentTimeMillis();
+                            Log.i(TAG, "single tap " + time);
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            });
 
             ibLike.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -199,13 +233,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             timer.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
-                    Log.i(TAG, "within run");
                     mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(new CallResult.ResultCallback<PlayerState>() {
                         @Override
                         public void onResult(PlayerState status) {
                             if (!seekBar.isPressed()) {
                                 seekBar.setProgress((int) status.playbackPosition);
-                                Log.i(TAG, "" + status.playbackPosition);
+                                Log.d(TAG, "" + status.playbackPosition);
                             }
                         }
                     });
