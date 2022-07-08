@@ -65,6 +65,7 @@ public class ProfileFragment extends Fragment {
     private TextView tvProfileName;
     private TextView tvProfileBiography;
     private TextView tvNumPosts;
+    private TextView tvNumberLikes;
     private Button btnEditProfile;
     private RecyclerView rvProfilePosts;
 
@@ -94,6 +95,7 @@ public class ProfileFragment extends Fragment {
         tvProfileName = view.findViewById(R.id.tvProfileName);
         tvProfileBiography = view.findViewById(R.id.tvProfileBiography);
         tvNumPosts = view.findViewById(R.id.tvNumPosts);
+        tvNumberLikes = view.findViewById(R.id.tvNumberLikes);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         rvProfilePosts = view.findViewById(R.id.rvProfilePosts);
 
@@ -126,6 +128,7 @@ public class ProfileFragment extends Fragment {
         tvProfileName.setText(user.getString("Name"));
         tvProfileBiography.setText(user.getString("Biography"));
         setPostCount();
+        setLikeCount();
 
         if (user.equals(ParseUser.getCurrentUser())) {
             btnEditProfile.setVisibility(View.VISIBLE);
@@ -177,6 +180,21 @@ public class ProfileFragment extends Fragment {
             @Override
             public void done(int count, ParseException e) {
                 tvNumPosts.setText(String.valueOf(count));
+            }
+        });
+    }
+
+    private void setLikeCount() {
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.whereEqualTo(Post.KEY_USER, user);
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> objects, ParseException e) {
+                int count = 0;
+                for (Post post : objects) {
+                    count += post.getNumLikes();
+                }
+                tvNumberLikes.setText(String.valueOf(count));
             }
         });
     }
