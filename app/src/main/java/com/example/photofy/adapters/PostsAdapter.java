@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -47,10 +49,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
     public static final String TAG = "PostsAdapter";
     private final Context context;
     private final List<Post> posts;
+    private final NavController navController;
 
-    public PostsAdapter(Context context, List<Post> posts) {
+    public PostsAdapter(Context context, List<Post> posts, NavController navController) {
         this.context = context;
         this.posts = posts;
+        this.navController = navController;
     }
 
     @NonNull
@@ -190,18 +194,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             ibComment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        Post post = posts.get(position);
-
-                        CommentsFragment commentsFragment = new CommentsFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("post", post);
-                        commentsFragment.setArguments(bundle);
-                        FragmentTransaction transaction =((MainActivity) context).getSupportFragmentManager().beginTransaction();
-                        transaction.setCustomAnimations(R.anim.stationary, R.anim.bottom_up);
-                        transaction.replace(R.id.flComments, commentsFragment).addToBackStack("Comments").commit();
-                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("post", post);
+                    navController.navigate(R.id.action_blankFragment_to_commentsFragment, bundle);
                 }
             });
 

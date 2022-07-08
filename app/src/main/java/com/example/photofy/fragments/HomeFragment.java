@@ -7,6 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.photofy.activities.MainActivity;
 import com.example.photofy.adapters.PostsAdapter;
 import com.example.photofy.R;
 import com.example.photofy.models.Post;
@@ -58,7 +61,7 @@ public class HomeFragment extends Fragment {
         viewpagerPosts = view.findViewById(R.id.viewpagerPosts);
 
         allPosts = new ArrayList<>();
-        adapter = new PostsAdapter(getContext(), allPosts);
+        adapter = new PostsAdapter(getContext(), allPosts, Navigation.findNavController(requireActivity(), R.id.navHostFragment));
 
         // Set the adapter on the ViewPager2
         viewpagerPosts.setAdapter(adapter);

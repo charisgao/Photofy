@@ -1,9 +1,15 @@
 package com.example.photofy.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +17,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.photofy.R;
 import com.example.photofy.fragments.ComposeFragment;
@@ -42,6 +49,20 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
 
         bottomNavigationView = findViewById(R.id.bottomNavigation);
+
+        NavHostFragment navHostFragment =
+                (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.navHostFragment);
+        NavController navController = navHostFragment.getNavController();
+        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+            @Override
+            public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
+                if (navDestination.getId() == R.id.commentsFragment) {
+                    bottomNavigationView.setVisibility(View.GONE);
+                } else {
+                    bottomNavigationView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
