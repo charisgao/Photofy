@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
@@ -42,6 +43,7 @@ public class HomeFragment extends Fragment {
 
     protected PostsAdapter adapter;
     protected List<Post> allPosts;
+    private SwipeRefreshLayout swipeContainer;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -59,6 +61,7 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         viewpagerPosts = view.findViewById(R.id.viewpagerPosts);
+        swipeContainer = view.findViewById(R.id.swipeContainer);
 
         allPosts = new ArrayList<>();
         adapter = new PostsAdapter(getContext(), allPosts, Navigation.findNavController(requireActivity(), R.id.navHostFragment));
@@ -67,8 +70,21 @@ public class HomeFragment extends Fragment {
         viewpagerPosts.setAdapter(adapter);
 
         connectSpotifyAppRemote();
-
         queryPosts();
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                adapter.clear();
+                queryPosts();
+                swipeContainer.setRefreshing(false);
+            }
+        });
+
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
     }
 
     private void connectSpotifyAppRemote() {

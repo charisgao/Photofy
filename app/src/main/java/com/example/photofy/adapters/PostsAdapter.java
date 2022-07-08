@@ -126,6 +126,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             ivHeart = itemView.findViewById(R.id.ivHeart);
 
             tvSongName = itemView.findViewById(R.id.tvSongName);
+            tvSongName.setSelected(true);
+
             seekBar = itemView.findViewById(R.id.seekBar);
             tvTime = itemView.findViewById(R.id.tvTime);
             ibPlay = itemView.findViewById(R.id.ibPlay);
