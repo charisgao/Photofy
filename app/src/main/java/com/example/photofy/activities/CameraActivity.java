@@ -1,9 +1,7 @@
-package com.example.photofy.fragments;
-
-import android.os.Bundle;
+package com.example.photofy.activities;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
@@ -12,18 +10,15 @@ import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.photofy.R;
-import com.example.photofy.activities.MainActivity;
 import com.example.photofy.models.Photo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -40,10 +35,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-// TODO: need to make into an activity (do not need bottom navigation bar showing)
-public class CameraFragment extends Fragment {
+public class CameraActivity extends AppCompatActivity {
 
-    public static final String TAG = "CameraFragment";
+    public static final String TAG = "CameraActivity";
     private PreviewView previewView;
     private FloatingActionButton fabImageCapture;
 
@@ -51,26 +45,16 @@ public class CameraFragment extends Fragment {
     private Executor executor;
     private ImageCapture imageCapture;
 
-    public CameraFragment() {
-        // Required empty public constructor
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_camera, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_camera);
 
         executor = Executors.newSingleThreadExecutor();
 
-        previewView = view.findViewById(R.id.previewView);
-        fabImageCapture = view.findViewById(R.id.fabImageCapture);
-        cameraProviderFuture = ProcessCameraProvider.getInstance(getContext());
+        previewView = findViewById(R.id.previewView);
+        fabImageCapture = findViewById(R.id.fabImageCapture);
+        cameraProviderFuture = ProcessCameraProvider.getInstance(this);
 
         cameraProviderFuture.addListener(() -> {
             try {
@@ -79,7 +63,7 @@ public class CameraFragment extends Fragment {
             } catch (ExecutionException | InterruptedException e) {
                 Log.e(TAG, "Error while creating camera", e);
             }
-        }, ContextCompat.getMainExecutor(getContext()));
+        }, ContextCompat.getMainExecutor(this));
 
         fabImageCapture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,33 +74,27 @@ public class CameraFragment extends Fragment {
                 ImageCapture.OutputFileOptions outputFileOptions =
                         new ImageCapture.OutputFileOptions.Builder(file).build();
                 imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback() {
-                        @Override
-                        public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-                            Photo photo = new Photo();
-                            photo.setUser(ParseUser.getCurrentUser());
-                            photo.setImage(new ParseFile(file));
-                            photo.saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                }
-                            });
-                            result.putString("filePath", file.getAbsolutePath());
-                            result.putParcelable("photo", photo);
-                            FragmentManager manager = ((MainActivity) getContext()).getSupportFragmentManager();
-                            manager.setFragmentResult("requestKey", result);
-                            ComposeFragment composeFragment = new ComposeFragment();
-                            manager.beginTransaction()
-                                    .replace(R.id.flContainer, composeFragment)
-                                    .addToBackStack(null)
-                                    .commit();
-
-                            Log.i(TAG, "Photo saved successfully");
+                            @Override
+                            public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+                                Photo photo = new Photo();
+                                photo.setUser(ParseUser.getCurrentUser());
+                                photo.setImage(new ParseFile(file));
+                                photo.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        Intent i = new Intent(CameraActivity.this, ImageResultsActivity.class);
+                                        i.putExtra("filePath", file.getAbsolutePath());
+                                        i.putExtra("photo", photo);
+                                        startActivity(i);
+                                        Log.i(TAG, "Photo saved successfully");
+                                    }
+                                });
+                            }
+                            @Override
+                            public void onError(ImageCaptureException error) {
+                                Log.e(TAG, "Error while capturing camera image", error);
+                            }
                         }
-                        @Override
-                        public void onError(ImageCaptureException error) {
-                            Log.e(TAG, "Error while capturing camera image", error);
-                        }
-                    }
                 );
             }
         });
@@ -129,7 +107,7 @@ public class CameraFragment extends Fragment {
                 .build();
         imageCapture = new ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                .setTargetRotation(getActivity().getWindowManager().getDefaultDisplay().getRotation())
+                .setTargetRotation(this.getWindowManager().getDefaultDisplay().getRotation())
                 .build();
         preview.setSurfaceProvider(previewView.createSurfaceProvider());
 
@@ -142,7 +120,7 @@ public class CameraFragment extends Fragment {
 
         // Get safe storage directory for photos
         // getExternalFilesDir used to access package specific directories, so don't need to request external read/write runtime permissions
-        File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
+        File mediaStorageDir = new File(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
 
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {

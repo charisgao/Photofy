@@ -13,9 +13,7 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorOnSecondary</item>
         <!-- Customize your theme here. -->
         <item name="materialCardViewStyle">@style/Widget.App.CardView</item>
-    </style>
 
-    <style name="Theme.Photofy.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -23,7 +21,6 @@
     <style name="Theme.Photofy.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Photofy.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
 
     <style name="Widget.App.CardView" parent="Widget.Material3.CardView.Elevated">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.Card</item>
