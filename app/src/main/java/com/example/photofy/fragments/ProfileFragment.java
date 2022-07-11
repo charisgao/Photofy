@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.photofy.activities.SettingsActivity;
 import com.example.photofy.adapters.ProfileAdapter;
 import com.example.photofy.R;
 import com.example.photofy.activities.EditProfileActivity;
@@ -70,6 +71,8 @@ public class ProfileFragment extends Fragment {
     private RecyclerView rvProfilePosts;
 
     private ParseUser user = ParseUser.getCurrentUser();
+    private ActivityResultLauncher<Intent> editProfileLauncher;
+    private ActivityResultLauncher<Intent> settingsLauncher;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -111,6 +114,7 @@ public class ProfileFragment extends Fragment {
                         logout();
                         return true;
                     case R.id.miSettings:
+                        goToSettings();
                         return true;
                     default:
                         return ProfileFragment.super.onOptionsItemSelected(item);
@@ -136,7 +140,7 @@ public class ProfileFragment extends Fragment {
             btnEditProfile.setVisibility(View.GONE);
         }
 
-        ActivityResultLauncher<Intent> editProfileLauncher = registerForActivityResult(
+        editProfileLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
@@ -160,11 +164,20 @@ public class ProfileFragment extends Fragment {
         btnEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getContext(), EditProfileActivity.class);
-                editProfileLauncher.launch(i);
-                getActivity().overridePendingTransition(R.anim.slide_up, R.anim.stationary);
+                goToEditProfile();
             }
         });
+
+        settingsLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Toast.makeText(getContext(), "Your password was updated!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
         profilePosts = new ArrayList<>();
         profileAdapter = new ProfileAdapter(getContext(), profilePosts);
@@ -218,6 +231,17 @@ public class ProfileFragment extends Fragment {
             }
         });
         ParseUser currentUser = ParseUser.getCurrentUser();
+    }
+
+    private void goToEditProfile() {
+        Intent i = new Intent(getContext(), EditProfileActivity.class);
+        editProfileLauncher.launch(i);
+        getActivity().overridePendingTransition(R.anim.slide_up, R.anim.stationary);
+    }
+
+    private void goToSettings() {
+        Intent i = new Intent(getContext(), SettingsActivity.class);
+        settingsLauncher.launch(i);
     }
 
     protected void queryPosts() {
