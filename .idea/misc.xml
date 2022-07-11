@@ -7,6 +7,7 @@
         <entry key="app/src/main/res/drawable/ic_bg.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_gradient_background.xml" value="0.2905" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_musicnotes.xml" value="0.278" />
         <entry key="app/src/main/res/drawable/ic_pause_button.xml" value="0.3045" />
         <entry key="app/src/main/res/drawable/ic_play_button.xml" value="0.3045" />
         <entry key="app/src/main/res/drawable/ic_simple_shiny.xml" value="0.1" />
@@ -22,6 +23,7 @@
         <entry key="app/src/main/res/layout/activity_connect_spotify.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_edit_profile.xml" value="0.3428442028985507" />
         <entry key="app/src/main/res/layout/activity_image_results.xml" value="0.3029891304347826" />
+        <entry key="app/src/main/res/layout/activity_launcher.xml" value="0.2734375" />
         <entry key="app/src/main/res/layout/activity_loading.xml" value="0.3029891304347826" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.2568585603133493" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.24764251708984375" />
