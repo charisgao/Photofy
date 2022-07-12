@@ -52,14 +52,20 @@ public class ImageResultsActivity extends AppCompatActivity {
 
         photo = getIntent().getParcelableExtra("photo");
         path = getIntent().getStringExtra("filePath");
+        boolean fromGallery = getIntent().getBooleanExtra("gallery", false);
 
         Bitmap bitmap = BitmapFactory.decodeFile(path);
 
-        // Rotate image to be portrait
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-        ivCapturedImage.setImageBitmap(rotatedBitmap);
+        if (!fromGallery) {
+            // Rotate image to be portrait
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            ivCapturedImage.setImageBitmap(rotatedBitmap);
+        } else {
+            ivCapturedImage.setImageBitmap(bitmap);
+        }
+
         btnGetColors.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

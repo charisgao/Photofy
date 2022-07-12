@@ -1,48 +1,48 @@
 package com.example.photofy.fragments
 
 import android.Manifest
-import androidx.navigation.Navigation.findNavController
-import androidx.viewpager2.widget.ViewPager2
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.example.photofy.adapters.PostsAdapter
-import com.example.photofy.models.Post
-import androidx.activity.result.ActivityResultLauncher
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.os.Bundle
-import com.example.photofy.R
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
-import androidx.activity.result.ActivityResultCallback
-import android.graphics.Bitmap
-import com.example.photofy.BitmapScaler
 import android.content.Intent
-import com.example.photofy.activities.ImageResultsActivity
-import com.example.photofy.fragments.HomeFragment
-import androidx.core.content.ContextCompat
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import com.example.photofy.activities.CameraActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation.findNavController
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import androidx.viewpager2.widget.ViewPager2
+import com.example.photofy.BitmapScaler
+import com.example.photofy.PhotofyApplication
+import com.example.photofy.R
+import com.example.photofy.activities.CameraActivity
+import com.example.photofy.activities.ImageResultsActivity
 import com.example.photofy.activities.MainActivity
+import com.example.photofy.adapters.PostsAdapter
+import com.example.photofy.models.Photo
+import com.example.photofy.models.Post
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.transition.platform.MaterialFadeThrough
+import com.parse.*
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector.ConnectionListener
 import com.spotify.android.appremote.api.SpotifyAppRemote
-import com.example.photofy.PhotofyApplication
-import com.example.photofy.models.Photo
-import com.google.android.material.transition.platform.MaterialFadeThrough
-import com.parse.*
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class HomeFragment() : Fragment() {
     private lateinit var viewpagerPosts: ViewPager2
@@ -133,6 +133,7 @@ class HomeFragment() : Fragment() {
                         val i = Intent(context, ImageResultsActivity::class.java)
                         i.putExtra("filePath", resizedFile.absolutePath)
                         i.putExtra("photo", picture)
+                        i.putExtra("gallery", true)
                         startActivity(i)
                         Log.i(TAG, "Photo saved successfully")
                     }
@@ -197,18 +198,15 @@ class HomeFragment() : Fragment() {
     private fun launchGallery() {
         val i = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
         if (i.resolveActivity(requireContext().packageManager) != null) {
-            galleryLauncher!!.launch("image/*")
+            galleryLauncher.launch("image/*")
         }
     }
 
     // Get safe storage directory for photos
     // getExternalFilesDir used to access package specific directories, so don't need to request external read/write runtime permissions
     private val photoFile: File
-
-    // Create the storage directory if it does not exist
-
-        // Return the file target for the photo based on timestamp
-        private get() {
+        get() {
+            // Return the file target for the photo based on timestamp
             val dateFormat = SimpleDateFormat("yyyyMMddHHmmss", Locale.US)
 
             // Get safe storage directory for photos

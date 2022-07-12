@@ -1,50 +1,49 @@
 package com.example.photofy.fragments
 
-import com.example.photofy.adapters.ProfileAdapter
-import com.example.photofy.models.Post
-import android.content.SharedPreferences
-import com.google.android.material.appbar.MaterialToolbar
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import com.parse.ParseUser
-import androidx.activity.result.ActivityResultLauncher
-import android.content.Intent
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import com.example.photofy.R
-import android.text.SpannableStringBuilder
-import android.text.style.StyleSpan
-import android.text.Spannable
-import com.parse.ParseObject
-import com.parse.GetCallback
-import com.parse.ParseFile
-import com.bumptech.glide.Glide
-import androidx.activity.result.ActivityResultCallback
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Typeface
+import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
-import com.example.photofy.fragments.ProfileFragment
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.parse.ParseQuery
-import com.parse.CountCallback
-import com.parse.FindCallback
-import com.parse.LogOutCallback
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.photofy.R
 import com.example.photofy.activities.EditProfileActivity
 import com.example.photofy.activities.LoginActivity
-import com.example.photofy.activities.SettingsActivity
 import com.example.photofy.activities.MainActivity
+import com.example.photofy.activities.SettingsActivity
+import com.example.photofy.adapters.PostsAdapter
+import com.example.photofy.adapters.ProfileAdapter
+import com.example.photofy.models.Like
+import com.example.photofy.models.Post
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.platform.MaterialFadeThrough
-import java.util.ArrayList
+import com.parse.FindCallback
+import com.parse.ParseObject
+import com.parse.ParseQuery
+import com.parse.ParseUser
+
 
 class ProfileFragment : Fragment {
     private lateinit var profileAdapter: ProfileAdapter
@@ -162,7 +161,74 @@ class ProfileFragment : Fragment {
         profileAdapter = ProfileAdapter(context, profilePosts)
         rvProfilePosts.adapter = profileAdapter
         rvProfilePosts.layoutManager = LinearLayoutManager(context)
+
+        val simpleItemTouchCallback: ItemTouchHelper.SimpleCallback = object :
+            ItemTouchHelper.SimpleCallback(
+                0,
+                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+            ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
+                val position = viewHolder.adapterPosition
+                val recentlyDeletedItem = profilePosts[position]
+                var undo = false
+
+                profilePosts.removeAt(position)
+                profileAdapter.notifyItemRemoved(position)
+                val snackbar: Snackbar = Snackbar.make(
+                    view, "Deleted post",
+                    Snackbar.LENGTH_LONG
+                )
+                snackbar.setAction("Undo") {
+                    profilePosts.add(
+                        position,
+                        recentlyDeletedItem
+                    )
+                    profileAdapter.notifyItemInserted(position)
+                    undo = true
+                }
+
+                snackbar.addCallback(object: BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                    override fun onShown(transientBottomBar: Snackbar?) {
+                        super.onShown(transientBottomBar)
+                    }
+
+                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                        super.onDismissed(transientBottomBar, event)
+                        if (!undo) {
+                            deletePost(recentlyDeletedItem)
+                        }
+                    }
+                })
+                snackbar.show()
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(rvProfilePosts)
+
         queryPosts()
+    }
+
+    private fun deletePost(post: Post) {
+        val query = ParseQuery.getQuery(Post::class.java)
+        query.whereEqualTo(Post.KEY_OBJECT_ID, post.objectId)
+        query.findInBackground(FindCallback { objects, e -> // Check for errors
+            if (e != null) {
+                Log.e(PostsAdapter.TAG, "Issue with finding like to delete $e")
+                return@FindCallback
+            }
+            if (objects.isNotEmpty()) {
+                objects[0].deleteInBackground()
+            }
+        })
     }
 
     private fun setPostCount() {

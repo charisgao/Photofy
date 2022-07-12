@@ -85,6 +85,7 @@ public class CameraActivity extends AppCompatActivity {
                                         Intent i = new Intent(CameraActivity.this, ImageResultsActivity.class);
                                         i.putExtra("filePath", file.getAbsolutePath());
                                         i.putExtra("photo", photo);
+                                        i.putExtra("gallery", false);
                                         startActivity(i);
                                         Log.i(TAG, "Photo saved successfully");
                                     }
