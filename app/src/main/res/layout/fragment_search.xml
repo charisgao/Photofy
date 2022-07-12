@@ -25,6 +25,7 @@
             android:id="@+id/etSearch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:maxLines="1"
             android:hint="Search" />
 
     </com.google.android.material.textfield.TextInputLayout>

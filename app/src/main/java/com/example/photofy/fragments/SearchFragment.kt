@@ -2,11 +2,13 @@ package com.example.photofy.fragments
 
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +32,7 @@ class SearchFragment : Fragment() {
     private lateinit var gridLayoutManager: GridLayoutManager
     private lateinit var adapter: SearchAdapter
     private lateinit var filteredPosts: MutableList<Post>
+    private var filtered = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +66,18 @@ class SearchFragment : Fragment() {
         queryPosts()
 
         etSearch.setText("")
+        etSearch.setOnKeyListener { v, keyCode, event ->
+            // user presses enter in the search bar
+            if ((event.action == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                val searchPhrase: String = etSearch.text.toString()
+                val searchResults = search(searchPhrase)
+                adapter.clear()
+                filteredPosts.addAll(searchResults)
+                adapter.notifyDataSetChanged()
+                Toast.makeText(context, etSearch.text, Toast.LENGTH_SHORT).show()
+            }
+            false
+        }
 
         var pressed = false
 
@@ -76,16 +91,19 @@ class SearchFragment : Fragment() {
         }
 
         cgGenre.setOnCheckedStateChangeListener { group, checkedIds ->
-            var checkedGenres:MutableList<String> = ArrayList<String>()
-            for (checkedId in checkedIds) {
-                val chip:Chip? = group.findViewById(checkedId)
-                checkedGenres.add(chip?.text.toString().lowercase())
-                adapter.clear()
-                filteredQuery(checkedGenres)
-            }
             if (checkedIds.isEmpty()) {
+                filtered = false
                 adapter.clear()
                 queryPosts()
+            } else {
+                filtered = true
+                var checkedGenres:MutableList<String> = ArrayList<String>()
+                for (checkedId in checkedIds) {
+                    val chip:Chip? = group.findViewById(checkedId)
+                    checkedGenres.add(chip?.text.toString().lowercase())
+                }
+                adapter.clear()
+                filteredQuery(checkedGenres)
             }
         }
     }
@@ -106,6 +124,25 @@ class SearchFragment : Fragment() {
                 adapter.notifyDataSetChanged()
             }
         })
+    }
+
+    private fun search(phrase: String): MutableList<Post> {
+        var searchResults: MutableList<Post> = ArrayList<Post>()
+        if (filtered) {
+            // TODO: use filtered list
+            for (post in filteredPosts) {
+                if (post.caption.lowercase().contains(phrase.lowercase())) {
+                    searchResults.add(post)
+                }
+            }
+//        } else {
+//            for (post in allPosts) {
+//                if (post.caption.lowercase().contains(phrase)) {
+//                    searchResults.add(post)
+//                }
+//            }
+        }
+        return searchResults
     }
 
     private fun filteredQuery(genres: MutableList<String>) {
