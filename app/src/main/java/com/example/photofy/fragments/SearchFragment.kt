@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -24,13 +25,16 @@ import com.parse.*
 
 class SearchFragment : Fragment() {
 
+    // UI components
     private lateinit var etSearch: EditText
     private lateinit var ivFilter: ImageView
     private lateinit var cgGenre: ChipGroup
-
+    private lateinit var tvNoPosts: TextView
     private lateinit var rvSearchedPosts: RecyclerView
-    private lateinit var gridLayoutManager: GridLayoutManager
+
+    // variables for filter and search
     private lateinit var adapter: SearchAdapter
+    private lateinit var allPosts: MutableList<Post>
     private lateinit var filteredPosts: MutableList<Post>
     private var filtered = false
 
@@ -49,20 +53,21 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // bind UI views
         etSearch = view.findViewById(R.id.etSearch)
         ivFilter = view.findViewById(R.id.ivFilter)
         cgGenre = view.findViewById(R.id.cgGenre)
-        cgGenre.visibility = View.GONE
-
+        tvNoPosts = view.findViewById(R.id.tvNoPosts)
         rvSearchedPosts = view.findViewById(R.id.rvSearchedPosts)
-        filteredPosts = java.util.ArrayList()
-        adapter = SearchAdapter(
-            context,
-            filteredPosts)
-        rvSearchedPosts.adapter = adapter
-        gridLayoutManager = GridLayoutManager(context, 2)
-        rvSearchedPosts.layoutManager = gridLayoutManager
 
+        cgGenre.visibility = View.GONE
+        tvNoPosts.visibility = View.GONE
+
+        allPosts = ArrayList<Post>()
+        filteredPosts = ArrayList<Post>()
+
+        // create RV adapter and load all posts
+        callAdapter(allPosts)
         queryPosts()
 
         etSearch.setText("")
@@ -70,17 +75,14 @@ class SearchFragment : Fragment() {
             // user presses enter in the search bar
             if ((event.action == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 val searchPhrase: String = etSearch.text.toString()
-                val searchResults = search(searchPhrase)
-                adapter.clear()
-                filteredPosts.addAll(searchResults)
-                adapter.notifyDataSetChanged()
+                callAdapter(search(searchPhrase))
                 Toast.makeText(context, etSearch.text, Toast.LENGTH_SHORT).show()
             }
             false
         }
 
+        // filter button
         var pressed = false
-
         ivFilter.setOnClickListener { _ ->
             pressed = !pressed
             if (pressed) {
@@ -90,25 +92,29 @@ class SearchFragment : Fragment() {
             }
         }
 
+        // chips
         cgGenre.setOnCheckedStateChangeListener { group, checkedIds ->
+            // if nothing clicked (user unclicked all) then query all posts
             if (checkedIds.isEmpty()) {
                 filtered = false
-                adapter.clear()
-                queryPosts()
-            } else {
+                callAdapter(allPosts)
+            }
+            // if user clicked some chips then call filtered query
+            else {
                 filtered = true
                 var checkedGenres:MutableList<String> = ArrayList<String>()
                 for (checkedId in checkedIds) {
                     val chip:Chip? = group.findViewById(checkedId)
                     checkedGenres.add(chip?.text.toString().lowercase())
                 }
-                adapter.clear()
                 filteredQuery(checkedGenres)
             }
         }
     }
 
+    // get all posts
     private fun queryPosts() {
+        allPosts.clear()
         val query = ParseQuery.getQuery(Post::class.java)
         query.include(Post.KEY_USER)
         query.addDescendingOrder(Post.KEY_CREATED)
@@ -120,32 +126,43 @@ class SearchFragment : Fragment() {
                     return
                 }
 
-                filteredPosts.addAll(posts)
-                adapter.notifyDataSetChanged()
+                allPosts.addAll(posts)
             }
         })
     }
 
+    // new adapter to update data given posts
+    private fun callAdapter(posts: List<Post>) {
+        adapter = SearchAdapter(
+            context,
+            posts)
+        rvSearchedPosts.adapter = adapter
+        rvSearchedPosts.layoutManager = GridLayoutManager(context, 2)
+        adapter.notifyDataSetChanged()
+    }
+
+    // search for posts
     private fun search(phrase: String): MutableList<Post> {
         var searchResults: MutableList<Post> = ArrayList<Post>()
         if (filtered) {
-            // TODO: use filtered list
             for (post in filteredPosts) {
                 if (post.caption.lowercase().contains(phrase.lowercase())) {
                     searchResults.add(post)
                 }
             }
-//        } else {
-//            for (post in allPosts) {
-//                if (post.caption.lowercase().contains(phrase)) {
-//                    searchResults.add(post)
-//                }
-//            }
+        } else {
+            for (post in allPosts) {
+                if (post.caption.lowercase().contains(phrase.lowercase())) {
+                    searchResults.add(post)
+                }
+            }
         }
         return searchResults
     }
 
+    // filter posts by genres in chips
     private fun filteredQuery(genres: MutableList<String>) {
+        filteredPosts.clear()
         var songQueries: MutableList<ParseQuery<Song>> = ArrayList<ParseQuery<Song>>()
 
         for (genre in genres) {
@@ -166,10 +183,13 @@ class SearchFragment : Fragment() {
                     Log.e(SearchFragment.TAG, "Issue with filtering posts", e)
                     return
                 }
-
-                // Save received posts to list and notify adapter of new data
                 filteredPosts.addAll(posts)
-                adapter.notifyDataSetChanged()
+                callAdapter(filteredPosts)
+                if (filteredPosts.isEmpty()) {
+                    tvNoPosts.visibility = View.VISIBLE
+                } else {
+                    tvNoPosts.visibility = View.GONE
+                }
             }
         })
     }
