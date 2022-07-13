@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
-import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import androidx.viewpager2.widget.ViewPager2
 import com.example.photofy.BitmapScaler
 import com.example.photofy.PhotofyApplication
@@ -43,7 +42,6 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 class HomeFragment() : Fragment() {
     private lateinit var viewpagerPosts: ViewPager2
     private lateinit var swipeContainer: SwipeRefreshLayout
@@ -51,6 +49,8 @@ class HomeFragment() : Fragment() {
     private lateinit var adapter: PostsAdapter
     private lateinit var allPosts: MutableList<Post>
     private lateinit var galleryLauncher: ActivityResultLauncher<String>
+    private lateinit var connectionParams: ConnectionParams
+    private lateinit var connectionListener: ConnectionListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -224,11 +224,11 @@ class HomeFragment() : Fragment() {
         }
 
     private fun connectSpotifyAppRemote() {
-        val connectionParams = ConnectionParams.Builder(CLIENT_ID)
+        connectionParams = ConnectionParams.Builder(CLIENT_ID)
             .setRedirectUri(REDIRECT_URI)
             .showAuthView(true)
             .build()
-        val connectionListener: ConnectionListener = object : ConnectionListener {
+        connectionListener = object : ConnectionListener {
             override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
                 mSpotifyAppRemote = spotifyAppRemote
             }
@@ -240,6 +240,17 @@ class HomeFragment() : Fragment() {
         SpotifyAppRemote.connect(context, connectionParams, connectionListener)
     }
 
+    override fun onStart() {
+        super.onStart()
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote)
+        SpotifyAppRemote.connect(context, connectionParams, connectionListener)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote)
+    }
+
     override fun onResume() {
         super.onResume()
         connectSpotifyAppRemote()
@@ -247,11 +258,6 @@ class HomeFragment() : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        SpotifyAppRemote.disconnect(mSpotifyAppRemote)
-    }
-
-    override fun onStop() {
-        super.onStop()
         SpotifyAppRemote.disconnect(mSpotifyAppRemote)
     }
 
