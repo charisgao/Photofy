@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ice"
     tools:context=".activities.WelcomeActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_top"
+        android:id="@+id/toolbarTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -43,7 +44,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.viewpager2.widget.ViewPager2
@@ -54,7 +54,7 @@
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_top">
+        app:layout_constraintTop_toBottomOf="@+id/toolbarTop">
 
     </androidx.viewpager2.widget.ViewPager2>
 
@@ -97,6 +97,8 @@
 
     <Button
         android:id="@+id/btnWelcomeLogin"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:backgroundTint="@color/light_blue"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="70dp"
@@ -110,7 +112,8 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:text="Continue"
+        android:text="@string/continuebtn"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/btnWelcomeLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -120,7 +123,8 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:text="Get Started"
+        android:text="@string/get_started"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/btnWelcomeLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

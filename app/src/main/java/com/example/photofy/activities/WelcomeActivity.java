@@ -43,7 +43,7 @@ public class WelcomeActivity extends AppCompatActivity {
         btnWelcomeGetStarted.setVisibility(View.GONE);
         vpWelcome = findViewById(R.id.vpWelcome);
 
-        Welcome screen1 = new Welcome(R.drawable.screen1, "Take photos", "Wherever you are, snap pictures of your surroundings");
+        Welcome screen1 = new Welcome(R.drawable.screen1, "Take photos", "Wherever you are, snap images of your surroundings");
         Welcome screen2 = new Welcome(R.drawable.screen2, "Discover new music", "Using our algorithm, we generate you Spotify songs that match the mood associated with your photo");
         screens = new ArrayList<>();
         screens.add(screen1);

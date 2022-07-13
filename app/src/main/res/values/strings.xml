@@ -11,7 +11,6 @@
     <string name="open_camera">Open camera</string>
     <string name="capture_image_button">capture image button</string>
     <string name="signup">Sign up</string>
-    <string name="sign_up_here">Sign up here</string>
     <string name="new_account">Don\'t have an account?</string>
     <string name="photofy">Photofy</string>
     <string name="upload_image">Upload image</string>
@@ -29,4 +28,10 @@
     <string name="user_stats">User Stats:</string>
     <string name="following">Following</string>
     <string name="followers">Followers</string>
+    <string name="continuebtn">Continue</string>
+    <string name="get_started">Get Started</string>
+    <string name="log_in_to_your_account">Log in to your account</string>
+    <string name="welcome_back">Welcome back!</string>
+    <string name="have_an_account">Have an Account?</string>
+    <string name="create_subtitle">Create account and choose your preferred genres</string>
 </resources>

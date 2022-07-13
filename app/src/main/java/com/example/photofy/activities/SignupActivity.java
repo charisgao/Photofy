@@ -1,12 +1,14 @@
 package com.example.photofy.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.photofy.R;
@@ -19,11 +21,12 @@ public class SignupActivity extends AppCompatActivity {
 
     public static final String TAG = "SignupActivity";
 
+    private Toolbar toolbarTop;
     private TextInputEditText etSignupEmail;
     private TextInputEditText etSignupUsername;
-    private TextInputEditText etSignUpConfirmPassword;
     private TextInputEditText etSignupPassword;
     private Button btnSignup;
+    private TextView tvLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +34,12 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
 
         // Connect visual components with logic
+        toolbarTop = findViewById(R.id.toolbarTop);
         etSignupEmail = findViewById(R.id.etSignUpEmail);
         etSignupUsername = findViewById(R.id.etSignUpUsername);
         etSignupPassword = findViewById(R.id.etSignUpPassword);
-        etSignUpConfirmPassword = findViewById(R.id.etSignUpConfirmPassword);
         btnSignup = findViewById(R.id.btnSignUp);
+        tvLogin = findViewById(R.id.tvLogin);
 
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,12 +47,24 @@ public class SignupActivity extends AppCompatActivity {
                 String email = etSignupEmail.getText().toString();
                 String username = etSignupUsername.getText().toString();
                 String password = etSignupPassword.getText().toString();
-                String confirmPassword = etSignUpConfirmPassword.getText().toString();
-                if (password.equals(confirmPassword)) {
-                    signupUser(username, password, email);
-                } else {
-                    Toast.makeText(SignupActivity.this, "Passwords must match", Toast.LENGTH_SHORT).show();
-                }
+                signupUser(username, password, email);
+            }
+        });
+
+        tvLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(SignupActivity.this, LoginActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
+
+        // on back button pressed
+        toolbarTop.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
