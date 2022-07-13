@@ -33,6 +33,7 @@ import com.example.photofy.activities.MainActivity
 import com.example.photofy.activities.SettingsActivity
 import com.example.photofy.adapters.PostsAdapter
 import com.example.photofy.adapters.ProfileAdapter
+import com.example.photofy.models.Follow
 import com.example.photofy.models.Like
 import com.example.photofy.models.Post
 import com.google.android.material.appbar.MaterialToolbar
@@ -129,10 +130,14 @@ class ProfileFragment : Fragment {
         tvProfileBiography.text = user.getString("Biography")
         setPostCount()
         setLikeCount()
+        setFollowerCount()
+        setFollowingCount()
         if (user == ParseUser.getCurrentUser()) {
             btnEditProfile.visibility = View.VISIBLE
+            btnFollow.visibility = View.GONE
         } else {
             btnEditProfile.visibility = View.GONE
+            btnFollow.visibility = View.VISIBLE
         }
         editProfileLauncher = registerForActivityResult<Intent, ActivityResult>(
             ActivityResultContracts.StartActivityForResult()
@@ -253,6 +258,18 @@ class ProfileFragment : Fragment {
             }
             tvNumberLikes.text = count.toString()
         }
+    }
+
+    private fun setFollowerCount() {
+        val query = ParseQuery.getQuery(Follow::class.java)
+        query.whereEqualTo(Follow.KEY_TO, user)
+        query.countInBackground { count, _ -> tvNumberFollowers.text = count.toString() }
+    }
+
+    private fun setFollowingCount() {
+        val query = ParseQuery.getQuery(Follow::class.java)
+        query.whereEqualTo(Follow.KEY_FROM, user)
+        query.countInBackground { count, _ -> tvNumberFollowing.text = count.toString() }
     }
 
     private fun logout() {
