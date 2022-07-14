@@ -60,8 +60,12 @@ class ProfileFragment : Fragment {
     private lateinit var tvNumberFollowing: TextView
     private lateinit var btnEditProfile: Button
     private lateinit var btnFollow: Button
+    private lateinit var btnFollowing: Button
     private lateinit var rvProfilePosts: RecyclerView
+
     private var user = ParseUser.getCurrentUser()
+    private var follows: Follow? = getIfFollows()
+
     private lateinit var editProfileLauncher: ActivityResultLauncher<Intent>
     private lateinit var settingsLauncher: ActivityResultLauncher<Intent>
 
@@ -99,8 +103,10 @@ class ProfileFragment : Fragment {
         tvNumberFollowing = view.findViewById(R.id.tvNumberFollowing)
         btnEditProfile = view.findViewById(R.id.btnEditProfile)
         btnFollow = view.findViewById(R.id.btnFollow)
+        btnFollowing = view.findViewById(R.id.btnFollowing)
         rvProfilePosts = view.findViewById(R.id.rvProfilePosts)
         tbProfile.inflateMenu(R.menu.menu_profile_toolbar)
+
         val username = SpannableStringBuilder(user.username)
         username.setSpan(
             StyleSpan(Typeface.BOLD),
@@ -122,23 +128,38 @@ class ProfileFragment : Fragment {
                 else -> super@ProfileFragment.onOptionsItemSelected(item)
             }
         })
+
         user.fetchInBackground<ParseObject> { _, _ ->
             val profilePic = user.getParseFile("Profile")
             Glide.with(requireContext()).load(profilePic!!.url).circleCrop().into(ivProfilePicture)
         }
+
         tvProfileName.text = user.getString("Name")
         tvProfileBiography.text = user.getString("Biography")
+
         setPostCount()
         setLikeCount()
         setFollowerCount()
         setFollowingCount()
+
         if (user == ParseUser.getCurrentUser()) {
             btnEditProfile.visibility = View.VISIBLE
             btnFollow.visibility = View.GONE
+            btnFollowing.visibility = View.GONE
         } else {
             btnEditProfile.visibility = View.GONE
-            btnFollow.visibility = View.VISIBLE
+            if (follows == null) {
+                btnFollow.visibility = View.VISIBLE
+                btnFollowing.visibility = View.GONE
+            } else {
+                btnFollow.visibility = View.GONE
+                btnFollowing.visibility = View.VISIBLE
+            }
         }
+
+        btnFollow.setOnClickListener(View.OnClickListener { followUser() })
+        btnFollowing.setOnClickListener(View.OnClickListener { unfollowUser() })
+
         editProfileLauncher = registerForActivityResult<Intent, ActivityResult>(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -161,6 +182,7 @@ class ProfileFragment : Fragment {
             }
         }
         btnEditProfile.setOnClickListener(View.OnClickListener { goToEditProfile() })
+
         settingsLauncher = registerForActivityResult<Intent, ActivityResult>(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -168,6 +190,7 @@ class ProfileFragment : Fragment {
                 Toast.makeText(context, "Your password was updated!", Toast.LENGTH_SHORT).show()
             }
         }
+
         profilePosts = ArrayList()
         profileAdapter = ProfileAdapter(context, profilePosts)
         rvProfilePosts.adapter = profileAdapter
@@ -272,6 +295,34 @@ class ProfileFragment : Fragment {
         query.countInBackground { count, _ -> tvNumberFollowing.text = count.toString() }
     }
 
+    private fun followUser() {
+        val follow = Follow()
+        follow.from = ParseUser.getCurrentUser()
+        follow.to = user
+        follow.saveInBackground()
+        btnFollow.visibility = View.GONE
+        btnFollowing.visibility = View.VISIBLE
+    }
+
+    private fun unfollowUser() {
+        follows?.deleteInBackground()
+        follows = getIfFollows()
+        btnFollow.visibility = View.VISIBLE
+        btnFollowing.visibility = View.GONE
+    }
+
+    private fun getIfFollows() : Follow? {
+        val query = ParseQuery.getQuery(Follow::class.java)
+        query.whereEqualTo(Follow.KEY_FROM, ParseUser.getCurrentUser())
+        query.whereEqualTo(Follow.KEY_TO, user)
+        val followList: MutableList<Follow> = query.find()
+        return if (followList.isNotEmpty()) {
+            followList[0]
+        } else {
+            null
+        }
+    }
+
     private fun logout() {
         ParseUser.logOutInBackground { e ->
             if (e != null) {
@@ -287,7 +338,12 @@ class ProfileFragment : Fragment {
                 Toast.makeText(context, R.string.logout_toast, Toast.LENGTH_SHORT).show()
             }
         }
-        val currentUser = ParseUser.getCurrentUser()
+    }
+
+    private fun goLoginActivity() {
+        val i = Intent(context as MainActivity?, LoginActivity::class.java)
+        startActivity(i)
+        (context as MainActivity?)!!.finish()
     }
 
     private fun goToEditProfile() {
@@ -316,12 +372,6 @@ class ProfileFragment : Fragment {
             profilePosts.addAll(posts)
             profileAdapter.notifyDataSetChanged()
         })
-    }
-
-    private fun goLoginActivity() {
-        val i = Intent(context as MainActivity?, LoginActivity::class.java)
-        startActivity(i)
-        (context as MainActivity?)!!.finish()
     }
 
     companion object {
