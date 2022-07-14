@@ -33,6 +33,7 @@ import com.example.photofy.activities.MainActivity
 import com.example.photofy.activities.SettingsActivity
 import com.example.photofy.adapters.PostsAdapter
 import com.example.photofy.adapters.ProfileAdapter
+import com.example.photofy.models.Follow
 import com.example.photofy.models.Like
 import com.example.photofy.models.Post
 import com.google.android.material.appbar.MaterialToolbar
@@ -53,9 +54,12 @@ class ProfileFragment : Fragment {
     private lateinit var ivProfilePicture: ImageView
     private lateinit var tvProfileName: TextView
     private lateinit var tvProfileBiography: TextView
-    private lateinit var tvNumPosts: TextView
+    private lateinit var tvNumberPosts: TextView
     private lateinit var tvNumberLikes: TextView
+    private lateinit var tvNumberFollowers: TextView
+    private lateinit var tvNumberFollowing: TextView
     private lateinit var btnEditProfile: Button
+    private lateinit var btnFollow: Button
     private lateinit var rvProfilePosts: RecyclerView
     private var user = ParseUser.getCurrentUser()
     private lateinit var editProfileLauncher: ActivityResultLauncher<Intent>
@@ -89,9 +93,12 @@ class ProfileFragment : Fragment {
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture)
         tvProfileName = view.findViewById(R.id.tvProfileName)
         tvProfileBiography = view.findViewById(R.id.tvProfileBiography)
-        tvNumPosts = view.findViewById(R.id.tvNumPosts)
+        tvNumberPosts = view.findViewById(R.id.tvNumberPosts)
         tvNumberLikes = view.findViewById(R.id.tvNumberLikes)
+        tvNumberFollowers = view.findViewById(R.id.tvNumberFollowers)
+        tvNumberFollowing = view.findViewById(R.id.tvNumberFollowing)
         btnEditProfile = view.findViewById(R.id.btnEditProfile)
+        btnFollow = view.findViewById(R.id.btnFollow)
         rvProfilePosts = view.findViewById(R.id.rvProfilePosts)
         tbProfile.inflateMenu(R.menu.menu_profile_toolbar)
         val username = SpannableStringBuilder(user.username)
@@ -123,10 +130,14 @@ class ProfileFragment : Fragment {
         tvProfileBiography.text = user.getString("Biography")
         setPostCount()
         setLikeCount()
+        setFollowerCount()
+        setFollowingCount()
         if (user == ParseUser.getCurrentUser()) {
             btnEditProfile.visibility = View.VISIBLE
+            btnFollow.visibility = View.GONE
         } else {
             btnEditProfile.visibility = View.GONE
+            btnFollow.visibility = View.VISIBLE
         }
         editProfileLauncher = registerForActivityResult<Intent, ActivityResult>(
             ActivityResultContracts.StartActivityForResult()
@@ -234,7 +245,7 @@ class ProfileFragment : Fragment {
     private fun setPostCount() {
         val query = ParseQuery.getQuery(Post::class.java)
         query.whereEqualTo(Post.KEY_USER, user)
-        query.countInBackground { count, _ -> tvNumPosts.text = count.toString() }
+        query.countInBackground { count, _ -> tvNumberPosts.text = count.toString() }
     }
 
     private fun setLikeCount() {
@@ -247,6 +258,18 @@ class ProfileFragment : Fragment {
             }
             tvNumberLikes.text = count.toString()
         }
+    }
+
+    private fun setFollowerCount() {
+        val query = ParseQuery.getQuery(Follow::class.java)
+        query.whereEqualTo(Follow.KEY_TO, user)
+        query.countInBackground { count, _ -> tvNumberFollowers.text = count.toString() }
+    }
+
+    private fun setFollowingCount() {
+        val query = ParseQuery.getQuery(Follow::class.java)
+        query.whereEqualTo(Follow.KEY_FROM, user)
+        query.countInBackground { count, _ -> tvNumberFollowing.text = count.toString() }
     }
 
     private fun logout() {
