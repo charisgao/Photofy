@@ -8,9 +8,9 @@
         android:title="Home"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_compose"
-        android:icon="@drawable/ic_filled_compose"
-        android:title="Compose"
+        android:id="@+id/action_search"
+        android:icon="@drawable/search"
+        android:title="Search"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_profile"

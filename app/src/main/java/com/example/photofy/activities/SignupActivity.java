@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.photofy.R;
 import com.google.android.material.textfield.TextInputEditText;
@@ -20,6 +21,7 @@ public class SignupActivity extends AppCompatActivity {
 
     private TextInputEditText etSignupEmail;
     private TextInputEditText etSignupUsername;
+    private TextInputEditText etSignUpConfirmPassword;
     private TextInputEditText etSignupPassword;
     private Button btnSignup;
 
@@ -32,6 +34,7 @@ public class SignupActivity extends AppCompatActivity {
         etSignupEmail = findViewById(R.id.etSignUpEmail);
         etSignupUsername = findViewById(R.id.etSignUpUsername);
         etSignupPassword = findViewById(R.id.etSignUpPassword);
+        etSignUpConfirmPassword = findViewById(R.id.etSignUpConfirmPassword);
         btnSignup = findViewById(R.id.btnSignUp);
 
         btnSignup.setOnClickListener(new View.OnClickListener() {
@@ -40,7 +43,12 @@ public class SignupActivity extends AppCompatActivity {
                 String email = etSignupEmail.getText().toString();
                 String username = etSignupUsername.getText().toString();
                 String password = etSignupPassword.getText().toString();
-                signupUser(username, password, email);
+                String confirmPassword = etSignUpConfirmPassword.getText().toString();
+                if (password.equals(confirmPassword)) {
+                    signupUser(username, password, email);
+                } else {
+                    Toast.makeText(SignupActivity.this, "Passwords must match", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

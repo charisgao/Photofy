@@ -92,7 +92,7 @@ public class RecommendationsService {
         song.setArtistName(artistName);
         song.setAlbumName(albumName);
         song.setAlbumCover(albumUrl);
-        song.setGenres(Arrays.asList(genre));
+        song.setGenre(genre);
         song.setPreview(previewUrl);
         song.setDuration(duration);
         Log.i(TAG, "adding song " + songName);
