@@ -45,7 +45,6 @@ import com.parse.ParseObject
 import com.parse.ParseQuery
 import com.parse.ParseUser
 
-
 class ProfileFragment : Fragment {
     private lateinit var profileAdapter: ProfileAdapter
     private lateinit var profilePosts: MutableList<Post>

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.example.photofy.R;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Post;
+import com.example.photofy.models.Song;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 
@@ -55,21 +57,26 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView ivSearchImage;
+        private TextView tvSearchSongName;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ivSearchImage = itemView.findViewById(R.id.ivSearchImage);
+            tvSearchSongName = itemView.findViewById(R.id.tvSearchSongName);
         }
 
         public void bind(Post post) {
             try {
                 Photo photo = post.getPhoto().fetch();
+                Song song = post.getSong().fetch();
+
                 ParseFile image = photo.getImage();
                 if (image != null) {
                     Glide.with(context).load(image.getUrl()).into(ivSearchImage);
                 }
+                tvSearchSongName.setText(song.getSongName());
 
-                //TODO: click on image to go into detail view
+                //TODO: click on image to go to view pager
             } catch (ParseException e) {
                 e.printStackTrace();
             }
