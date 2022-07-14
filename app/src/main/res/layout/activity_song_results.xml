@@ -7,31 +7,75 @@
     android:layout_height="match_parent"
     tools:context=".activities.SongResultsActivity">
 
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:foreground="#22000000">
+
+        <ImageView
+            android:id="@+id/ivResultsCapturedImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
+
+    </FrameLayout>
+
     <ImageView
-        android:id="@+id/ivResultsCapturedImage"
-        android:layout_width="125dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:id="@+id/ivResultsSongImage"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvMatch"
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/ivResultsSongImage"
-        android:layout_width="125dp"
-        android:layout_height="125dp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/imageView"
+        android:layout_width="80dp"
+        android:layout_height="100dp"
+        android:layout_marginEnd="20dp"
+        android:rotation="-25"
+        app:layout_constraintBottom_toTopOf="@+id/ivResultsSongImage"
+        app:layout_constraintEnd_toStartOf="@+id/tvMatch"
+        app:srcCompat="@drawable/eighth" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="80dp"
+        android:layout_height="100dp"
+        android:rotation="15"
+        app:layout_constraintBottom_toTopOf="@+id/tfCaptionLayout"
+        app:layout_constraintEnd_toEndOf="@+id/frameLayout"
+        app:layout_constraintStart_toEndOf="@+id/tvResultsSongArtist"
+        app:srcCompat="@drawable/sixteenth" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="25dp"
+        android:layout_height="100dp"
+        android:rotation="-5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnPost"
+        app:layout_constraintHorizontal_bias="0.85"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivResultsCapturedImage"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintTop_toBottomOf="@+id/tfCaptionLayout"
+        app:srcCompat="@drawable/quarter" />
 
     <TextView
         android:id="@+id/tvResultsSongName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivResultsSongImage"
@@ -42,6 +86,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvResultsSongName"
@@ -52,8 +99,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="75dp"
-        android:text="Your match!"
-        android:textSize="20sp"
+        android:text="Your song match!"
+        android:textColor="#000000"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -69,17 +117,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etCaption" />
+        app:layout_constraintTop_toBottomOf="@+id/tfCaptionLayout" />
 
-    <EditText
-        android:id="@+id/etCaption"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tfCaptionLayout"
+        style="?attr/textInputFilledStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:ems="10"
         android:hint="caption"
-        android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvResultsSongArtist" />
+        app:layout_constraintTop_toBottomOf="@+id/tvResultsSongArtist">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etCaption"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

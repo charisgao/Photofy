@@ -9,6 +9,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -97,6 +101,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         private final ImageButton ibComment;
         private final TextView tvNumLikes;
         private final TextView tvNumComments;
+        private final ImageView ivHeart;
 
         private final TextView tvSongName;
         private final SeekBar seekBar;
@@ -118,8 +123,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             ibComment = itemView.findViewById(R.id.ibComment);
             tvNumLikes = itemView.findViewById(R.id.tvNumLikes);
             tvNumComments = itemView.findViewById(R.id.tvNumComments);
+            ivHeart = itemView.findViewById(R.id.ivHeart);
 
             tvSongName = itemView.findViewById(R.id.tvSongName);
+            tvSongName.setSelected(true);
+
             seekBar = itemView.findViewById(R.id.seekBar);
             tvTime = itemView.findViewById(R.id.tvTime);
             ibPlay = itemView.findViewById(R.id.ibPlay);
@@ -137,6 +145,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                                 unlikePost(post);
                                 ibLike.setImageResource(R.drawable.ufi_heart);
                             } else {
+                                ivHeart.setVisibility(View.VISIBLE);
+                                animateHeart(ivHeart);
                                 likePost(post);
                                 ibLike.setImageResource(R.drawable.ufi_heart_active);
                             }
@@ -170,6 +180,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             tvUsername.setText(post.getUser().getUsername());
             tvCaption.setText(post.getCaption());
 
+            ivHeart.setVisibility(View.GONE);
+
             bindLikeButton(post);
 
             tvNumLikes.setText(Integer.toString(post.getNumLikes()));
@@ -182,6 +194,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                         unlikePost(post);
                         ibLike.setImageResource(R.drawable.ufi_heart);
                     } else {
+                        ivHeart.setVisibility(View.VISIBLE);
+                        animateHeart(ivHeart);
                         likePost(post);
                         ibLike.setImageResource(R.drawable.ufi_heart_active);
                     }
@@ -357,6 +371,29 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             ProfileFragment otherProfileFragment = new ProfileFragment(post.getUser());
             FragmentTransaction transaction =((MainActivity) context).getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.flContainer, otherProfileFragment).addToBackStack(null).commit();
+        }
+
+        public void animateHeart(final ImageView view) {
+            ScaleAnimation scaleAnimation = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            prepareAnimation(scaleAnimation);
+
+            AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+            prepareAnimation(alphaAnimation);
+
+            AnimationSet animation = new AnimationSet(true);
+            animation.addAnimation(alphaAnimation);
+            animation.addAnimation(scaleAnimation);
+            animation.setDuration(500);
+            animation.setFillAfter(true);
+
+            view.startAnimation(animation);
+        }
+
+        private Animation prepareAnimation(Animation animation){
+            animation.setRepeatCount(1);
+            animation.setRepeatMode(Animation.REVERSE);
+            return animation;
         }
     }
 }

@@ -12,7 +12,7 @@ public class Song extends ParseObject {
     public static final String KEY_ARTIST = "Artist";
     public static final String KEY_ALBUM = "Album";
     public static final String KEY_ALBUM_COVER = "AlbumCover";
-    public static final String KEY_GENRES = "Genres";
+    public static final String KEY_GENRE = "Genres";
     public static final String KEY_PREVIEW = "Preview";
     public static final String KEY_DURATION = "Duration";
 
@@ -56,12 +56,12 @@ public class Song extends ParseObject {
         put(KEY_ALBUM_COVER, albumUrl);
     }
 
-    public List getGenres() {
-        return getList(KEY_GENRES);
+    public String getGenre() {
+        return getString(KEY_GENRE);
     }
 
-    public void setGenres(List<String> genres) {
-        put(KEY_GENRES, genres);
+    public void setGenre(String genre) {
+        put(KEY_GENRE, genre);
     }
 
     public String getPreview() {

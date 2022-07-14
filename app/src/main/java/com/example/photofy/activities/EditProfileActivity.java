@@ -115,8 +115,8 @@ public class EditProfileActivity extends AppCompatActivity {
                 i.putExtra("Username", newUsername);
                 i.putExtra("Bio", newBio);
                 setResult(RESULT_OK, i);
-                overridePendingTransition(R.anim.stationary, R.anim.slide_down);
                 finish();
+                overridePendingTransition(R.anim.stationary, R.anim.slide_down);
             }
         });
 

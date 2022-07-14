@@ -22,39 +22,51 @@
         android:id="@+id/ivProfilePicture"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tbProfile"
         tools:src="@tools:sample/avatars" />
 
     <TextView
+        android:id="@+id/tvProfileName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="20dp"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivProfilePicture"
+        tools:text="Charis" />
+
+    <TextView
         android:id="@+id/tvProfileBiography"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="2dp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="@+id/tvProfileName"
+        app:layout_constraintStart_toStartOf="@+id/tvProfileName"
         app:layout_constraintTop_toBottomOf="@+id/tvProfileName"
         tools:text="biography goes here" />
 
     <Button
         android:id="@+id/btnEditProfile"
         style="?attr/materialButtonOutlinedStyle"
-        android:layout_width="0dp"
+        android:layout_width="175dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
         android:background="@android:color/transparent"
         android:minWidth="0dp"
         android:minHeight="0dp"
         android:text="@string/edit_profile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvProfileBiography" />
+        app:layout_constraintTop_toBottomOf="@+id/clStats" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvProfilePosts"
@@ -67,22 +79,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnEditProfile" />
 
+    <Button
+        android:id="@+id/btnFollow"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:text="@string/follow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/clStats" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clStats"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvProfileBiography"
-        app:layout_constraintStart_toEndOf="@+id/ivProfilePicture"
-        app:layout_constraintTop_toBottomOf="@+id/tbProfile"
-        app:layout_constraintVertical_bias="0.4">
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvProfileBiography">
 
         <TextView
-            android:id="@+id/tvNumPosts"
+            android:id="@+id/tvNumberPosts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:layout_marginStart="11dp"
+            android:textSize="15sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="80" />
@@ -91,23 +117,79 @@
             android:id="@+id/tvPosts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:text="Posts"
+            android:layout_marginTop="1dp"
+            android:text="@string/posts"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvNumPosts" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintEnd_toEndOf="@+id/tvNumberPosts"
+            app:layout_constraintStart_toStartOf="@+id/tvNumberPosts"
+            app:layout_constraintTop_toBottomOf="@+id/tvNumberPosts" />
 
-    <TextView
-        android:id="@+id/tvProfileName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivProfilePicture"
-        tools:text="Charis" />
+        <TextView
+            android:id="@+id/tvNumberLikes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/tvNumberPosts"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="80" />
+
+        <TextView
+            android:id="@+id/tvLikes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:text="@string/likes"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/tvNumberLikes"
+            app:layout_constraintStart_toStartOf="@+id/tvNumberLikes"
+            app:layout_constraintTop_toBottomOf="@+id/tvNumberLikes" />
+
+        <TextView
+            android:id="@+id/tvNumberFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="65dp"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/tvNumberLikes"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="80" />
+
+        <TextView
+            android:id="@+id/tvFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:text="@string/followers"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/tvNumberFollowers"
+            app:layout_constraintStart_toStartOf="@+id/tvNumberFollowers"
+            app:layout_constraintTop_toBottomOf="@+id/tvNumberFollowers" />
+
+        <TextView
+            android:id="@+id/tvNumberFollowing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="78dp"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/tvNumberFollowers"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="80" />
+
+        <TextView
+            android:id="@+id/tvFollowing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:text="@string/following"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/tvNumberFollowing"
+            app:layout_constraintStart_toStartOf="@+id/tvNumberFollowing"
+            app:layout_constraintTop_toBottomOf="@+id/tvNumberFollowing" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
