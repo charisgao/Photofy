@@ -11,7 +11,7 @@
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:foreground="#22000000">
+        android:foreground="#80FFFFFF">
 
         <ImageView
             android:id="@+id/ivResultsCapturedImage"

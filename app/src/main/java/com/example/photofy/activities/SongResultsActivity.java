@@ -84,6 +84,11 @@ public class SongResultsActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+    }
 
     @Override
     public void onStart() {

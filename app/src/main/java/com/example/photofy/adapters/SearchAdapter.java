@@ -1,13 +1,16 @@
 package com.example.photofy.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -49,20 +52,19 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         return posts.size();
     }
 
-    public void clear() {
-        posts.clear();
-        notifyDataSetChanged();
-    }
-
     class ViewHolder extends RecyclerView.ViewHolder {
 
+        private LinearLayout linearSong;
         private ImageView ivSearchImage;
         private TextView tvSearchSongName;
+        private TextView tvSearchSongArtist;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            linearSong = itemView.findViewById(R.id.linearSong);
             ivSearchImage = itemView.findViewById(R.id.ivSearchImage);
             tvSearchSongName = itemView.findViewById(R.id.tvSearchSongName);
+            tvSearchSongArtist = itemView.findViewById(R.id.tvSearchSongArtist);
         }
 
         public void bind(Post post) {
@@ -75,6 +77,9 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                     Glide.with(context).load(image.getUrl()).into(ivSearchImage);
                 }
                 tvSearchSongName.setText(song.getSongName());
+                tvSearchSongArtist.setText(song.getArtistName());
+
+                linearSong.setBackgroundColor(Color.parseColor("#D4" + photo.getColor().substring(1)));
 
                 //TODO: click on image to go to view pager
             } catch (ParseException e) {
