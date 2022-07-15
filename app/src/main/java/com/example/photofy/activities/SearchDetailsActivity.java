@@ -1,9 +1,14 @@
 package com.example.photofy.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,7 +24,11 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import java.io.IOException;
+
 public class SearchDetailsActivity extends AppCompatActivity {
+
+    public static final String TAG = "SearchDetailsActivity";
 
     private ImageView ivImageSearchDetails;
     private ImageView ivProfileSearchDetails;
@@ -28,9 +37,10 @@ public class SearchDetailsActivity extends AppCompatActivity {
     private TextView tvSongNameSearchDetails;
     private TextView tvSongArtistSearchDetails;
     private TextView tvSongAlbumSearchDetails;
-    private Post post;
+    private ConstraintLayout clSongDetails;
 
-    // TODO: use preview
+    private Post post;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +54,7 @@ public class SearchDetailsActivity extends AppCompatActivity {
         tvSongNameSearchDetails = findViewById(R.id.tvSongNameSearchDetails);
         tvSongArtistSearchDetails = findViewById(R.id.tvSongArtistSearchDetails);
         tvSongAlbumSearchDetails = findViewById(R.id.tvSongAlbumSearchDetails);
+        clSongDetails = findViewById(R.id.clSongDetails);
 
         // Extract post from bundle
         post = getIntent().getParcelableExtra("post");
@@ -69,17 +80,35 @@ public class SearchDetailsActivity extends AppCompatActivity {
             }
         });
 
-//        ivProfileSearchDetails.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                goOtherProfile(post.getUser());
-//            }
-//        });
+        clSongDetails.setBackgroundColor(Color.parseColor("#D4" + photo.getColor().substring(1)));
+
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioAttributes(new AudioAttributes
+                .Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .build());
+        try {
+            mediaPlayer.setDataSource(song.getPreview());
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            Log.e(TAG, "error playing song preview " + e);
+        }
+
+        ivProfileSearchDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                followUser(post.getUser());
+                //unfollowUser(post.getUser());
+            }
+        });
     }
 
-//    private void goOtherProfile(ParseUser user) {
-//        ProfileFragment otherProfileFragment = new ProfileFragment(user);
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        transaction.replace(R.id.flContainer, otherProfileFragment).addToBackStack(null).commit();
-//    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mediaPlayer.release();
+        mediaPlayer = null;
+    }
 }

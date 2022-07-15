@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     tools:context=".activities.SearchDetailsActivity">
 
     <ImageView
@@ -24,8 +25,6 @@
         android:id="@+id/clSongDetails"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
         app:layout_constraintBottom_toBottomOf="@+id/ivImageSearchDetails"
         app:layout_constraintEnd_toEndOf="@+id/ivImageSearchDetails"
         app:layout_constraintStart_toStartOf="@+id/ivImageSearchDetails">
@@ -36,6 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
             android:gravity="center_horizontal"
             android:orientation="vertical"
@@ -56,11 +56,11 @@
                 android:maxLines="1"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                tools:text="Song Title"
-                android:transitionName="songName"/>
+                android:transitionName="songName"
+                tools:text="Song Title" />
 
             <TextView
                 android:id="@+id/tvSongArtistSearchDetails"
@@ -68,16 +68,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:textAlignment="center"
-                android:textColor="#000000"
-                tools:text="Song Artist"
-                android:transitionName="artistName"/>
+                android:textColor="#FFFFFF"
+                android:transitionName="artistName"
+                tools:text="Song Artist" />
 
             <TextView
                 android:id="@+id/tvSongAlbumSearchDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 tools:text="Song Album" />
 
@@ -87,6 +87,8 @@
             android:id="@+id/ivSongPictureSearchDetails"
             android:layout_width="64dp"
             android:layout_height="64dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toBottomOf="@+id/linearLayoutSongSearchDetails"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/linearLayoutSongSearchDetails"
@@ -94,35 +96,30 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/ivProfileSearchDetails"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        app:layout_constraintStart_toStartOf="@+id/ivImageSearchDetails"
+        app:layout_constraintTop_toTopOf="@+id/ivImageSearchDetails"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvUsernameSearchDetails"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:orientation="horizontal"
-        android:background="@drawable/post_bg"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/ivProfileSearchDetails"
         app:layout_constraintEnd_toEndOf="@+id/ivImageSearchDetails"
-        app:layout_constraintStart_toStartOf="@+id/ivImageSearchDetails"
-        app:layout_constraintTop_toTopOf="@+id/ivImageSearchDetails">
-
-        <ImageView
-            android:id="@+id/ivProfileSearchDetails"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:clickable="true"
-            tools:srcCompat="@tools:sample/avatars" />
-
-        <TextView
-            android:id="@+id/tvUsernameSearchDetails"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="1"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            tools:text="charisgao" />
-    </LinearLayout>
+        app:layout_constraintStart_toEndOf="@+id/ivProfileSearchDetails"
+        app:layout_constraintTop_toTopOf="@+id/ivProfileSearchDetails"
+        tools:text="charisgao" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
