@@ -29,7 +29,7 @@ public class ColorToGenre {
 
     // color to mood mapping source: https://www.pnas.org/doi/10.1073/pnas.1910704117#sec-1, https://www.ocf.berkeley.edu/~acowen/music.html#
     // if I have time later on, can expand to more colors through https://design-milk.com/color-coded-diaries-emotions-300-days/
-    private final static Map<Color, String> COLOR_TO_MOOD = new HashMap<Color, String>() {{
+    public final static Map<Color, String> COLOR_TO_MOOD = new HashMap<Color, String>() {{
         put(BLUE, "amusing");
         put(RED, "annoyed");
         put(YELLOW, "anxious");
@@ -47,7 +47,7 @@ public class ColorToGenre {
     }};
 
     // separate hash map to map to genre, possible stretch goal is to use other features besides color to determine genre
-    private final static Map<String, String> MOOD_TO_GENRE = new HashMap<String, String>() {{
+    public final static Map<String, String> MOOD_TO_GENRE = new HashMap<String, String>() {{
         put("amusing", "hip hop"); //
         put("annoyed", "hyperpop"); //
         put("anxious", "industrial");
