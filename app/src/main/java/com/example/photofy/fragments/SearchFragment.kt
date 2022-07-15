@@ -100,6 +100,7 @@ class SearchFragment : Fragment() {
             if (checkedIds.isEmpty()) {
                 filtered = false
                 callAdapter(allPosts)
+                tvNoPosts.visibility = View.GONE
             }
             // if user clicked some chips then call filtered query
             else {

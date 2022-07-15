@@ -262,15 +262,13 @@ class HomeFragment() : Fragment() {
     }
 
     private fun queryPosts() {
-        // Specify what type of data we want to query – Post.class
         val query = ParseQuery.getQuery(Post::class.java)
-        // Include data referred by user key
         query.include(Post.KEY_USER)
-        // Limit query to 20 items
         query.limit = 20
-        // Order posts by creation date (newest first)
+        val validUsers: MutableList<String> = ParseUser.getCurrentUser().getList<String>("Following")!!
+        validUsers.add(ParseUser.getCurrentUser().objectId)
+        query.whereContainedIn(Post.KEY_USER, validUsers)
         query.addDescendingOrder(Post.KEY_CREATED)
-        // Start an asynchronous call for posts
         query.findInBackground(object : FindCallback<Post> {
             override fun done(posts: List<Post>, e: ParseException?) {
                 // Check for errors
