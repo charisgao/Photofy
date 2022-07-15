@@ -34,7 +34,6 @@ import com.example.photofy.activities.SettingsActivity
 import com.example.photofy.adapters.PostsAdapter
 import com.example.photofy.adapters.ProfileAdapter
 import com.example.photofy.models.Follow
-import com.example.photofy.models.Like
 import com.example.photofy.models.Post
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -63,7 +62,6 @@ class ProfileFragment : Fragment {
     private lateinit var rvProfilePosts: RecyclerView
 
     private var user = ParseUser.getCurrentUser()
-    private var follows: Follow? = getIfFollows()
 
     private lateinit var editProfileLauncher: ActivityResultLauncher<Intent>
     private lateinit var settingsLauncher: ActivityResultLauncher<Intent>
@@ -141,18 +139,18 @@ class ProfileFragment : Fragment {
         setFollowerCount()
         setFollowingCount()
 
-        if (user == ParseUser.getCurrentUser()) {
+        if (user.objectId == ParseUser.getCurrentUser().objectId) {
             btnEditProfile.visibility = View.VISIBLE
             btnFollow.visibility = View.GONE
             btnFollowing.visibility = View.GONE
         } else {
             btnEditProfile.visibility = View.GONE
-            if (follows == null) {
-                btnFollow.visibility = View.VISIBLE
-                btnFollowing.visibility = View.GONE
-            } else {
+            if (ParseUser.getCurrentUser().getList<String>("Following")!!.contains(user.objectId)) {
                 btnFollow.visibility = View.GONE
                 btnFollowing.visibility = View.VISIBLE
+            } else {
+                btnFollow.visibility = View.VISIBLE
+                btnFollowing.visibility = View.GONE
             }
         }
 
@@ -289,9 +287,7 @@ class ProfileFragment : Fragment {
     }
 
     private fun setFollowingCount() {
-        val query = ParseQuery.getQuery(Follow::class.java)
-        query.whereEqualTo(Follow.KEY_FROM, user)
-        query.countInBackground { count, _ -> tvNumberFollowing.text = count.toString() }
+        tvNumberFollowing.text = user.getList<String>("Following")!!.size.toString()
     }
 
     private fun followUser() {
@@ -299,27 +295,32 @@ class ProfileFragment : Fragment {
         follow.from = ParseUser.getCurrentUser()
         follow.to = user
         follow.saveInBackground()
+
+        val following = ParseUser.getCurrentUser().getList<String>("Following")!!
+        following.add(user.objectId)
+        ParseUser.getCurrentUser().put("Following", following)
+        ParseUser.getCurrentUser().saveInBackground()
+
         btnFollow.visibility = View.GONE
         btnFollowing.visibility = View.VISIBLE
     }
 
     private fun unfollowUser() {
-        follows?.deleteInBackground()
-        follows = getIfFollows()
-        btnFollow.visibility = View.VISIBLE
-        btnFollowing.visibility = View.GONE
-    }
-
-    private fun getIfFollows() : Follow? {
         val query = ParseQuery.getQuery(Follow::class.java)
         query.whereEqualTo(Follow.KEY_FROM, ParseUser.getCurrentUser())
         query.whereEqualTo(Follow.KEY_TO, user)
         val followList: MutableList<Follow> = query.find()
-        return if (followList.isNotEmpty()) {
-            followList[0]
-        } else {
-            null
-        }
+        val userToUnfollow = followList[0].to
+
+        val following = ParseUser.getCurrentUser().getList<String>("Following")!!
+        following.remove(userToUnfollow.objectId)
+        ParseUser.getCurrentUser().put("Following", following)
+        ParseUser.getCurrentUser().saveInBackground()
+
+        followList[0].deleteInBackground()
+
+        btnFollow.visibility = View.VISIBLE
+        btnFollowing.visibility = View.GONE
     }
 
     private fun logout() {

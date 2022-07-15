@@ -21,13 +21,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.photofy.R;
 import com.example.photofy.activities.MainActivity;
-import com.example.photofy.fragments.CommentsFragment;
 import com.example.photofy.fragments.ProfileFragment;
 import com.example.photofy.models.Like;
 import com.example.photofy.models.Photo;
@@ -217,14 +215,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             ivProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    goOtherProfile(post);
+                    goOtherProfile(post.getUser());
                 }
             });
 
             tvUsername.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    goOtherProfile(post);
+                    goOtherProfile(post.getUser());
                 }
             });
 
@@ -367,8 +365,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             seekBar.setProgress(0);
         }
 
-        private void goOtherProfile(Post post) {
-            ProfileFragment otherProfileFragment = new ProfileFragment(post.getUser());
+        private void goOtherProfile(ParseUser user) {
+            ProfileFragment otherProfileFragment = new ProfileFragment(user);
             FragmentTransaction transaction =((MainActivity) context).getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.flContainer, otherProfileFragment).addToBackStack(null).commit();
         }
