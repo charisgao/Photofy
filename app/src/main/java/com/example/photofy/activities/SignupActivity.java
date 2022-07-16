@@ -93,6 +93,7 @@ public class SignupActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(SignupActivity.this, LoginActivity.class);
                 startActivity(i);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 finish();
             }
         });
@@ -104,6 +105,12 @@ public class SignupActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     // Signs up user to Parse

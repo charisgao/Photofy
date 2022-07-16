@@ -2,7 +2,6 @@ package com.example.photofy.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.graphics.Color;
 import android.media.AudioAttributes;
@@ -15,14 +14,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.photofy.R;
-import com.example.photofy.fragments.ProfileFragment;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Post;
 import com.example.photofy.models.Song;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 
 import java.io.IOException;
 
@@ -99,7 +96,7 @@ public class SearchDetailsActivity extends AppCompatActivity {
         ivProfileSearchDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                followUser(post.getUser());
+                //followUser(post.getUser());
                 //unfollowUser(post.getUser());
             }
         });
@@ -109,6 +106,5 @@ public class SearchDetailsActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         mediaPlayer.release();
-        mediaPlayer = null;
     }
 }

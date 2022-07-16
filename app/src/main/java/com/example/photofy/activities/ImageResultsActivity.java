@@ -35,7 +35,7 @@ public class ImageResultsActivity extends AppCompatActivity {
     public static final String TAG = "ImageResultsActivity";
 
     private ImageView ivCapturedImage;
-    private Button btnGetColors;
+    private Button btnGetSongs;
 
     private ColorToGenre genreFinder = new ColorToGenre();
 
@@ -48,7 +48,7 @@ public class ImageResultsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_results);
 
         ivCapturedImage = findViewById(R.id.ivCapturedImage);
-        btnGetColors = findViewById(R.id.btnGetColors);
+        btnGetSongs = findViewById(R.id.btnGetSongs);
 
         photo = getIntent().getParcelableExtra("photo");
         path = getIntent().getStringExtra("filePath");
@@ -66,7 +66,7 @@ public class ImageResultsActivity extends AppCompatActivity {
             ivCapturedImage.setImageBitmap(bitmap);
         }
 
-        btnGetColors.setOnClickListener(new View.OnClickListener() {
+        btnGetSongs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToLoadingFragment();
