@@ -105,7 +105,7 @@ class SearchFragment : Fragment() {
             // if user clicked some chips then call filtered query
             else {
                 filtered = true
-                var checkedGenres:MutableList<String> = ArrayList()
+                val checkedGenres:MutableList<String> = ArrayList()
                 for (checkedId in checkedIds) {
                     val chip:Chip? = group.findViewById(checkedId)
                     checkedGenres.add(chip?.text.toString().lowercase())
@@ -130,7 +130,7 @@ class SearchFragment : Fragment() {
                 }
 
                 allPosts.addAll(posts)
-                adapter.notifyDataSetChanged()
+                adapter.notifyItemRangeInserted(0, posts.size)
             }
         })
     }
@@ -147,7 +147,7 @@ class SearchFragment : Fragment() {
 
     // search for posts
     private fun search(phrase: String): MutableList<Post> {
-        var searchResults: MutableList<Post> = ArrayList()
+        val searchResults: MutableList<Post> = ArrayList()
         if (filtered) {
             for (post in filteredPosts) {
                 if (post.caption.lowercase().contains(phrase.lowercase())) {
@@ -167,7 +167,7 @@ class SearchFragment : Fragment() {
     // filter posts by genres in chips
     private fun filteredQuery(genres: MutableList<String>) {
         filteredPosts.clear()
-        var songQueries: MutableList<ParseQuery<Song>> = ArrayList()
+        val songQueries: MutableList<ParseQuery<Song>> = ArrayList()
 
         for (genre in genres) {
             // all songs part of genre

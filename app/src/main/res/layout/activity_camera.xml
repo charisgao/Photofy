@@ -19,7 +19,7 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabImageCapture"
-        android:backgroundTint="@color/ice"
+        android:backgroundTint="@color/baby_blue"
         app:tint="@color/dark_blue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

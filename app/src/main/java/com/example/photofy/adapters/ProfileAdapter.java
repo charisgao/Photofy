@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,11 +54,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView ivTakenImage;
         private ImageView ivGeneratedSong;
+        private TextView tvGeneratedSongName;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ivTakenImage = itemView.findViewById(R.id.ivTakenImage);
             ivGeneratedSong = itemView.findViewById(R.id.ivGeneratedSong);
+            tvGeneratedSongName = itemView.findViewById(R.id.tvGeneratedSongName);
         }
 
         public void bind(Post post) {
@@ -74,6 +77,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 @Override
                 public void done(ParseObject object, ParseException e) {
                     Glide.with(context).load(song.getAlbumCover()).centerCrop().into(ivGeneratedSong);
+                    tvGeneratedSongName.setText(song.getSongName());
                 }
             });
         }

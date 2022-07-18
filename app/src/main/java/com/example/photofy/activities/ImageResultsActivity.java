@@ -124,5 +124,6 @@ public class ImageResultsActivity extends AppCompatActivity {
         i.putExtra("photo", photo);
         i.putParcelableArrayListExtra("songs", songs);
         startActivity(i);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 }

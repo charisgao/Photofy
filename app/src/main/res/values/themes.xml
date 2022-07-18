@@ -26,7 +26,7 @@
     </style>
 
     <style name="ThemeOverlay.App.Card" parent="">
-        <item name="colorSurface">@color/light_blue</item>
+        <item name="colorSurface">@color/dark_blue</item>
     </style>
 
     <style name="ShapeAppearance.App.MediumComponent" parent="ShapeAppearance.Material3.MediumComponent">

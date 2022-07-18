@@ -34,4 +34,6 @@
     <string name="welcome_back">Welcome back!</string>
     <string name="have_an_account">Have an Account?</string>
     <string name="create_subtitle">Create account and choose your preferred music genres</string>
+    <string name="generate_me_songs">Generate me songs!</string>
+    <string name="search">Search</string>
 </resources>

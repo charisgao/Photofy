@@ -22,6 +22,7 @@
             android:layout_marginTop="15dp"
             android:clickable="true"
             android:text="@string/cancel"
+            android:textColor="@color/dark_gray"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,6 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
+            android:fontFamily="@font/open_sans_bold"
             android:text="@string/edit_profile"
             android:textColor="#000000"
             android:textSize="18sp"
@@ -46,6 +48,7 @@
             android:layout_marginEnd="12dp"
             android:clickable="true"
             android:text="Done"
+            android:textColor="@color/dark_gray"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -67,6 +70,7 @@
         android:layout_marginTop="5dp"
         android:clickable="true"
         android:text="Change profile photo"
+        android:textColor="@color/dark_gray"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

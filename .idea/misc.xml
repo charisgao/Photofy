@@ -25,7 +25,7 @@
         <entry key="app/src/main/res/font/open_sans.xml" value="0.39947916666666666" />
         <entry key="app/src/main/res/layout/activity_camera.xml" value="0.3029891304347826" />
         <entry key="app/src/main/res/layout/activity_connect_spotify.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_edit_profile.xml" value="0.3428442028985507" />
+        <entry key="app/src/main/res/layout/activity_edit_profile.xml" value="0.23599726775956284" />
         <entry key="app/src/main/res/layout/activity_image_results.xml" value="0.3029891304347826" />
         <entry key="app/src/main/res/layout/activity_launcher.xml" value="0.2734375" />
         <entry key="app/src/main/res/layout/activity_loading.xml" value="0.3029891304347826" />
@@ -65,6 +65,7 @@
         <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.36944444444444446" />
         <entry key="app/src/main/res/menu/menu_compose.xml" value="0.32760416666666664" />
         <entry key="app/src/main/res/menu/menu_editprofile_toolbar.xml" value="0.40260416666666665" />
+        <entry key="app/src/main/res/menu/menu_home_toolbar.xml" value="0.40260416666666665" />
         <entry key="app/src/main/res/menu/menu_profile_toolbar.xml" value="0.29583333333333334" />
       </map>
     </option>

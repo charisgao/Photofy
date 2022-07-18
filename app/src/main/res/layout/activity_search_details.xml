@@ -53,6 +53,7 @@
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
+                android:fontFamily="@font/open_sans_bold"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:maxLines="1"
                 android:scrollHorizontally="true"
@@ -70,6 +71,7 @@
                 android:layout_marginTop="3dp"
                 android:textAlignment="center"
                 android:textColor="#FFFFFF"
+                android:textStyle="italic"
                 android:transitionName="artistName"
                 tools:text="Song Artist" />
 
@@ -100,8 +102,8 @@
 
     <ImageView
         android:id="@+id/ivProfileSearchDetails"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_marginStart="7dp"
         android:layout_marginTop="7dp"
         android:clickable="true"
@@ -122,6 +124,7 @@
         app:layout_constraintEnd_toEndOf="@+id/ivImageSearchDetails"
         app:layout_constraintStart_toEndOf="@+id/ivProfileSearchDetails"
         app:layout_constraintTop_toTopOf="@+id/ivProfileSearchDetails"
+        app:layout_constraintVertical_bias="0.3"
         tools:text="charisgao" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
