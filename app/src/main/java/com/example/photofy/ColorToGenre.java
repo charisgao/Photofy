@@ -38,7 +38,7 @@ public class ColorToGenre {
         put(GREEN, "dreamy");
         put(MAGENTA, "energizing");
         put(PURPLE, "desirous");
-        put(LIGHTPINK, "indignant");
+        put(LIGHTPINK, "loving");
         put(CYAN, "joyful");
         put(AQUA, "sad");
         put(YELLOWGREEN, "scary");
@@ -46,20 +46,19 @@ public class ColorToGenre {
         put(BLACK, "fear");
     }};
 
-    // separate hash map to map to genre, possible stretch goal is to use other features besides color to determine genre
     public final static Map<String, String> MOOD_TO_GENRE = new HashMap<String, String>() {{
-        put("amusing", "hip hop"); //
-        put("annoyed", "hyperpop"); //
+        put("amusing", "hip-hop");
+        put("annoyed", "synth-pop");
         put("anxious", "industrial");
         put("beautiful", "classical");
         put("calm", "ambient");
         put("dreamy", "soul");
-        put("energizing", "dance pop"); //
-        put("desirous", "indie pop"); //
-        put("indignant", "rock");
-        put("joyful", "jazz");
-        put("sad", "sad lo-fi"); //
-        put("scary", "horror punk"); //
+        put("energizing", "party");
+        put("desirous", "indie-pop");
+        put("loving", "romance");
+        put("joyful", "r-n-b");
+        put("sad", "sad");
+        put("scary", "grindcore");
         put("triumphant", "alternative");
         put("fear", "metal");
     }};
