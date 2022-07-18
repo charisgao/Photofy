@@ -41,6 +41,7 @@ public class SearchDetailsActivity extends AppCompatActivity {
     private TextView tvSongNameSearchDetails;
     private TextView tvSongArtistSearchDetails;
     private TextView tvSongAlbumSearchDetails;
+    private ImageView ivAdd;
     private ConstraintLayout clSongDetails;
 
     private Post post;
@@ -58,6 +59,7 @@ public class SearchDetailsActivity extends AppCompatActivity {
         tvSongNameSearchDetails = findViewById(R.id.tvSongNameSearchDetails);
         tvSongArtistSearchDetails = findViewById(R.id.tvSongArtistSearchDetails);
         tvSongAlbumSearchDetails = findViewById(R.id.tvSongAlbumSearchDetails);
+        ivAdd = findViewById(R.id.ivAdd);
         clSongDetails = findViewById(R.id.clSongDetails);
 
         // Extract post from bundle
@@ -100,19 +102,49 @@ public class SearchDetailsActivity extends AppCompatActivity {
             Log.e(TAG, "error playing song preview " + e);
         }
 
+        List<String> following = ParseUser.getCurrentUser().getList("Following");
+        if (following.contains(post.getUser().getObjectId())) {
+            ivAdd.setVisibility(View.VISIBLE);
+            ivAdd.setImageResource(R.drawable.ic_check);
+        } else if (!post.getUser().getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
+            ivAdd.setVisibility(View.VISIBLE);
+            ivAdd.setImageResource(R.drawable.ic_add);
+        } else {
+            ivAdd.setVisibility(View.GONE);
+        }
+
         ivProfileSearchDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<String> following = ParseUser.getCurrentUser().getList("Following");
-                if (following.contains(post.getUser().getObjectId())) {
-                    unfollowUser(post.getUser());
-                    Toast.makeText(SearchDetailsActivity.this, "unfollowed " + post.getUser().getUsername(), Toast.LENGTH_SHORT).show();
-                } else if (post.getUser().getObjectId() != ParseUser.getCurrentUser().getObjectId()){
-                    followUser(post.getUser());
-                    Toast.makeText(SearchDetailsActivity.this, "followed " + post.getUser().getUsername(), Toast.LENGTH_SHORT).show();
-                }
+                followController(following);
             }
         });
+
+        ivAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                followController(following);
+            }
+        });
+
+        tvUsernameSearchDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                followController(following);
+            }
+        });
+    }
+
+    private void followController(List<String> following) {
+        if (following.contains(post.getUser().getObjectId())) {
+            unfollowUser(post.getUser());
+            ivAdd.setImageResource(R.drawable.ic_add);
+            Toast.makeText(SearchDetailsActivity.this, "unfollowed " + post.getUser().getUsername(), Toast.LENGTH_SHORT).show();
+        } else if (!post.getUser().getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
+            followUser(post.getUser());
+            ivAdd.setImageResource(R.drawable.ic_check);
+            Toast.makeText(SearchDetailsActivity.this, "followed " + post.getUser().getUsername(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

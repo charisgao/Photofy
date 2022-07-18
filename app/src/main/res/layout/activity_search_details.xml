@@ -96,7 +96,8 @@
             app:layout_constraintBottom_toBottomOf="@+id/linearLayoutSongSearchDetails"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/linearLayoutSongSearchDetails"
-            tools:srcCompat="@tools:sample/avatars" />
+            tools:srcCompat="@tools:sample/avatars"
+            android:transitionName="song"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -117,6 +118,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_weight="1"
+        android:clickable="true"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -126,5 +128,15 @@
         app:layout_constraintTop_toTopOf="@+id/ivProfileSearchDetails"
         app:layout_constraintVertical_bias="0.3"
         tools:text="charisgao" />
+
+    <ImageView
+        android:id="@+id/ivAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-10dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/ivProfileSearchDetails"
+        app:layout_constraintEnd_toStartOf="@+id/tvUsernameSearchDetails"
+        app:srcCompat="@drawable/ic_add" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
