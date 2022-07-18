@@ -11,17 +11,24 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.photofy.R;
+import com.example.photofy.models.Follow;
+import com.example.photofy.models.Like;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Post;
 import com.example.photofy.models.Song;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.io.IOException;
+import java.util.List;
 
 public class SearchDetailsActivity extends AppCompatActivity {
 
@@ -96,8 +103,14 @@ public class SearchDetailsActivity extends AppCompatActivity {
         ivProfileSearchDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //followUser(post.getUser());
-                //unfollowUser(post.getUser());
+                List<String> following = ParseUser.getCurrentUser().getList("Following");
+                if (following.contains(post.getUser().getObjectId())) {
+                    unfollowUser(post.getUser());
+                    Toast.makeText(SearchDetailsActivity.this, "unfollowed " + post.getUser().getUsername(), Toast.LENGTH_SHORT).show();
+                } else if (post.getUser().getObjectId() != ParseUser.getCurrentUser().getObjectId()){
+                    followUser(post.getUser());
+                    Toast.makeText(SearchDetailsActivity.this, "followed " + post.getUser().getUsername(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -106,5 +119,38 @@ public class SearchDetailsActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         mediaPlayer.release();
+    }
+
+    private void followUser(ParseUser user) {
+        Follow follow = new Follow();
+        follow.setFrom(ParseUser.getCurrentUser());
+        follow.setTo(user);
+        follow.saveInBackground();
+
+        List<String> following = ParseUser.getCurrentUser().getList("Following");
+        following.add(user.getObjectId());
+        ParseUser.getCurrentUser().put("Following", following);
+        ParseUser.getCurrentUser().saveInBackground();
+    }
+
+    private void unfollowUser(ParseUser user) {
+        ParseQuery<Follow> query = ParseQuery.getQuery(Follow.class);
+        query.whereEqualTo(Follow.KEY_FROM, ParseUser.getCurrentUser());
+        query.whereEqualTo(Follow.KEY_TO, user);
+
+        try {
+            List<Follow> followList = query.find();
+            Follow item = followList.get(0);
+            ParseUser userToUnfollow = item.getTo();
+
+            List<String> following = ParseUser.getCurrentUser().getList("Following");
+            following.remove(userToUnfollow.getObjectId());
+            ParseUser.getCurrentUser().put("Following", following);
+            ParseUser.getCurrentUser().saveInBackground();
+
+            item.deleteInBackground();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }
