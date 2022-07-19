@@ -48,6 +48,7 @@ public class PhotofyApplication extends Application {
         }
 
         Parse.initialize(new Parse.Configuration.Builder(this)
+                .enableLocalDataStore()
                 .applicationId(APP_ID)
                 .clientKey(clientKey)
                 .server(SERVER)

@@ -107,6 +107,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         private final ImageView ivHeart;
 
         private final TextView tvSongName;
+        private final TextView tvArtistName;
         private final SeekBar seekBar;
         private final TextView tvTime;
         private final ImageButton ibPlay;
@@ -130,6 +131,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
             tvSongName = itemView.findViewById(R.id.tvSongName);
             tvSongName.setSelected(true);
+            tvArtistName = itemView.findViewById(R.id.tvArtistName);
 
             seekBar = itemView.findViewById(R.id.seekBar);
             tvTime = itemView.findViewById(R.id.tvTime);
@@ -236,6 +238,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                 @Override
                 public void done(ParseObject object, ParseException e) {
                     tvSongName.setText(song.getSongName());
+                    tvArtistName.setText(song.getArtistName());
                     setupSeekBar(song.getDuration());
                 }
             });
