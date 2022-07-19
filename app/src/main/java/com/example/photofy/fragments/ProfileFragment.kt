@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.TextUtils
 import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
@@ -57,6 +58,7 @@ class ProfileFragment : Fragment {
     private lateinit var ivProfilePicture: ImageView
     private lateinit var tvProfileName: TextView
     private lateinit var tvProfileBiography: TextView
+    private lateinit var tvProfileFavGenres: TextView
     private lateinit var tvNumberPosts: TextView
     private lateinit var tvNumberLikes: TextView
     private lateinit var tvNumberFollowers: TextView
@@ -101,6 +103,7 @@ class ProfileFragment : Fragment {
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture)
         tvProfileName = view.findViewById(R.id.tvProfileName)
         tvProfileBiography = view.findViewById(R.id.tvProfileBiography)
+        tvProfileFavGenres = view.findViewById(R.id.tvProfileFavGenres);
         tvNumberPosts = view.findViewById(R.id.tvNumberPosts)
         tvNumberLikes = view.findViewById(R.id.tvNumberLikes)
         tvNumberFollowers = view.findViewById(R.id.tvNumberFollowers)
@@ -140,6 +143,8 @@ class ProfileFragment : Fragment {
 
         tvProfileName.text = user.getString("Name")
         tvProfileBiography.text = user.getString("Biography")
+        val favGenres: MutableList<String> = user.getList("FavGenres")!!
+        tvProfileFavGenres.text = TextUtils.join(", ", favGenres)
 
         setPostCount()
         setLikeCount()

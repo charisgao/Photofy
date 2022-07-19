@@ -23,8 +23,8 @@
         android:id="@+id/ivProfilePicture"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_marginTop="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tbProfile"
         tools:src="@tools:sample/avatars" />
@@ -33,17 +33,15 @@
         android:id="@+id/tvProfileName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
         android:layout_marginEnd="20dp"
         android:fontFamily="@font/open_sans_bold"
-        android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivProfilePicture"
+        app:layout_constraintStart_toEndOf="@+id/ivProfilePicture"
+        app:layout_constraintTop_toTopOf="@+id/ivProfilePicture"
         tools:text="Charis" />
 
     <TextView
@@ -51,11 +49,24 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:textAlignment="center"
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="@+id/tvProfileName"
         app:layout_constraintStart_toStartOf="@+id/tvProfileName"
         app:layout_constraintTop_toBottomOf="@+id/tvProfileName"
+        tools:text="biography goes here" />
+
+    <TextView
+        android:id="@+id/tvProfileFavGenres"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="5dp"
+        android:fontFamily="@font/open_sans_italic"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="@+id/tvProfileName"
+        app:layout_constraintStart_toEndOf="@+id/tvFavoriteGenresText"
+        app:layout_constraintTop_toBottomOf="@+id/tvProfileBiography"
         tools:text="biography goes here" />
 
     <Button
@@ -118,7 +129,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvProfileBiography">
+        app:layout_constraintTop_toBottomOf="@+id/ivProfilePicture">
 
         <TextView
             android:id="@+id/tvNumberPosts"
@@ -213,5 +224,16 @@
             app:layout_constraintTop_toBottomOf="@+id/tvNumberFollowing" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tvFavoriteGenresText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/open_sans_italic"
+        android:text="Favorite Genres: "
+        android:textColor="#000000"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/tvProfileName"
+        app:layout_constraintTop_toTopOf="@+id/tvProfileFavGenres" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
