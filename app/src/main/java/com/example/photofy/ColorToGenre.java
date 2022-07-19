@@ -35,15 +35,15 @@ public class ColorToGenre {
         put(YELLOW, "anxious");
         put(PEACH, "beautiful");
         put(PINK, "calm");
+        put(PURPLE, "desirous");
         put(GREEN, "dreamy");
         put(MAGENTA, "energizing");
-        put(PURPLE, "desirous");
-        put(LIGHTPINK, "loving");
+        put(BLACK, "fear");
         put(CYAN, "joyful");
+        put(LIGHTPINK, "loving");
         put(AQUA, "sad");
         put(YELLOWGREEN, "scary");
         put(BROWN, "triumphant");
-        put(BLACK, "fear");
     }};
 
     public final static Map<String, String> MOOD_TO_GENRE = new HashMap<String, String>() {{
@@ -52,15 +52,15 @@ public class ColorToGenre {
         put("anxious", "industrial");
         put("beautiful", "classical");
         put("calm", "ambient");
+        put("desirous", "indie-pop");
         put("dreamy", "soul");
         put("energizing", "party");
-        put("desirous", "indie-pop");
+        put("fear", "metal");
         put("loving", "romance");
         put("joyful", "r-n-b");
         put("sad", "sad");
         put("scary", "grindcore");
         put("triumphant", "alternative");
-        put("fear", "metal");
     }};
 
     private Color getDominantColor(String imageColor) {

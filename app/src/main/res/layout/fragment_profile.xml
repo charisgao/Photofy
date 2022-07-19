@@ -67,7 +67,7 @@
         app:layout_constraintEnd_toEndOf="@+id/tvProfileName"
         app:layout_constraintStart_toEndOf="@+id/tvFavoriteGenresText"
         app:layout_constraintTop_toBottomOf="@+id/tvProfileBiography"
-        tools:text="biography goes here" />
+        tools:text="genres go here" />
 
     <Button
         android:id="@+id/btnEditProfile"

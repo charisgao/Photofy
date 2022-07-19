@@ -27,8 +27,10 @@ import com.example.photofy.RecommendationsErrorCallback;
 import com.example.photofy.RecommendationsService;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Song;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ImageResultsActivity extends AppCompatActivity {
 
@@ -97,7 +99,27 @@ public class ImageResultsActivity extends AppCompatActivity {
                 RequestQueue queue = Volley.newRequestQueue(ImageResultsActivity.this);
                 recommendationsService = new RecommendationsService(token, queue);
 
-                recommendationsService.getRecommendations(genre, new RecommendationsCallback() {
+                StringBuilder parameter = new StringBuilder();
+                List<String> favGenres = ParseUser.getCurrentUser().getList("FavGenres");
+                for (String g : favGenres) {
+                    if (g.equalsIgnoreCase("indie-pop")) {
+                        parameter.append("n");
+                    } else if (g.equalsIgnoreCase("soul")) {
+                        parameter.append("o");
+                    } else if (g.equalsIgnoreCase("romance")) {
+                        parameter.append("e");
+                    } else if (g.equalsIgnoreCase("sad")) {
+                        parameter.append("S");
+                    } else if (g.equalsIgnoreCase("alternative")) {
+                        parameter.append("l");
+                    } else {
+                        parameter.append(g.charAt(0));
+                    }
+                }
+
+                Log.i(TAG, parameter.toString());
+
+                recommendationsService.getRecommendations(genre, parameter.toString(), new RecommendationsCallback() {
                     @Override
                     public void callback(ArrayList<Song> songs) {
                         goToRecommendationsActivity(songs);
