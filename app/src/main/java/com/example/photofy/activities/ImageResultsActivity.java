@@ -27,15 +27,17 @@ import com.example.photofy.RecommendationsErrorCallback;
 import com.example.photofy.RecommendationsService;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Song;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ImageResultsActivity extends AppCompatActivity {
 
     public static final String TAG = "ImageResultsActivity";
 
     private ImageView ivCapturedImage;
-    private Button btnGetColors;
+    private Button btnGetSongs;
 
     private ColorToGenre genreFinder = new ColorToGenre();
 
@@ -48,7 +50,7 @@ public class ImageResultsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_results);
 
         ivCapturedImage = findViewById(R.id.ivCapturedImage);
-        btnGetColors = findViewById(R.id.btnGetColors);
+        btnGetSongs = findViewById(R.id.btnGetSongs);
 
         photo = getIntent().getParcelableExtra("photo");
         path = getIntent().getStringExtra("filePath");
@@ -66,7 +68,7 @@ public class ImageResultsActivity extends AppCompatActivity {
             ivCapturedImage.setImageBitmap(bitmap);
         }
 
-        btnGetColors.setOnClickListener(new View.OnClickListener() {
+        btnGetSongs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToLoadingFragment();
@@ -97,7 +99,27 @@ public class ImageResultsActivity extends AppCompatActivity {
                 RequestQueue queue = Volley.newRequestQueue(ImageResultsActivity.this);
                 recommendationsService = new RecommendationsService(token, queue);
 
-                recommendationsService.getRecommendations(genre, new RecommendationsCallback() {
+                StringBuilder parameter = new StringBuilder();
+                List<String> favGenres = ParseUser.getCurrentUser().getList("FavGenres");
+                for (String g : favGenres) {
+                    if (g.equalsIgnoreCase("indie-pop")) {
+                        parameter.append("n");
+                    } else if (g.equalsIgnoreCase("soul")) {
+                        parameter.append("o");
+                    } else if (g.equalsIgnoreCase("romance")) {
+                        parameter.append("e");
+                    } else if (g.equalsIgnoreCase("sad")) {
+                        parameter.append("S");
+                    } else if (g.equalsIgnoreCase("alternative")) {
+                        parameter.append("l");
+                    } else {
+                        parameter.append(g.charAt(0));
+                    }
+                }
+
+                Log.i(TAG, parameter.toString());
+
+                recommendationsService.getRecommendations(genre, parameter.toString(), new RecommendationsCallback() {
                     @Override
                     public void callback(ArrayList<Song> songs) {
                         goToRecommendationsActivity(songs);
@@ -124,5 +146,6 @@ public class ImageResultsActivity extends AppCompatActivity {
         i.putExtra("photo", photo);
         i.putParcelableArrayListExtra("songs", songs);
         startActivity(i);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 }

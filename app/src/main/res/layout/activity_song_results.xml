@@ -11,7 +11,7 @@
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:foreground="#22000000">
+        android:foreground="#80FFFFFF">
 
         <ImageView
             android:id="@+id/ivResultsCapturedImage"
@@ -73,6 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
+        android:fontFamily="@font/open_sans_medium"
         android:textColor="#000000"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -86,6 +87,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:fontFamily="@font/open_sans_mediumitalic"
         android:textColor="#000000"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -98,13 +100,13 @@
         android:id="@+id/tvMatch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="75dp"
-        android:text="Your song match!"
+        android:layout_marginTop="60dp"
+        android:fontFamily="@font/open_sans_bold"
+        android:text="Song match"
         android:textColor="#000000"
-        android:textSize="24sp"
+        android:textSize="34sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -122,19 +124,22 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tfCaptionLayout"
         style="?attr/textInputFilledStyle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="40dp"
         android:ems="10"
-        android:hint="caption"
+        android:hint="Add a caption here!"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvResultsSongArtist">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etCaption"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/baby_blue" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

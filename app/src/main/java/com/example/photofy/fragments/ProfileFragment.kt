@@ -4,10 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.TextUtils
 import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,6 +26,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,7 +40,6 @@ import com.example.photofy.activities.SettingsActivity
 import com.example.photofy.adapters.PostsAdapter
 import com.example.photofy.adapters.ProfileAdapter
 import com.example.photofy.models.Follow
-import com.example.photofy.models.Like
 import com.example.photofy.models.Post
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -45,7 +50,6 @@ import com.parse.ParseObject
 import com.parse.ParseQuery
 import com.parse.ParseUser
 
-
 class ProfileFragment : Fragment {
     private lateinit var profileAdapter: ProfileAdapter
     private lateinit var profilePosts: MutableList<Post>
@@ -54,6 +58,7 @@ class ProfileFragment : Fragment {
     private lateinit var ivProfilePicture: ImageView
     private lateinit var tvProfileName: TextView
     private lateinit var tvProfileBiography: TextView
+    private lateinit var tvProfileFavGenres: TextView
     private lateinit var tvNumberPosts: TextView
     private lateinit var tvNumberLikes: TextView
     private lateinit var tvNumberFollowers: TextView
@@ -64,7 +69,8 @@ class ProfileFragment : Fragment {
     private lateinit var rvProfilePosts: RecyclerView
 
     private var user = ParseUser.getCurrentUser()
-    private var follows: Follow? = getIfFollows()
+    private var swipeBackground: ColorDrawable = ColorDrawable(Color.parseColor("#FF0000"))
+    private lateinit var deleteIcon: Drawable
 
     private lateinit var editProfileLauncher: ActivityResultLauncher<Intent>
     private lateinit var settingsLauncher: ActivityResultLauncher<Intent>
@@ -97,6 +103,7 @@ class ProfileFragment : Fragment {
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture)
         tvProfileName = view.findViewById(R.id.tvProfileName)
         tvProfileBiography = view.findViewById(R.id.tvProfileBiography)
+        tvProfileFavGenres = view.findViewById(R.id.tvProfileFavGenres);
         tvNumberPosts = view.findViewById(R.id.tvNumberPosts)
         tvNumberLikes = view.findViewById(R.id.tvNumberLikes)
         tvNumberFollowers = view.findViewById(R.id.tvNumberFollowers)
@@ -136,24 +143,26 @@ class ProfileFragment : Fragment {
 
         tvProfileName.text = user.getString("Name")
         tvProfileBiography.text = user.getString("Biography")
+        val favGenres: MutableList<String> = user.getList("FavGenres")!!
+        tvProfileFavGenres.text = TextUtils.join(", ", favGenres)
 
         setPostCount()
         setLikeCount()
         setFollowerCount()
         setFollowingCount()
 
-        if (user == ParseUser.getCurrentUser()) {
+        if (user.objectId == ParseUser.getCurrentUser().objectId) {
             btnEditProfile.visibility = View.VISIBLE
             btnFollow.visibility = View.GONE
             btnFollowing.visibility = View.GONE
         } else {
             btnEditProfile.visibility = View.GONE
-            if (follows == null) {
-                btnFollow.visibility = View.VISIBLE
-                btnFollowing.visibility = View.GONE
-            } else {
+            if (ParseUser.getCurrentUser().getList<String>("Following")!!.contains(user.objectId)) {
                 btnFollow.visibility = View.GONE
                 btnFollowing.visibility = View.VISIBLE
+            } else {
+                btnFollow.visibility = View.VISIBLE
+                btnFollowing.visibility = View.GONE
             }
         }
 
@@ -195,6 +204,8 @@ class ProfileFragment : Fragment {
         profileAdapter = ProfileAdapter(context, profilePosts)
         rvProfilePosts.adapter = profileAdapter
         rvProfilePosts.layoutManager = LinearLayoutManager(context)
+
+        deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_delete)!!
 
         val simpleItemTouchCallback: ItemTouchHelper.SimpleCallback = object :
             ItemTouchHelper.SimpleCallback(
@@ -243,6 +254,50 @@ class ProfileFragment : Fragment {
                 })
                 snackbar.show()
             }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                val itemView = viewHolder.itemView
+
+                val iconMargin = (itemView.height - deleteIcon.intrinsicHeight) / 2
+
+                // swipe right
+                if (dX > 0 ) {
+                    swipeBackground.setBounds(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
+                    deleteIcon.setBounds(itemView.left + iconMargin,
+                        itemView.top + iconMargin,
+                        itemView.left + iconMargin + deleteIcon.intrinsicWidth,
+                        itemView.bottom - iconMargin)
+                } else { // swipe left
+                    swipeBackground.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                    deleteIcon.setBounds(itemView.right - iconMargin - deleteIcon.intrinsicWidth,
+                        itemView.top + iconMargin,
+                        itemView.right - iconMargin,
+                        itemView.bottom - iconMargin)
+                }
+
+                swipeBackground.draw(c)
+
+                c.save()
+
+                if (dX > 0) {
+                    c.clipRect(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
+                } else {
+                    c.clipRect(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                }
+                deleteIcon.draw(c)
+
+                c.restore()
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            }
         }
 
         val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
@@ -290,9 +345,7 @@ class ProfileFragment : Fragment {
     }
 
     private fun setFollowingCount() {
-        val query = ParseQuery.getQuery(Follow::class.java)
-        query.whereEqualTo(Follow.KEY_FROM, user)
-        query.countInBackground { count, _ -> tvNumberFollowing.text = count.toString() }
+        tvNumberFollowing.text = user.getList<String>("Following")!!.size.toString()
     }
 
     private fun followUser() {
@@ -300,27 +353,32 @@ class ProfileFragment : Fragment {
         follow.from = ParseUser.getCurrentUser()
         follow.to = user
         follow.saveInBackground()
+
+        val following = ParseUser.getCurrentUser().getList<String>("Following")!!
+        following.add(user.objectId)
+        ParseUser.getCurrentUser().put("Following", following)
+        ParseUser.getCurrentUser().saveInBackground()
+
         btnFollow.visibility = View.GONE
         btnFollowing.visibility = View.VISIBLE
     }
 
     private fun unfollowUser() {
-        follows?.deleteInBackground()
-        follows = getIfFollows()
-        btnFollow.visibility = View.VISIBLE
-        btnFollowing.visibility = View.GONE
-    }
-
-    private fun getIfFollows() : Follow? {
         val query = ParseQuery.getQuery(Follow::class.java)
         query.whereEqualTo(Follow.KEY_FROM, ParseUser.getCurrentUser())
         query.whereEqualTo(Follow.KEY_TO, user)
         val followList: MutableList<Follow> = query.find()
-        return if (followList.isNotEmpty()) {
-            followList[0]
-        } else {
-            null
-        }
+        val userToUnfollow = followList[0].to
+
+        val following = ParseUser.getCurrentUser().getList<String>("Following")!!
+        following.remove(userToUnfollow.objectId)
+        ParseUser.getCurrentUser().put("Following", following)
+        ParseUser.getCurrentUser().saveInBackground()
+
+        followList[0].deleteInBackground()
+
+        btnFollow.visibility = View.VISIBLE
+        btnFollowing.visibility = View.GONE
     }
 
     private fun logout() {

@@ -89,8 +89,8 @@ public class EditProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent();
                 setResult(RESULT_CANCELED, i);
-                overridePendingTransition(R.anim.stationary, R.anim.slide_down);
                 finish();
+                overridePendingTransition(R.anim.stationary, R.anim.slide_down);
             }
         });
 

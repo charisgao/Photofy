@@ -29,7 +29,6 @@ public class SpotifyLoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_spotify_login);
 
         authenticateUser();
-
     }
 
     @Override

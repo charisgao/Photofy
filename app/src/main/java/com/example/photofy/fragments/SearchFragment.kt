@@ -63,27 +63,29 @@ class SearchFragment : Fragment() {
         cgGenre.visibility = View.GONE
         tvNoPosts.visibility = View.GONE
 
-        allPosts = ArrayList<Post>()
-        filteredPosts = ArrayList<Post>()
+        allPosts = ArrayList()
+        filteredPosts = ArrayList()
 
-        // create RV adapter and load all posts
-        callAdapter(allPosts)
+        // create adapter to initially load all posts
+        adapter = SearchAdapter(context, allPosts)
+        rvSearchedPosts.adapter = adapter
+        rvSearchedPosts.layoutManager = GridLayoutManager(context, 2)
         queryPosts()
 
-        etSearch.setText("")
-        etSearch.setOnKeyListener { v, keyCode, event ->
+        etSearch.setOnKeyListener { _, keyCode, event ->
             // user presses enter in the search bar
             if ((event.action == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 val searchPhrase: String = etSearch.text.toString()
                 callAdapter(search(searchPhrase))
                 Toast.makeText(context, etSearch.text, Toast.LENGTH_SHORT).show()
+                etSearch.setText("")
             }
             false
         }
 
         // filter button
         var pressed = false
-        ivFilter.setOnClickListener { _ ->
+        ivFilter.setOnClickListener {
             pressed = !pressed
             if (pressed) {
                 cgGenre.visibility = View.VISIBLE
@@ -98,11 +100,12 @@ class SearchFragment : Fragment() {
             if (checkedIds.isEmpty()) {
                 filtered = false
                 callAdapter(allPosts)
+                tvNoPosts.visibility = View.GONE
             }
             // if user clicked some chips then call filtered query
             else {
                 filtered = true
-                var checkedGenres:MutableList<String> = ArrayList<String>()
+                val checkedGenres:MutableList<String> = ArrayList()
                 for (checkedId in checkedIds) {
                     val chip:Chip? = group.findViewById(checkedId)
                     checkedGenres.add(chip?.text.toString().lowercase())
@@ -117,16 +120,17 @@ class SearchFragment : Fragment() {
         allPosts.clear()
         val query = ParseQuery.getQuery(Post::class.java)
         query.include(Post.KEY_USER)
-        query.addDescendingOrder(Post.KEY_CREATED)
+        query.addDescendingOrder(Post.KEY_LIKES)
         query.findInBackground(object : FindCallback<Post> {
             override fun done(posts: List<Post>, e: ParseException?) {
                 // Check for errors
                 if (e != null) {
-                    Log.e(SearchFragment.TAG, "Issue with getting posts", e)
+                    Log.e(TAG, "Issue with getting posts", e)
                     return
                 }
 
                 allPosts.addAll(posts)
+                adapter.notifyItemRangeInserted(0, posts.size)
             }
         })
     }
@@ -143,7 +147,7 @@ class SearchFragment : Fragment() {
 
     // search for posts
     private fun search(phrase: String): MutableList<Post> {
-        var searchResults: MutableList<Post> = ArrayList<Post>()
+        val searchResults: MutableList<Post> = ArrayList()
         if (filtered) {
             for (post in filteredPosts) {
                 if (post.caption.lowercase().contains(phrase.lowercase())) {
@@ -163,7 +167,7 @@ class SearchFragment : Fragment() {
     // filter posts by genres in chips
     private fun filteredQuery(genres: MutableList<String>) {
         filteredPosts.clear()
-        var songQueries: MutableList<ParseQuery<Song>> = ArrayList<ParseQuery<Song>>()
+        val songQueries: MutableList<ParseQuery<Song>> = ArrayList()
 
         for (genre in genres) {
             // all songs part of genre
@@ -175,12 +179,12 @@ class SearchFragment : Fragment() {
         val postQuery: ParseQuery<Post> = ParseQuery.getQuery(Post::class.java)
         // get posts where song is a song part of genre
         postQuery.whereMatchesQuery(Post.KEY_SONG, ParseQuery.or(songQueries))
-        postQuery.addDescendingOrder(Post.KEY_CREATED)
+        postQuery.addDescendingOrder(Post.KEY_LIKES)
         postQuery.findInBackground(object : FindCallback<Post> {
             override fun done(posts: List<Post>, e: ParseException?) {
                 // Check for errors
                 if (e != null) {
-                    Log.e(SearchFragment.TAG, "Issue with filtering posts", e)
+                    Log.e(TAG, "Issue with filtering posts", e)
                     return
                 }
                 filteredPosts.addAll(posts)
