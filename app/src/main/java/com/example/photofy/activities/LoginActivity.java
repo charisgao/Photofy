@@ -1,8 +1,7 @@
 package com.example.photofy.activities;
 
-import static com.example.photofy.activities.SpotifyLoginActivity.spotifyToken;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,9 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.example.photofy.R;
+import com.google.android.material.textfield.TextInputEditText;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -21,8 +21,10 @@ public class LoginActivity extends AppCompatActivity {
 
     public static final String TAG = "LoginActivity";
 
-    private EditText etLoginUsername;
-    private EditText etLoginPassword;
+    private Toolbar toolbarTop;
+    private TextInputEditText etLoginUsername;
+    private TextInputEditText etLoginPassword;
+    private TextView tvSignup;
     private Button btnLogin;
 
     @Override
@@ -30,19 +32,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // If Parse user is already logged in and authorized through Spotify
-        if (ParseUser.getCurrentUser() != null) {
-            if (spotifyToken != null) {
-                goMainActivity();
-            } else {
-                goSpotifyLoginActivity();
-            }
-        }
-
         // Connect visual components with logic
+        toolbarTop = findViewById(R.id.toolbarTop);
         etLoginUsername = findViewById(R.id.etLoginUsername);
         etLoginPassword = findViewById(R.id.etLoginPassword);
         btnLogin = findViewById(R.id.btnLogin);
+        tvSignup = findViewById(R.id.btnSignUp);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +47,30 @@ public class LoginActivity extends AppCompatActivity {
                 loginUser(username, password);
             }
         });
+
+        tvSignup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(LoginActivity.this, SignupActivity.class);
+                startActivity(i);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
+            }
+        });
+
+        // on back button pressed
+        toolbarTop.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     // Logs in user to Parse
@@ -71,12 +90,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void goSpotifyLoginActivity() {
         Intent i = new Intent (this, SpotifyLoginActivity.class);
-        startActivity(i);
-        finish();
-    }
-
-    private void goMainActivity() {
-        Intent i = new Intent (this, MainActivity.class);
         startActivity(i);
         finish();
     }

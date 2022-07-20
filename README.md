@@ -104,7 +104,7 @@ Photofy allows you to take a picture of something around you, pulls the most dom
    | objectId      | String   | unique id for the image (default field) |
    | user          | Pointer to User  |  user that took the image |
    | image         | File     | image that user takes|
-   | color         | Array    | dominant color associated with the image |
+   | color         | String    | hex code of dominant color associated with the image |
 
 #### Song
    | Property      | Type     | Description |

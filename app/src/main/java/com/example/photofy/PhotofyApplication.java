@@ -6,7 +6,12 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.example.photofy.models.Image;
+import com.example.photofy.models.Comment;
+import com.example.photofy.models.Follow;
+import com.example.photofy.models.Like;
+import com.example.photofy.models.Photo;
+import com.example.photofy.models.Post;
+import com.example.photofy.models.Song;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -16,6 +21,7 @@ public class PhotofyApplication extends Application {
 
     private String clientKey;
     public static String spotifyKey;
+    public static String googleCredentials;
     final String APP_ID = "zWEATxbbLsSFXeCWqTMXKWP0j2akWwV9cVZ86Q3p";
     final String SERVER = "https://parseapi.back4app.com";
 
@@ -24,13 +30,19 @@ public class PhotofyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        ParseObject.registerSubclass(Image.class);
+        ParseObject.registerSubclass(Photo.class);
+        ParseObject.registerSubclass(Song.class);
+        ParseObject.registerSubclass(Post.class);
+        ParseObject.registerSubclass(Like.class);
+        ParseObject.registerSubclass(Comment.class);
+        ParseObject.registerSubclass(Follow.class);
 
         try {
             ApplicationInfo applicationInfo = getApplicationContext().getPackageManager().getApplicationInfo(getApplicationContext().getPackageName(), PackageManager.GET_META_DATA);
             Bundle bundle = applicationInfo.metaData;
             clientKey = bundle.getString("clientKey");
             spotifyKey = bundle.getString("spotifyClientId");
+            googleCredentials = bundle.getString("googleCredentials");
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, "Client key not found " + e);
         }

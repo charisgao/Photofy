@@ -4,14 +4,17 @@
 
     <item
         android:id="@+id/action_home"
+        android:icon="@drawable/ic_filled_home"
         android:title="Home"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_compose"
-        android:title="Compose"
+        android:id="@+id/action_search"
+        android:icon="@drawable/search"
+        android:title="Discover"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_profile"
+        android:icon="@drawable/ic_filled_profile"
         android:title="Profile"
         app:showAsAction="always" />
 </menu>
