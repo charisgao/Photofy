@@ -18,6 +18,14 @@ import java.util.*;
 
 import okhttp3.HttpUrl;
 
+/**
+ * Recommendations Service using Spotify Web API's GET recommendations endpoint, takes in parameters
+ * for a US market, music genre from ColorToGenre and the image, and various parameters depending
+ * on user preference
+ *
+ * Parses JSON response and populates an ArrayList of Song objects for the user to choose from to
+ * match their image
+ */
 public class RecommendationsService {
 
     public static final String TAG = "RecommendationsService";

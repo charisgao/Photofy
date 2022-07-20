@@ -30,6 +30,10 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Notification Service using Firebase Cloud Messaging, generates notifications to user's devices
+ * with a custom NotificationChannel and JsonObjectRequest that creates the appropriate notif
+ */
 public class PushNotificationService extends FirebaseMessagingService {
 
     public static final String TAG = "PushNotificationService";
