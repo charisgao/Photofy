@@ -59,8 +59,7 @@ public class DetectProperties {
             // GCS path for image from bucket
             String gcsPath = "gs://" + bucketName + "/" + objectName;
 
-            String hexColor = detectPropertiesGcs(gcsPath);
-            return hexColor;
+            return detectPropertiesGcs(gcsPath);
         } catch (IOException e) {
             Log.e(TAG, "problem with finding dominant color" + e);
             return "";

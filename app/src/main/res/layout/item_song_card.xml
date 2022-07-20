@@ -23,33 +23,43 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
 
             <!-- Title, secondary and supporting text -->
             <TextView
                 android:id="@+id/tvRecommendedSong"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:fontFamily="@font/open_sans_bold"
+                android:textAlignment="center"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
                 tools:text="Song Name" />
 
             <TextView
                 android:id="@+id/tvRecommendedArtist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/open_sans_italic"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?android:attr/textColorSecondary"
+                android:textColor="@color/white"
+                android:textSize="16sp"
                 tools:text="Song Artist" />
 
             <TextView
                 android:id="@+id/tvRecommendedAlbum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="@font/open_sans_medium"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?android:attr/textColorSecondary"
+                android:textColor="@color/white"
                 tools:text="Song Album" />
 
         </LinearLayout>
