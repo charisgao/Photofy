@@ -5,6 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:backgroundTint="@color/ice"
+    android:padding="5dp"
     tools:context=".fragments.SearchFragment">
 
     <com.google.android.material.textfield.TextInputLayout
@@ -26,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:maxLines="1"
-            android:hint="Search" />
+            android:hint="@string/search" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -120,6 +122,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
+        android:padding="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

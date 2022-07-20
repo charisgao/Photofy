@@ -76,6 +76,7 @@ public class SongRecommendationsActivity extends AppCompatActivity {
                     i.putExtra("song", recommendedSongs.get(currentPos));
                     startActivity(i);
                     finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
             }
 

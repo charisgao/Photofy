@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +23,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
-import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import androidx.viewpager2.widget.ViewPager2
 import com.example.photofy.BitmapScaler
 import com.example.photofy.PhotofyApplication
@@ -43,7 +43,6 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 class HomeFragment() : Fragment() {
     private lateinit var viewpagerPosts: ViewPager2
     private lateinit var swipeContainer: SwipeRefreshLayout
@@ -51,6 +50,8 @@ class HomeFragment() : Fragment() {
     private lateinit var adapter: PostsAdapter
     private lateinit var allPosts: MutableList<Post>
     private lateinit var galleryLauncher: ActivityResultLauncher<String>
+    private lateinit var connectionParams: ConnectionParams
+    private lateinit var connectionListener: ConnectionListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -147,7 +148,7 @@ class HomeFragment() : Fragment() {
     }
 
     private fun showPopup(v: View?) {
-        val popup = PopupMenu(context, v)
+        val popup = PopupMenu(context, v, Gravity.RIGHT)
         popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.miOpenCamera -> {
@@ -224,11 +225,11 @@ class HomeFragment() : Fragment() {
         }
 
     private fun connectSpotifyAppRemote() {
-        val connectionParams = ConnectionParams.Builder(CLIENT_ID)
+        connectionParams = ConnectionParams.Builder(CLIENT_ID)
             .setRedirectUri(REDIRECT_URI)
             .showAuthView(true)
             .build()
-        val connectionListener: ConnectionListener = object : ConnectionListener {
+        connectionListener = object : ConnectionListener {
             override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
                 mSpotifyAppRemote = spotifyAppRemote
             }
@@ -238,6 +239,17 @@ class HomeFragment() : Fragment() {
             }
         }
         SpotifyAppRemote.connect(context, connectionParams, connectionListener)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote)
+        SpotifyAppRemote.connect(context, connectionParams, connectionListener)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote)
     }
 
     override fun onResume() {
@@ -250,21 +262,14 @@ class HomeFragment() : Fragment() {
         SpotifyAppRemote.disconnect(mSpotifyAppRemote)
     }
 
-    override fun onStop() {
-        super.onStop()
-        SpotifyAppRemote.disconnect(mSpotifyAppRemote)
-    }
-
     private fun queryPosts() {
-        // Specify what type of data we want to query – Post.class
         val query = ParseQuery.getQuery(Post::class.java)
-        // Include data referred by user key
         query.include(Post.KEY_USER)
-        // Limit query to 20 items
         query.limit = 20
-        // Order posts by creation date (newest first)
+        val validUsers: MutableList<String> = ParseUser.getCurrentUser().getList<String>("Following")!!
+        validUsers.add(ParseUser.getCurrentUser().objectId)
+        query.whereContainedIn(Post.KEY_USER, validUsers)
         query.addDescendingOrder(Post.KEY_CREATED)
-        // Start an asynchronous call for posts
         query.findInBackground(object : FindCallback<Post> {
             override fun done(posts: List<Post>, e: ParseException?) {
                 // Check for errors
@@ -272,7 +277,7 @@ class HomeFragment() : Fragment() {
                     Log.e(TAG, "Issue with getting posts", e)
                     return
                 }
-
+                validUsers.remove(ParseUser.getCurrentUser().objectId)
                 // Save received posts to list and notify adapter of new data
                 allPosts.addAll(posts)
                 adapter.notifyDataSetChanged()
