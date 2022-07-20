@@ -11,9 +11,10 @@ public class Song extends ParseObject {
     public static final String KEY_NAME = "Name";
     public static final String KEY_ARTIST = "Artist";
     public static final String KEY_ALBUM = "Album";
-    public static final String KEY_ALBUMCOVER = "AlbumCover";
-    public static final String KEY_GENRES = "Genres";
+    public static final String KEY_ALBUM_COVER = "AlbumCover";
+    public static final String KEY_GENRE = "Genres";
     public static final String KEY_PREVIEW = "Preview";
+    public static final String KEY_DURATION = "Duration";
 
     public String getSpotifyId() {
         return getString(KEY_SPOTIFYID);
@@ -31,36 +32,36 @@ public class Song extends ParseObject {
         put(KEY_NAME, songName);
     }
 
-    public String getArtist() {
+    public String getArtistName() {
         return getString(KEY_ARTIST);
     }
 
-    public void setArtist(String artist) {
+    public void setArtistName(String artist) {
         put(KEY_ARTIST, artist);
     }
 
-    public String getAlbum() {
+    public String getAlbumName() {
         return getString(KEY_ALBUM);
     }
 
-    public void setAlbum(String album) {
+    public void setAlbumName(String album) {
         put(KEY_ALBUM, album);
     }
 
     public String getAlbumCover() {
-        return getString(KEY_ALBUMCOVER);
+        return getString(KEY_ALBUM_COVER);
     }
 
     public void setAlbumCover(String albumUrl) {
-        put(KEY_ALBUMCOVER, albumUrl);
+        put(KEY_ALBUM_COVER, albumUrl);
     }
 
-    public List getGenres() {
-        return getList(KEY_GENRES);
+    public String getGenre() {
+        return getString(KEY_GENRE);
     }
 
-    public void setGenres(List<String> genres) {
-        put(KEY_GENRES, genres);
+    public void setGenre(String genre) {
+        put(KEY_GENRE, genre);
     }
 
     public String getPreview() {
@@ -69,5 +70,13 @@ public class Song extends ParseObject {
 
     public void setPreview(String preview) {
         put(KEY_PREVIEW, preview);
+    }
+
+    public int getDuration() {
+        return getInt(KEY_DURATION);
+    }
+
+    public void setDuration(int duration) {
+        put(KEY_DURATION, duration);
     }
 }

@@ -6,6 +6,9 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.photofy.models.Comment;
+import com.example.photofy.models.Follow;
+import com.example.photofy.models.Like;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Post;
 import com.example.photofy.models.Song;
@@ -30,6 +33,9 @@ public class PhotofyApplication extends Application {
         ParseObject.registerSubclass(Photo.class);
         ParseObject.registerSubclass(Song.class);
         ParseObject.registerSubclass(Post.class);
+        ParseObject.registerSubclass(Like.class);
+        ParseObject.registerSubclass(Comment.class);
+        ParseObject.registerSubclass(Follow.class);
 
         try {
             ApplicationInfo applicationInfo = getApplicationContext().getPackageManager().getApplicationInfo(getApplicationContext().getPackageName(), PackageManager.GET_META_DATA);
