@@ -71,7 +71,7 @@ public class ImageResultsActivity extends AppCompatActivity {
         btnGetSongs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToLoadingFragment();
+                goToLoadingActivity();
                 runBackground(photo, path);
             }
         });
@@ -119,9 +119,10 @@ public class ImageResultsActivity extends AppCompatActivity {
         runner.start();
     }
 
-    private void goToLoadingFragment() {
+    private void goToLoadingActivity() {
         Intent i = new Intent(this, LoadingActivity.class);
         startActivity(i);
+        finish();
     }
 
     private void goToRecommendationsActivity(ArrayList<Song> songs) {
@@ -129,6 +130,7 @@ public class ImageResultsActivity extends AppCompatActivity {
         i.putExtra("photo", photo);
         i.putParcelableArrayListExtra("songs", songs);
         startActivity(i);
+        finish();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 }

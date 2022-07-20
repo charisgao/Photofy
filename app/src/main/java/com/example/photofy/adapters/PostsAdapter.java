@@ -210,6 +210,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                     post.isLiked = !post.isLiked;
                     int count = post.updateLikes();
                     tvNumLikes.setText(Integer.toString(count));
+                    ivHeart.setVisibility(View.GONE);
                 }
             });
 
@@ -386,7 +387,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             transaction.replace(R.id.flContainer, otherProfileFragment).addToBackStack(null).commit();
         }
 
-        public void animateHeart(final ImageView view) {
+        public void animateHeart(ImageView view) {
             ScaleAnimation scaleAnimation = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
                     Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             prepareAnimation(scaleAnimation);

@@ -87,6 +87,7 @@ public class CameraActivity extends AppCompatActivity {
                                         i.putExtra("photo", photo);
                                         i.putExtra("gallery", false);
                                         startActivity(i);
+                                        finish();
                                         Log.i(TAG, "Photo saved successfully");
                                     }
                                 });
