@@ -3,12 +3,9 @@ package com.example.photofy.fragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.photofy.ProgressActivityListener
 import com.example.photofy.R
 import com.example.photofy.adapters.SearchAdapter
 import com.example.photofy.models.Post
@@ -29,14 +27,14 @@ import com.parse.boltsinternal.Task
 
 class SearchFragment : Fragment() {
 
-    // UI components
     private lateinit var etSearch: EditText
     private lateinit var ivFilter: ImageView
     private lateinit var cgGenre: ChipGroup
     private lateinit var tvNoPosts: TextView
     private lateinit var rvSearchedPosts: RecyclerView
 
-    // variables for filter and search
+    private lateinit var progressActivity: ProgressActivityListener
+
     private lateinit var adapter: SearchAdapter
     private lateinit var allPosts: MutableList<Post>
     private lateinit var filteredPosts: MutableList<Post>
@@ -56,8 +54,8 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        progressActivity = activity as ProgressActivityListener
 
-        // bind UI views
         etSearch = view.findViewById(R.id.etSearch)
         ivFilter = view.findViewById(R.id.ivFilter)
         cgGenre = view.findViewById(R.id.cgGenre)
@@ -70,7 +68,6 @@ class SearchFragment : Fragment() {
         allPosts = ArrayList()
         filteredPosts = ArrayList()
 
-        // create adapter to initially load all posts
         adapter = SearchAdapter(context, allPosts)
         rvSearchedPosts.adapter = adapter
         rvSearchedPosts.layoutManager = GridLayoutManager(context, 2)
@@ -93,7 +90,6 @@ class SearchFragment : Fragment() {
             }
         })
 
-        // filter button
         var pressed = false
         ivFilter.setOnClickListener {
             pressed = !pressed
@@ -104,7 +100,6 @@ class SearchFragment : Fragment() {
             }
         }
 
-        // chips
         cgGenre.setOnCheckedStateChangeListener { group, checkedIds ->
             // if nothing clicked (user unclicked all) then query all posts
             if (checkedIds.isEmpty()) {
@@ -112,7 +107,7 @@ class SearchFragment : Fragment() {
                 callAdapter(allPosts)
                 tvNoPosts.visibility = View.GONE
             }
-            // if user clicked some chips then call filtered query
+            // if user clicked some chips then call filtered query on selected genres
             else {
                 filtered = true
                 val checkedGenres:MutableList<String> = ArrayList()
@@ -125,27 +120,28 @@ class SearchFragment : Fragment() {
         }
     }
 
-    // get all posts
     private fun queryPosts() {
         val query = ParseQuery.getQuery(Post::class.java)
         query.include(Post.KEY_USER)
         query.addDescendingOrder(Post.KEY_LIKES)
         query.fromLocalDatastore().findInBackground().continueWithTask(
             { task: Task<List<Post>?> ->
-                // Update UI with results from Local Datastore
+                // update UI with results from local datastore
                 val error = task.error
                 if (error == null) {
                     val posts = task.result!!
 
-                    // Save received posts to list and notify adapter of new data
+                    // save received posts to list and notify adapter of new data
                     allPosts.clear()
                     allPosts.addAll(posts)
                     adapter.notifyItemRangeInserted(0, posts.size)
 
+                    progressActivity.hideProgressBar()
+                    // unpin cache
                     ParseObject.unpinAllInBackground(allPosts)
                 }
 
-                // Update cache with new query
+                // update cache with new query from network
                 query.fromNetwork().findInBackground()
             }, ContextCompat.getMainExecutor(requireContext())
         ).continueWithTask(
@@ -156,6 +152,7 @@ class SearchFragment : Fragment() {
                     allPosts.clear()
                     allPosts.addAll(posts)
 
+                    // pin all posts to cache
                     ParseObject.pinAllInBackground(allPosts)
                 }
                 task
@@ -163,7 +160,6 @@ class SearchFragment : Fragment() {
         )
     }
 
-    // new adapter to update data given posts
     private fun callAdapter(posts: List<Post>) {
         adapter = SearchAdapter(
             context,
@@ -173,7 +169,6 @@ class SearchFragment : Fragment() {
         adapter.notifyDataSetChanged()
     }
 
-    // search for posts
     private fun search(phrase: String): MutableList<Post> {
         val searchResults: MutableList<Post> = ArrayList()
         if (filtered) {
@@ -211,7 +206,6 @@ class SearchFragment : Fragment() {
 
         postQuery.fromLocalDatastore().findInBackground().continueWithTask(
             { task: Task<List<Post>?> ->
-                // Update UI with results from Local Datastore
                 val error = task.error
                 if (error == null) {
                     val posts = task.result!!
@@ -226,7 +220,6 @@ class SearchFragment : Fragment() {
 
                     ParseObject.unpinAllInBackground(filteredPosts)
                 }
-                // Update cache with new query
                 postQuery.fromNetwork().findInBackground()
             }, ContextCompat.getMainExecutor(requireContext())
         ).continueWithTask(

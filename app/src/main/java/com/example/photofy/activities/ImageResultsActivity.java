@@ -101,25 +101,8 @@ public class ImageResultsActivity extends AppCompatActivity {
 
                 StringBuilder parameter = new StringBuilder();
                 List<String> favGenres = ParseUser.getCurrentUser().getList("FavGenres");
-                for (String g : favGenres) {
-                    if (g.equalsIgnoreCase("indie-pop")) {
-                        parameter.append("n");
-                    } else if (g.equalsIgnoreCase("soul")) {
-                        parameter.append("o");
-                    } else if (g.equalsIgnoreCase("romance")) {
-                        parameter.append("e");
-                    } else if (g.equalsIgnoreCase("sad")) {
-                        parameter.append("S");
-                    } else if (g.equalsIgnoreCase("alternative")) {
-                        parameter.append("l");
-                    } else {
-                        parameter.append(g.charAt(0));
-                    }
-                }
 
-                Log.i(TAG, parameter.toString());
-
-                recommendationsService.getRecommendations(genre, parameter.toString(), new RecommendationsCallback() {
+                recommendationsService.getRecommendations(genre, favGenres, new RecommendationsCallback() {
                     @Override
                     public void callback(ArrayList<Song> songs) {
                         goToRecommendationsActivity(songs);
