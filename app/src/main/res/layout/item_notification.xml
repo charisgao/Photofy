@@ -24,11 +24,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:fontFamily="@font/open_sans_bold"
-        android:text="@string/photofy"
         android:textColor="#000000"
         android:textSize="17sp"
         app:layout_constraintStart_toEndOf="@+id/ivNotif"
-        app:layout_constraintTop_toTopOf="@+id/ivNotif" />
+        app:layout_constraintTop_toTopOf="@+id/ivNotif"
+        tools:text="Title" />
 
     <TextView
         android:id="@+id/tvNotifMessage"

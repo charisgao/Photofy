@@ -44,9 +44,11 @@ public class PushNotificationService extends FirebaseMessagingService {
         super.onMessageReceived(message);
         Log.i(TAG, "received message");
 
-        String title = message.getNotification().getTitle();
-        String body = message.getNotification().getBody();
-        generateNotification(title, body);
+        if (message.getNotification() != null) {
+            String title = message.getNotification().getTitle();
+            String body = message.getNotification().getBody();
+            generateNotification(title, body);
+        }
     }
 
     // generate the notification
@@ -113,7 +115,7 @@ public class PushNotificationService extends FirebaseMessagingService {
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     HashMap<String, String> headers = new HashMap<String, String>();
                     headers.put("Content-Type", "application/json");
-                    headers.put("Authorization", firebaseKey);
+                    headers.put("Authorization", "key=" + firebaseKey);
                     return headers;
                 }
             };
