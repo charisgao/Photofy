@@ -40,6 +40,8 @@ import com.parse.boltsinternal.Task
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector.ConnectionListener
 import com.spotify.android.appremote.api.SpotifyAppRemote
+import smartdevelop.ir.eram.showcaseviewlib.GuideView
+import smartdevelop.ir.eram.showcaseviewlib.config.DismissType
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -147,6 +149,18 @@ class HomeFragment() : Fragment() {
                 }
             }
         }
+    }
+
+    private fun createGuideview() {
+        GuideView.Builder(context)
+            .setTitle("Create your first post!")
+            .setContentText("Take an image and let \n us generate you a song!")
+            .setDismissType(DismissType.anywhere)
+            .setTargetView(fabCompose)
+            .setContentTextSize(12) //optional
+            .setTitleTextSize(14) //optional
+            .build()
+            .show()
     }
 
     private fun showPopup(v: View?) {
@@ -296,6 +310,10 @@ class HomeFragment() : Fragment() {
                     val posts = task.result!!
                     allPosts.addAll(posts)
                     adapter.notifyItemRangeInserted(0, posts.size)
+
+                    if (adapter.itemCount == 0) {
+                        createGuideview()
+                    }
 
                     // Release any objects previously pinned for this query
                     ParseObject.unpinAllInBackground(allPosts,
