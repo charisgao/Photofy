@@ -42,6 +42,7 @@
         android:layout_marginEnd="3dp"
         android:background="@android:color/transparent"
         android:src="@android:drawable/ic_menu_send"
+        app:tint="@color/dark_blue"
         app:layout_constraintBottom_toBottomOf="@+id/etAddComment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rvComments" />
@@ -51,6 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:fontFamily="@font/open_sans_medium"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -69,5 +71,5 @@
         app:layout_constraintBottom_toTopOf="@+id/rvComments"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="#000000" />
+        app:tint="@color/dark_blue" />
 </androidx.constraintlayout.widget.ConstraintLayout>

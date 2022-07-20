@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -147,7 +148,7 @@ class HomeFragment() : Fragment() {
     }
 
     private fun showPopup(v: View?) {
-        val popup = PopupMenu(context, v)
+        val popup = PopupMenu(context, v, Gravity.RIGHT)
         popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.miOpenCamera -> {
@@ -262,15 +263,13 @@ class HomeFragment() : Fragment() {
     }
 
     private fun queryPosts() {
-        // Specify what type of data we want to query – Post.class
         val query = ParseQuery.getQuery(Post::class.java)
-        // Include data referred by user key
         query.include(Post.KEY_USER)
-        // Limit query to 20 items
         query.limit = 20
-        // Order posts by creation date (newest first)
+        val validUsers: MutableList<String> = ParseUser.getCurrentUser().getList<String>("Following")!!
+        validUsers.add(ParseUser.getCurrentUser().objectId)
+        query.whereContainedIn(Post.KEY_USER, validUsers)
         query.addDescendingOrder(Post.KEY_CREATED)
-        // Start an asynchronous call for posts
         query.findInBackground(object : FindCallback<Post> {
             override fun done(posts: List<Post>, e: ParseException?) {
                 // Check for errors
@@ -278,7 +277,7 @@ class HomeFragment() : Fragment() {
                     Log.e(TAG, "Issue with getting posts", e)
                     return
                 }
-
+                validUsers.remove(ParseUser.getCurrentUser().objectId)
                 // Save received posts to list and notify adapter of new data
                 allPosts.addAll(posts)
                 adapter.notifyDataSetChanged()
