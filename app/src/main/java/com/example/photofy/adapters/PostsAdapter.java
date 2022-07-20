@@ -82,6 +82,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         return position;
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
     // Clean all elements of the recycler
     public void clear() {
         posts.clear();

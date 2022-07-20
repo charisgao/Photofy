@@ -277,7 +277,7 @@ class HomeFragment() : Fragment() {
                     Log.e(TAG, "Issue with getting posts", e)
                     return
                 }
-
+                validUsers.remove(ParseUser.getCurrentUser().objectId)
                 // Save received posts to list and notify adapter of new data
                 allPosts.addAll(posts)
                 adapter.notifyDataSetChanged()

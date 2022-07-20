@@ -120,7 +120,7 @@ class SearchFragment : Fragment() {
         allPosts.clear()
         val query = ParseQuery.getQuery(Post::class.java)
         query.include(Post.KEY_USER)
-        query.addDescendingOrder(Post.KEY_CREATED)
+        query.addDescendingOrder(Post.KEY_LIKES)
         query.findInBackground(object : FindCallback<Post> {
             override fun done(posts: List<Post>, e: ParseException?) {
                 // Check for errors
@@ -179,7 +179,7 @@ class SearchFragment : Fragment() {
         val postQuery: ParseQuery<Post> = ParseQuery.getQuery(Post::class.java)
         // get posts where song is a song part of genre
         postQuery.whereMatchesQuery(Post.KEY_SONG, ParseQuery.or(songQueries))
-        postQuery.addDescendingOrder(Post.KEY_CREATED)
+        postQuery.addDescendingOrder(Post.KEY_LIKES)
         postQuery.findInBackground(object : FindCallback<Post> {
             override fun done(posts: List<Post>, e: ParseException?) {
                 // Check for errors

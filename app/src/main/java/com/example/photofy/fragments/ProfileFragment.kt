@@ -4,10 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.TextUtils
 import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,6 +26,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -52,6 +58,7 @@ class ProfileFragment : Fragment {
     private lateinit var ivProfilePicture: ImageView
     private lateinit var tvProfileName: TextView
     private lateinit var tvProfileBiography: TextView
+    private lateinit var tvProfileFavGenres: TextView
     private lateinit var tvNumberPosts: TextView
     private lateinit var tvNumberLikes: TextView
     private lateinit var tvNumberFollowers: TextView
@@ -62,6 +69,8 @@ class ProfileFragment : Fragment {
     private lateinit var rvProfilePosts: RecyclerView
 
     private var user = ParseUser.getCurrentUser()
+    private var swipeBackground: ColorDrawable = ColorDrawable(Color.parseColor("#FF0000"))
+    private lateinit var deleteIcon: Drawable
 
     private lateinit var editProfileLauncher: ActivityResultLauncher<Intent>
     private lateinit var settingsLauncher: ActivityResultLauncher<Intent>
@@ -94,6 +103,7 @@ class ProfileFragment : Fragment {
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture)
         tvProfileName = view.findViewById(R.id.tvProfileName)
         tvProfileBiography = view.findViewById(R.id.tvProfileBiography)
+        tvProfileFavGenres = view.findViewById(R.id.tvProfileFavGenres);
         tvNumberPosts = view.findViewById(R.id.tvNumberPosts)
         tvNumberLikes = view.findViewById(R.id.tvNumberLikes)
         tvNumberFollowers = view.findViewById(R.id.tvNumberFollowers)
@@ -133,6 +143,8 @@ class ProfileFragment : Fragment {
 
         tvProfileName.text = user.getString("Name")
         tvProfileBiography.text = user.getString("Biography")
+        val favGenres: MutableList<String> = user.getList("FavGenres")!!
+        tvProfileFavGenres.text = TextUtils.join(", ", favGenres)
 
         setPostCount()
         setLikeCount()
@@ -193,6 +205,8 @@ class ProfileFragment : Fragment {
         rvProfilePosts.adapter = profileAdapter
         rvProfilePosts.layoutManager = LinearLayoutManager(context)
 
+        deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_delete)!!
+
         val simpleItemTouchCallback: ItemTouchHelper.SimpleCallback = object :
             ItemTouchHelper.SimpleCallback(
                 0,
@@ -239,6 +253,50 @@ class ProfileFragment : Fragment {
                     }
                 })
                 snackbar.show()
+            }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                val itemView = viewHolder.itemView
+
+                val iconMargin = (itemView.height - deleteIcon.intrinsicHeight) / 2
+
+                // swipe right
+                if (dX > 0 ) {
+                    swipeBackground.setBounds(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
+                    deleteIcon.setBounds(itemView.left + iconMargin,
+                        itemView.top + iconMargin,
+                        itemView.left + iconMargin + deleteIcon.intrinsicWidth,
+                        itemView.bottom - iconMargin)
+                } else { // swipe left
+                    swipeBackground.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                    deleteIcon.setBounds(itemView.right - iconMargin - deleteIcon.intrinsicWidth,
+                        itemView.top + iconMargin,
+                        itemView.right - iconMargin,
+                        itemView.bottom - iconMargin)
+                }
+
+                swipeBackground.draw(c)
+
+                c.save()
+
+                if (dX > 0) {
+                    c.clipRect(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
+                } else {
+                    c.clipRect(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                }
+                deleteIcon.draw(c)
+
+                c.restore()
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }
         }
 
