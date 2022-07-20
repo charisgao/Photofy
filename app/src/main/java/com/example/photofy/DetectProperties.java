@@ -18,7 +18,6 @@ import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.cloud.vision.v1.ImageAnnotatorSettings;
 import com.google.cloud.vision.v1.ImageSource;
-import com.parse.ParseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,77 +28,73 @@ public class DetectProperties {
 
     public static final String TAG = "DetectProperties";
 
-    private Photo picture;
-    private String path;
     private GoogleCredentials credentials;
-    private List<String> objects;
+    private ImageAnnotatorClient client;
 
-    public DetectProperties(Photo picture, String path) {
-        this.picture = picture;
-        this.path = path;
-        objects = new ArrayList<String>();
+    public DetectProperties(String credentialsFilePath, Context context) {
+        try {
+            // Authorize Google credentials
+            credentials = GoogleCredentials.fromStream(context.getAssets().open(credentialsFilePath))
+                    .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
+
+            // Create annotator client
+            ImageAnnotatorSettings imageAnnotatorSettings =
+                    ImageAnnotatorSettings.newBuilder()
+                            .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
+                            .build();
+            client = ImageAnnotatorClient.create(imageAnnotatorSettings);
+        } catch (IOException e) {
+            Log.e(TAG, "credentials error" + e);
+        }
     }
 
-    public String authExplicit(String jsonPath, Context context) throws IOException {
-        // Authorize Google credentials
-        credentials = GoogleCredentials.fromStream(context.getAssets().open(jsonPath))
-                .createScoped(Arrays.asList("https://www.googleapis.com/auth/cloud-platform"));
-        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+    public String findDominantColor(Photo photo, String path) {
+        try {
+            // Upload captured image to Google Cloud storage
+            Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+            String bucketName = "photofy-images0";
+            String objectName = "image-" + photo.getImage().getName();
+            UploadObject.uploadObject(storage, bucketName, objectName, path);
 
-        // Upload captured image to Google Cloud storage
-        String bucketName = "photofy-images0";
-        String objectName = "image-" + picture.getImage().getName();
-        UploadObject.uploadObject(storage, bucketName, objectName, path);
+            // GCS path for image from bucket
+            String gcsPath = "gs://" + bucketName + "/" + objectName;
 
-        // Get GCS path for image from bucket
-        return "gs://" + bucketName + "/" + objectName;
+            return detectPropertiesGcs(gcsPath);
+        } catch (IOException e) {
+            Log.e(TAG, "problem with finding dominant color" + e);
+            return "";
+        }
     }
 
     // Detects most dominant color from the specified remote image
-    public void detectPropertiesGcs(String gcsPath) throws IOException {
+    private String detectPropertiesGcs(String gcsPath) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
         ImageSource imgSource = ImageSource.newBuilder().setGcsImageUri(gcsPath).build();
         Image img = Image.newBuilder().setSource(imgSource).build();
-        Feature feat1 = Feature.newBuilder().setType(Feature.Type.IMAGE_PROPERTIES).setMaxResults(1).build();
-        AnnotateImageRequest request1 =
-                AnnotateImageRequest.newBuilder().addFeatures(feat1).setImage(img).build();
-        requests.add(request1);
+        Feature feat = Feature.newBuilder().setType(Feature.Type.IMAGE_PROPERTIES).setMaxResults(1).build();
+        AnnotateImageRequest request =
+                AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
+        requests.add(request);
 
-        ImageAnnotatorSettings imageAnnotatorSettings =
-                ImageAnnotatorSettings.newBuilder()
-                        .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
-                        .build();
+        BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
+        List<AnnotateImageResponse> responses = response.getResponsesList();
+        client.close();
 
-        // Initialize client that will be used to send requests. This client only needs to be created
-        // once, and can be reused for multiple requests. After completing all of your requests, call
-        // the "close" method on the client to safely clean up any remaining background resources.
-        try (ImageAnnotatorClient client = ImageAnnotatorClient.create(imageAnnotatorSettings)) {
-            BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
-            List<AnnotateImageResponse> responses = response.getResponsesList();
-            client.close();
-
-            for (AnnotateImageResponse res : responses) {
-                if (res.hasError()) {
-                    System.out.format("Error: %s%n", res.getError().getMessage());
-                    return;
-                }
-
-                DominantColorsAnnotation colors = res.getImagePropertiesAnnotation().getDominantColors();
-                ColorInfo color = colors.getColorsList().get(0);
-
-                int red = Math.round(color.getColor().getRed());
-                int green = Math.round(color.getColor().getGreen());
-                int blue = Math.round(color.getColor().getBlue());
-
-                // Save dominant color hex code in Parse
-                String hex = String.format("#%02X%02X%02X", red, green, blue);
-                picture.setColor(hex);
-                Log.i(TAG, "generated color " + hex);
-                picture.save();
-            }
-        } catch (ParseException e) {
-            Log.e(TAG, "color error " + e);
+        AnnotateImageResponse res = responses.get(0);
+        if (res.hasError()) {
+            Log.e(TAG, "error " + res.getError().getMessage());
+            return "";
         }
+
+        DominantColorsAnnotation colors = res.getImagePropertiesAnnotation().getDominantColors();
+        ColorInfo color = colors.getColorsList().get(0);
+
+        int red = Math.round(color.getColor().getRed());
+        int green = Math.round(color.getColor().getGreen());
+        int blue = Math.round(color.getColor().getBlue());
+
+        String hex = String.format("#%02X%02X%02X", red, green, blue);
+        return hex;
     }
 }
