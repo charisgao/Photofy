@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.photofy.PushNotificationService;
 import com.example.photofy.R;
 import com.example.photofy.models.Follow;
 import com.example.photofy.models.Like;
@@ -143,6 +144,7 @@ public class SearchDetailsActivity extends AppCompatActivity {
         } else if (!post.getUser().getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
             followUser(post.getUser());
             ivAdd.setImageResource(R.drawable.ic_check);
+            sendFollowNotification(post.getUser());
             Toast.makeText(SearchDetailsActivity.this, "followed " + post.getUser().getUsername(), Toast.LENGTH_SHORT).show();
         }
     }
@@ -151,6 +153,10 @@ public class SearchDetailsActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         mediaPlayer.release();
+    }
+
+    private void sendFollowNotification(ParseUser userTo) {
+        PushNotificationService.pushNotification(this, userTo.getString("DeviceToken"), "New follower!", userTo.getUsername() + " followed you");
     }
 
     private void followUser(ParseUser user) {

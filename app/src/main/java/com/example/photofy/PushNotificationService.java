@@ -2,7 +2,6 @@ package com.example.photofy;
 
 import static com.example.photofy.PhotofyApplication.firebaseKey;
 
-import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.StrictMode;
 import android.util.Log;
-import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -63,25 +61,14 @@ public class PushNotificationService extends FirebaseMessagingService {
                 .setAutoCancel(true)
                 .setVibrate(new long[] {1000, 1000})
                 .setOnlyAlertOnce(true)
+                .setContentTitle(title)
+                .setContentText(body)
                 .setContentIntent(pendingIntent);
-
-        builder = builder.setContent(getRemoteView(title, body));
 
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
         manager.createNotificationChannel(channel);
         manager.notify(0, builder.build());
-    }
-
-    private RemoteViews getRemoteView(String title, String body) {
-         // attach the notification created with the custom layout
-        @SuppressLint("RemoteViewLayout") RemoteViews remoteView = new RemoteViews("com.example.photofy", R.layout.item_notification);
-
-        remoteView.setImageViewResource(R.id.ivNotif, R.drawable.splash_logo);
-        remoteView.setTextViewText(R.id.tvNotifTitle, title);
-        remoteView.setTextViewText(R.id.tvNotifMessage, body);
-
-        return remoteView;
     }
 
     public static void pushNotification(Context context, String deviceToken, String title, String body) {

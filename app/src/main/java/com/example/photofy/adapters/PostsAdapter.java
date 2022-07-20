@@ -367,7 +367,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         }
 
         private void sendLikeNotification(ParseUser userTo) {
-            PushNotificationService.pushNotification(context, userTo.getString("DeviceToken"), "New like!", userTo.getUsername() + " liked your post!");
+            PushNotificationService.pushNotification(context, userTo.getString("DeviceToken"), "New like!", userTo.getUsername() + " liked your post");
         }
 
         private void setupSeekBar(int millis) {

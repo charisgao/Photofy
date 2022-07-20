@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.photofy.PushNotificationService
 import com.example.photofy.R
 import com.example.photofy.activities.EditProfileActivity
 import com.example.photofy.activities.LoginActivity
@@ -166,7 +167,11 @@ class ProfileFragment : Fragment {
             }
         }
 
-        btnFollow.setOnClickListener(View.OnClickListener { followUser() })
+        btnFollow.setOnClickListener(View.OnClickListener {
+            followUser()
+            sendFollowNotification(user)
+        })
+
         btnFollowing.setOnClickListener(View.OnClickListener { unfollowUser() })
 
         editProfileLauncher = registerForActivityResult<Intent, ActivityResult>(
@@ -304,6 +309,11 @@ class ProfileFragment : Fragment {
         itemTouchHelper.attachToRecyclerView(rvProfilePosts)
 
         queryPosts()
+    }
+
+    private fun sendFollowNotification(userTo: ParseUser) {
+        PushNotificationService.pushNotification(context, userTo.getString("DeviceToken"), "New follower!", userTo.username + " followed you"
+        )
     }
 
     private fun deletePost(post: Post) {
