@@ -6,8 +6,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -15,12 +20,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.photofy.R;
 import com.example.photofy.activities.MainActivity;
-import com.example.photofy.fragments.CommentsFragment;
 import com.example.photofy.fragments.ProfileFragment;
 import com.example.photofy.models.Like;
 import com.example.photofy.models.Photo;
@@ -44,18 +49,20 @@ import java.util.concurrent.TimeUnit;
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
     public static final String TAG = "PostsAdapter";
-    private Context context;
-    private List<Post> posts;
+    private final Context context;
+    private final List<Post> posts;
+    private final NavController navController;
 
-    public PostsAdapter(Context context, List<Post> posts) {
+    public PostsAdapter(Context context, List<Post> posts, NavController navController) {
         this.context = context;
         this.posts = posts;
+        this.navController = navController;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_post, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_full_post, parent, false);
         return new ViewHolder(view);
     }
 
@@ -75,6 +82,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         return position;
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
     // Clean all elements of the recycler
     public void clear() {
         posts.clear();
@@ -83,20 +95,21 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView ivImage;
+        private final ImageView ivImage;
 
-        private ImageView ivProfile;
-        private TextView tvUsername;
-        private TextView tvCaption;
-        private ImageButton ibLike;
-        private ImageButton ibComment;
-        private TextView tvNumLikes;
-        private TextView tvNumComments;
+        private final ImageView ivProfile;
+        private final TextView tvUsername;
+        private final TextView tvCaption;
+        private final ImageButton ibLike;
+        private final ImageButton ibComment;
+        private final TextView tvNumLikes;
+        private final TextView tvNumComments;
+        private final ImageView ivHeart;
 
-        private TextView tvSongName;
-        private SeekBar seekBar;
-        private TextView tvTime;
-        private ImageButton ibPlay;
+        private final TextView tvSongName;
+        private final SeekBar seekBar;
+        private final TextView tvTime;
+        private final ImageButton ibPlay;
 
         private String duration;
         private ScheduledExecutorService timer;
@@ -113,11 +126,48 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             ibComment = itemView.findViewById(R.id.ibComment);
             tvNumLikes = itemView.findViewById(R.id.tvNumLikes);
             tvNumComments = itemView.findViewById(R.id.tvNumComments);
+            ivHeart = itemView.findViewById(R.id.ivHeart);
 
             tvSongName = itemView.findViewById(R.id.tvSongName);
+            tvSongName.setSelected(true);
+
             seekBar = itemView.findViewById(R.id.seekBar);
             tvTime = itemView.findViewById(R.id.tvTime);
             ibPlay = itemView.findViewById(R.id.ibPlay);
+
+            itemView.setOnTouchListener(new View.OnTouchListener() {
+                boolean firstTouch = false;
+                long time = System.currentTimeMillis();
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    int position = getAdapterPosition();
+                    Post post = posts.get(position);
+                    if(event.getAction() == MotionEvent.ACTION_DOWN){
+                        if(firstTouch && (System.currentTimeMillis() - time) <= 300) {
+                            if (post.isLiked) {
+                                unlikePost(post);
+                                ibLike.setImageResource(R.drawable.ufi_heart);
+                            } else {
+                                ivHeart.setVisibility(View.VISIBLE);
+                                animateHeart(ivHeart);
+                                likePost(post);
+                                ibLike.setImageResource(R.drawable.ufi_heart_active);
+                            }
+                            post.isLiked = !post.isLiked;
+                            int count = post.updateLikes();
+                            tvNumLikes.setText(Integer.toString(count));
+                            Log.i(TAG, "double tap");
+                            firstTouch = false;
+                        } else {
+                            firstTouch = true;
+                            time = System.currentTimeMillis();
+                            Log.i(TAG, "single tap " + time);
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            });
         }
 
         public void bind(Post post) {
@@ -133,6 +183,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             tvUsername.setText(post.getUser().getUsername());
             tvCaption.setText(post.getCaption());
 
+            ivHeart.setVisibility(View.GONE);
+
             bindLikeButton(post);
 
             tvNumLikes.setText(Integer.toString(post.getNumLikes()));
@@ -145,6 +197,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                         unlikePost(post);
                         ibLike.setImageResource(R.drawable.ufi_heart);
                     } else {
+                        ivHeart.setVisibility(View.VISIBLE);
+                        animateHeart(ivHeart);
                         likePost(post);
                         ibLike.setImageResource(R.drawable.ufi_heart_active);
                     }
@@ -157,32 +211,23 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             ibComment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO: have comment screen only appear part way
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        Post post = posts.get(position);
-
-                        CommentsFragment commentsFragment = new CommentsFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("post", post);
-                        commentsFragment.setArguments(bundle);
-                        FragmentTransaction transaction =((MainActivity) context).getSupportFragmentManager().beginTransaction();
-                        transaction.replace(R.id.flContainer, commentsFragment).addToBackStack("Comments").commit();
-                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("post", post);
+                    navController.navigate(R.id.action_blankFragment_to_commentsFragment, bundle);
                 }
             });
 
             ivProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    goOtherProfile(post);
+                    goOtherProfile(post.getUser());
                 }
             });
 
             tvUsername.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    goOtherProfile(post);
+                    goOtherProfile(post.getUser());
                 }
             });
 
@@ -199,13 +244,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             timer.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
-                    Log.i(TAG, "within run");
                     mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(new CallResult.ResultCallback<PlayerState>() {
                         @Override
                         public void onResult(PlayerState status) {
                             if (!seekBar.isPressed()) {
                                 seekBar.setProgress((int) status.playbackPosition);
-                                Log.i(TAG, "" + status.playbackPosition);
+                                Log.d(TAG, "" + status.playbackPosition);
                             }
                         }
                     });
@@ -326,10 +370,33 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             seekBar.setProgress(0);
         }
 
-        private void goOtherProfile(Post post) {
-            ProfileFragment otherProfileFragment = new ProfileFragment(post.getUser());
+        private void goOtherProfile(ParseUser user) {
+            ProfileFragment otherProfileFragment = new ProfileFragment(user);
             FragmentTransaction transaction =((MainActivity) context).getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.flContainer, otherProfileFragment).addToBackStack(null).commit();
+        }
+
+        public void animateHeart(final ImageView view) {
+            ScaleAnimation scaleAnimation = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            prepareAnimation(scaleAnimation);
+
+            AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+            prepareAnimation(alphaAnimation);
+
+            AnimationSet animation = new AnimationSet(true);
+            animation.addAnimation(alphaAnimation);
+            animation.addAnimation(scaleAnimation);
+            animation.setDuration(500);
+            animation.setFillAfter(true);
+
+            view.startAnimation(animation);
+        }
+
+        private Animation prepareAnimation(Animation animation){
+            animation.setRepeatCount(1);
+            animation.setRepeatMode(Animation.REVERSE);
+            return animation;
         }
     }
 }

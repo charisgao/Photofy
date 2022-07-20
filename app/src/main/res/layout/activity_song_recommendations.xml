@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/ice"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.SongRecommendationsActivity">
@@ -11,6 +12,10 @@
         android:id="@+id/csvSongs"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,9 +32,9 @@
 
         <ImageButton
             android:id="@+id/ibReject"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginEnd="30dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="40dp"
             android:background="@android:color/transparent"
             android:scaleType="fitXY"
             android:src="@drawable/thumbs_down"
@@ -40,8 +45,8 @@
 
         <ImageButton
             android:id="@+id/ibAccept"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="45dp"
+            android:layout_height="50dp"
             android:background="@android:color/transparent"
             android:scaleType="fitXY"
             android:src="@drawable/thumbs_up"

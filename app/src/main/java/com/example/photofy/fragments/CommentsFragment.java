@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -101,7 +103,8 @@ public class CommentsFragment extends Fragment {
         ibClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStackImmediate();
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.navHostFragment);
+                navController.navigate(R.id.action_commentsFragment_to_blankFragment);
             }
         });
     }
