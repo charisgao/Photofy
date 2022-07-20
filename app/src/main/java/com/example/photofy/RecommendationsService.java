@@ -32,15 +32,48 @@ public class RecommendationsService {
         this.queue = queue;
     }
 
-    private String getUrl(String genre){
+    private String getUrl(String genre, String parameter){
         HttpUrl.Builder url = HttpUrl.parse("https://api.spotify.com/v1/recommendations").newBuilder();
         url.addQueryParameter("market", "US");
         url.addQueryParameter("seed_genres", genre);
+        Character type1 = parameter.charAt(0);
+        Character type2 = parameter.charAt(1);
+        Character type3 = parameter.charAt(2);
+        if (type1 == 'h' || type2 == 'h' || type3 == 'h') { // amusing, hip-hop
+            url.addQueryParameter("min_energy", "0.4");
+        } if (type1 == 's' || type2 == 's' || type3 == 's') { // annoyed, synth-pop
+            url.addQueryParameter("min_loudness", "0.4");
+        } if (type1 == 'i' || type2 == 'i' || type3 == 'i') { // anxious, industrial
+            url.addQueryParameter("max_acousticness", "0.5");
+        } if (type1 == 'c' || type2 == 'c' || type3 == 'c') { // beautiful, classical
+            url.addQueryParameter("min_instrumentalness", "0.6");
+        } if (type1 == 'a' || type2 == 'a' || type3 == 'a') { // calm, ambient
+            url.addQueryParameter("max_tempo", "90");
+        } if (type1 == 'n' || type2 == 'n' || type3 == 'n') { // desirous, indie-pop
+            url.addQueryParameter("max_energy", "0.6");
+        } if (type1 == 'o' || type2 == 'o' || type3 == 'o') { // dreamy, soul
+            url.addQueryParameter("min_acousticness", "0.4");
+        } if (type1 == 'p' || type2 == 'p' || type3 == 'p') { // energizing, party
+            url.addQueryParameter("min_danceability", "0.75");
+        } if (type1 == 'm' || type2 == 'm' || type3 == 'm') { // fear, metal
+            url.addQueryParameter("min_energy", "0.5");
+        } if (type1 == 'r' || type2 == 'r' || type3 == 'r') { // joyful, r-n-b
+            url.addQueryParameter("min_valence", "0.4");
+        } if (type1 == 'e' || type2 == 'e' || type3 == 'e') { // loving, romance
+            url.addQueryParameter("max_liveness", "0.6");
+        } if (type1 == 'S' || type2 == 'S' || type3 == 'S') { // sad
+            url.addQueryParameter("max_valence", "0.6");
+        } if (type1 == 'g' || type2 == 'g' || type3 == 'g') { // scary, grindcore
+            url.addQueryParameter("max_loudness", "0.6");
+        } if (type1 == 'l' || type2 == 'l' || type3 == 'l') { // triumphant, alternative
+            url.addQueryParameter("min_liveness", "0.6");
+        }
+        Log.d(TAG, url.build().toString());
         return url.build().toString();
     }
 
-    public void getRecommendations(String genre, RecommendationsCallback recommendationsCallback, RecommendationsErrorCallback errorCallback) {
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getUrl(genre), null, new Response.Listener<JSONObject>() {
+    public void getRecommendations(String genre, String parameter, RecommendationsCallback recommendationsCallback, RecommendationsErrorCallback errorCallback) {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getUrl(genre, parameter), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Log.i(TAG, "in response");
@@ -92,7 +125,7 @@ public class RecommendationsService {
         song.setArtistName(artistName);
         song.setAlbumName(albumName);
         song.setAlbumCover(albumUrl);
-        song.setGenres(Arrays.asList(genre));
+        song.setGenre(genre);
         song.setPreview(previewUrl);
         song.setDuration(duration);
         Log.i(TAG, "adding song " + songName);

@@ -17,8 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.photofy.R;
-import com.example.photofy.fragments.HomeFragment;
-import com.example.photofy.fragments.LoadingFragment;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Post;
 import com.example.photofy.models.Song;
@@ -86,6 +84,11 @@ public class SongResultsActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+    }
 
     @Override
     public void onStart() {
