@@ -36,12 +36,14 @@ import com.example.photofy.models.Post
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.transition.platform.MaterialFadeThrough
 import com.parse.*
+import com.parse.boltsinternal.Task
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector.ConnectionListener
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class HomeFragment() : Fragment() {
     private lateinit var viewpagerPosts: ViewPager2
@@ -266,23 +268,48 @@ class HomeFragment() : Fragment() {
         val query = ParseQuery.getQuery(Post::class.java)
         query.include(Post.KEY_USER)
         query.limit = 20
-        val validUsers: MutableList<String> = ParseUser.getCurrentUser().getList<String>("Following")!!
-        validUsers.add(ParseUser.getCurrentUser().objectId)
-        query.whereContainedIn(Post.KEY_USER, validUsers)
+        val validUsers: List<String> = ParseUser.getCurrentUser().getList<String>("Following")!!
+
+        val validUsersBackup: MutableList<String> = ArrayList(validUsers);
+        validUsersBackup.add(ParseUser.getCurrentUser().objectId)
+        query.whereContainedIn(Post.KEY_USER, validUsersBackup)
         query.addDescendingOrder(Post.KEY_CREATED)
-        query.findInBackground(object : FindCallback<Post> {
-            override fun done(posts: List<Post>, e: ParseException?) {
-                // Check for errors
-                if (e != null) {
-                    Log.e(TAG, "Issue with getting posts", e)
-                    return
+        query.fromLocalDatastore().findInBackground().continueWithTask(
+            { task: Task<List<Post>?> ->
+                // Update UI with results from Local Datastore
+                val error = task.error
+                if (error == null) {
+                    val posts = task.result!!
+
+                    // Save received posts to list and notify adapter of new data
+                    allPosts.addAll(posts)
+                    adapter.notifyItemRangeInserted(0, posts.size)
                 }
-                validUsers.remove(ParseUser.getCurrentUser().objectId)
-                // Save received posts to list and notify adapter of new data
-                allPosts.addAll(posts)
-                adapter.notifyDataSetChanged()
-            }
-        })
+
+                // Update cache with new query
+                query.fromNetwork().findInBackground()
+            }, ContextCompat.getMainExecutor(requireContext())
+        ).continueWithTask(
+            { task: Task<List<Post>> ->
+                val error = task.error
+                if (error == null) {
+                    val posts = task.result!!
+                    allPosts.addAll(posts)
+                    adapter.notifyItemRangeInserted(0, posts.size)
+
+                    // Release any objects previously pinned for this query
+                    ParseObject.unpinAllInBackground(allPosts,
+                        DeleteCallback { e ->
+                            if (e != null) {
+                                return@DeleteCallback
+                            }
+                            // Add the latest results for this query to the cache
+                            ParseObject.pinAllInBackground(allPosts)
+                        })
+                }
+                task
+            }, ContextCompat.getMainExecutor(requireContext())
+        )
     }
 
     companion object {

@@ -1,15 +1,18 @@
 package com.example.photofy.fragments
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +24,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.transition.platform.MaterialFadeThrough
 import com.parse.*
+import com.parse.boltsinternal.Task
 
 
 class SearchFragment : Fragment() {
@@ -72,16 +76,22 @@ class SearchFragment : Fragment() {
         rvSearchedPosts.layoutManager = GridLayoutManager(context, 2)
         queryPosts()
 
-        etSearch.setOnKeyListener { _, keyCode, event ->
-            // user presses enter in the search bar
-            if ((event.action == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                val searchPhrase: String = etSearch.text.toString()
-                callAdapter(search(searchPhrase))
-                Toast.makeText(context, etSearch.text, Toast.LENGTH_SHORT).show()
-                etSearch.setText("")
+        etSearch.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {
             }
-            false
-        }
+            override fun beforeTextChanged(
+                s: CharSequence, start: Int,
+                count: Int, after: Int
+            ) {
+            }
+
+            override fun onTextChanged(
+                s: CharSequence, start: Int,
+                before: Int, count: Int
+            ) {
+                callAdapter(search(s.toString()))
+            }
+        })
 
         // filter button
         var pressed = false
@@ -117,22 +127,40 @@ class SearchFragment : Fragment() {
 
     // get all posts
     private fun queryPosts() {
-        allPosts.clear()
         val query = ParseQuery.getQuery(Post::class.java)
         query.include(Post.KEY_USER)
         query.addDescendingOrder(Post.KEY_LIKES)
-        query.findInBackground(object : FindCallback<Post> {
-            override fun done(posts: List<Post>, e: ParseException?) {
-                // Check for errors
-                if (e != null) {
-                    Log.e(TAG, "Issue with getting posts", e)
-                    return
+        query.fromLocalDatastore().findInBackground().continueWithTask(
+            { task: Task<List<Post>?> ->
+                // Update UI with results from Local Datastore
+                val error = task.error
+                if (error == null) {
+                    val posts = task.result!!
+
+                    // Save received posts to list and notify adapter of new data
+                    allPosts.clear()
+                    allPosts.addAll(posts)
+                    adapter.notifyItemRangeInserted(0, posts.size)
+
+                    ParseObject.unpinAllInBackground(allPosts)
                 }
 
-                allPosts.addAll(posts)
-                adapter.notifyItemRangeInserted(0, posts.size)
-            }
-        })
+                // Update cache with new query
+                query.fromNetwork().findInBackground()
+            }, ContextCompat.getMainExecutor(requireContext())
+        ).continueWithTask(
+            { task: Task<List<Post>> ->
+                val error = task.error
+                if (error == null) {
+                    val posts = task.result!!
+                    allPosts.clear()
+                    allPosts.addAll(posts)
+
+                    ParseObject.pinAllInBackground(allPosts)
+                }
+                task
+            }, ContextCompat.getMainExecutor(requireContext())
+        )
     }
 
     // new adapter to update data given posts
@@ -150,13 +178,13 @@ class SearchFragment : Fragment() {
         val searchResults: MutableList<Post> = ArrayList()
         if (filtered) {
             for (post in filteredPosts) {
-                if (post.caption.lowercase().contains(phrase.lowercase())) {
+                if (post.caption.lowercase().contains(phrase.lowercase()) || post.user.username.contains(phrase.lowercase())) {
                     searchResults.add(post)
                 }
             }
         } else {
             for (post in allPosts) {
-                if (post.caption.lowercase().contains(phrase.lowercase())) {
+                if (post.caption.lowercase().contains(phrase.lowercase()) || post.user.username.contains(phrase.lowercase())) {
                     searchResults.add(post)
                 }
             }
@@ -180,22 +208,40 @@ class SearchFragment : Fragment() {
         // get posts where song is a song part of genre
         postQuery.whereMatchesQuery(Post.KEY_SONG, ParseQuery.or(songQueries))
         postQuery.addDescendingOrder(Post.KEY_LIKES)
-        postQuery.findInBackground(object : FindCallback<Post> {
-            override fun done(posts: List<Post>, e: ParseException?) {
-                // Check for errors
-                if (e != null) {
-                    Log.e(TAG, "Issue with filtering posts", e)
-                    return
+
+        postQuery.fromLocalDatastore().findInBackground().continueWithTask(
+            { task: Task<List<Post>?> ->
+                // Update UI with results from Local Datastore
+                val error = task.error
+                if (error == null) {
+                    val posts = task.result!!
+
+                    filteredPosts.addAll(posts)
+                    callAdapter(filteredPosts)
+                    if (filteredPosts.isEmpty()) {
+                        tvNoPosts.visibility = View.VISIBLE
+                    } else {
+                        tvNoPosts.visibility = View.GONE
+                    }
+
+                    ParseObject.unpinAllInBackground(filteredPosts)
                 }
-                filteredPosts.addAll(posts)
-                callAdapter(filteredPosts)
-                if (filteredPosts.isEmpty()) {
-                    tvNoPosts.visibility = View.VISIBLE
-                } else {
-                    tvNoPosts.visibility = View.GONE
+                // Update cache with new query
+                postQuery.fromNetwork().findInBackground()
+            }, ContextCompat.getMainExecutor(requireContext())
+        ).continueWithTask(
+            { task: Task<List<Post>> ->
+                val error = task.error
+                if (error == null) {
+                    val posts = task.result!!
+                    filteredPosts.clear()
+                    filteredPosts.addAll(posts)
+
+                    ParseObject.pinAllInBackground(filteredPosts)
                 }
-            }
-        })
+                task
+            }, ContextCompat.getMainExecutor(requireContext())
+        )
     }
 
     companion object {

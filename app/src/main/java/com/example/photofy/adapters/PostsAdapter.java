@@ -24,6 +24,7 @@ import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.photofy.PushNotificationService;
 import com.example.photofy.R;
 import com.example.photofy.activities.MainActivity;
 import com.example.photofy.fragments.ProfileFragment;
@@ -107,6 +108,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         private final ImageView ivHeart;
 
         private final TextView tvSongName;
+        private final TextView tvArtistName;
         private final SeekBar seekBar;
         private final TextView tvTime;
         private final ImageButton ibPlay;
@@ -130,6 +132,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
             tvSongName = itemView.findViewById(R.id.tvSongName);
             tvSongName.setSelected(true);
+            tvArtistName = itemView.findViewById(R.id.tvArtistName);
 
             seekBar = itemView.findViewById(R.id.seekBar);
             tvTime = itemView.findViewById(R.id.tvTime);
@@ -151,6 +154,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                                 ivHeart.setVisibility(View.VISIBLE);
                                 animateHeart(ivHeart);
                                 likePost(post);
+                                sendLikeNotification(post.getUser());
                                 ibLike.setImageResource(R.drawable.ufi_heart_active);
                             }
                             post.isLiked = !post.isLiked;
@@ -200,6 +204,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                         ivHeart.setVisibility(View.VISIBLE);
                         animateHeart(ivHeart);
                         likePost(post);
+                        sendLikeNotification(post.getUser());
                         ibLike.setImageResource(R.drawable.ufi_heart_active);
                     }
                     post.isLiked = !post.isLiked;
@@ -236,6 +241,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                 @Override
                 public void done(ParseObject object, ParseException e) {
                     tvSongName.setText(song.getSongName());
+                    tvArtistName.setText(song.getArtistName());
                     setupSeekBar(song.getDuration());
                 }
             });
@@ -358,6 +364,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                     }
                 }
             });
+        }
+
+        private void sendLikeNotification(ParseUser userTo) {
+            PushNotificationService.pushNotification(context, userTo.getString("DeviceToken"), "New like!", userTo.getUsername() + " liked your post!");
         }
 
         private void setupSeekBar(int millis) {

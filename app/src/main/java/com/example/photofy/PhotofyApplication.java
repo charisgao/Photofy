@@ -22,6 +22,7 @@ public class PhotofyApplication extends Application {
     private String clientKey;
     public static String spotifyKey;
     public static String googleCredentials;
+    public static String firebaseKey;
     final String APP_ID = "zWEATxbbLsSFXeCWqTMXKWP0j2akWwV9cVZ86Q3p";
     final String SERVER = "https://parseapi.back4app.com";
 
@@ -43,11 +44,13 @@ public class PhotofyApplication extends Application {
             clientKey = bundle.getString("clientKey");
             spotifyKey = bundle.getString("spotifyClientId");
             googleCredentials = bundle.getString("googleCredentials");
+            firebaseKey = bundle.getString("firebaseKey");
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, "Client key not found " + e);
         }
 
         Parse.initialize(new Parse.Configuration.Builder(this)
+                .enableLocalDataStore()
                 .applicationId(APP_ID)
                 .clientKey(clientKey)
                 .server(SERVER)

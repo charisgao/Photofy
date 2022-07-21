@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "911459558094",
+    "project_id": "photofy-e849e",
+    "storage_bucket": "photofy-e849e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:911459558094:android:d7de3ef60d8155f866669f",
+        "android_client_info": {
+          "package_name": "com.example.photofy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "911459558094-ago08iof6gmrr3g9vknn2b4otu3q8d9l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTTJT35InDBZpWzrI602OehxKURqIwMQ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "911459558094-ago08iof6gmrr3g9vknn2b4otu3q8d9l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

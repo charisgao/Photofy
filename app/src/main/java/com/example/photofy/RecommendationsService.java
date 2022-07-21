@@ -36,9 +36,9 @@ public class RecommendationsService {
         HttpUrl.Builder url = HttpUrl.parse("https://api.spotify.com/v1/recommendations").newBuilder();
         url.addQueryParameter("market", "US");
         url.addQueryParameter("seed_genres", genre);
-        Character type1 = parameter.charAt(0);
-        Character type2 = parameter.charAt(1);
-        Character type3 = parameter.charAt(2);
+        char type1 = parameter.charAt(0);
+        char type2 = parameter.charAt(1);
+        char type3 = parameter.charAt(2);
         if (type1 == 'h' || type2 == 'h' || type3 == 'h') { // amusing, hip-hop
             url.addQueryParameter("min_energy", "0.4");
         } if (type1 == 's' || type2 == 's' || type3 == 's') { // annoyed, synth-pop
@@ -48,7 +48,7 @@ public class RecommendationsService {
         } if (type1 == 'c' || type2 == 'c' || type3 == 'c') { // beautiful, classical
             url.addQueryParameter("min_instrumentalness", "0.6");
         } if (type1 == 'a' || type2 == 'a' || type3 == 'a') { // calm, ambient
-            url.addQueryParameter("max_tempo", "90");
+            url.addQueryParameter("max_tempo", "100");
         } if (type1 == 'n' || type2 == 'n' || type3 == 'n') { // desirous, indie-pop
             url.addQueryParameter("max_energy", "0.6");
         } if (type1 == 'o' || type2 == 'o' || type3 == 'o') { // dreamy, soul
@@ -56,11 +56,11 @@ public class RecommendationsService {
         } if (type1 == 'p' || type2 == 'p' || type3 == 'p') { // energizing, party
             url.addQueryParameter("min_danceability", "0.75");
         } if (type1 == 'm' || type2 == 'm' || type3 == 'm') { // fear, metal
-            url.addQueryParameter("min_energy", "0.5");
+            url.addQueryParameter("min_tempo", "95");
         } if (type1 == 'r' || type2 == 'r' || type3 == 'r') { // joyful, r-n-b
             url.addQueryParameter("min_valence", "0.4");
         } if (type1 == 'e' || type2 == 'e' || type3 == 'e') { // loving, romance
-            url.addQueryParameter("max_liveness", "0.6");
+            url.addQueryParameter("max_liveness", "0.7");
         } if (type1 == 'S' || type2 == 'S' || type3 == 'S') { // sad
             url.addQueryParameter("max_valence", "0.6");
         } if (type1 == 'g' || type2 == 'g' || type3 == 'g') { // scary, grindcore
