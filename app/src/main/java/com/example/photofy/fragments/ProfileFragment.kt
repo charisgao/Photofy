@@ -182,7 +182,7 @@ class ProfileFragment : Fragment {
                 val newName = data!!.getStringExtra("Name")
                 val newUsername = data.getStringExtra("Username")
                 val newBio = data.getStringExtra("Bio")
-                Log.i(TAG, "got new info $newUsername $newBio")
+                val newProfilePic = data.getStringExtra("Picture");
                 val boldNewUsername = SpannableStringBuilder(newUsername)
                 boldNewUsername.setSpan(
                     StyleSpan(Typeface.BOLD),
@@ -190,6 +190,8 @@ class ProfileFragment : Fragment {
                     newUsername!!.length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
+
+                Glide.with(requireContext()).load(newProfilePic).circleCrop().into(ivProfilePicture)
                 tbProfile.title = boldNewUsername
                 tvProfileName.text = newName
                 tvProfileBiography.text = newBio
@@ -397,7 +399,6 @@ class ProfileFragment : Fragment {
                 Toast.makeText(context, R.string.logout_error_toast, Toast.LENGTH_SHORT).show()
                 Log.e(TAG, "Issue with logout", e)
             } else {
-                // TODO: figure out how to log user out from Spotify
                 editor = requireContext().getSharedPreferences("SPOTIFY", Context.MODE_PRIVATE)
                     .edit()
                 editor.remove("token")

@@ -110,10 +110,13 @@ public class EditProfileActivity extends AppCompatActivity {
 
                 current.saveInBackground();
 
+                ParseFile picture = current.getParseFile("Profile");
+
                 Intent i = new Intent();
                 i.putExtra("Name", newName);
                 i.putExtra("Username", newUsername);
                 i.putExtra("Bio", newBio);
+                i.putExtra("Picture", picture.getUrl());
                 setResult(RESULT_OK, i);
                 finish();
                 overridePendingTransition(R.anim.stationary, R.anim.slide_down);
