@@ -11,14 +11,20 @@ import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.androidbuts.multispinnerfilter.KeyPairBoolData;
+import com.androidbuts.multispinnerfilter.MultiSpinnerListener;
+import com.androidbuts.multispinnerfilter.MultiSpinnerSearch;
 import com.bumptech.glide.Glide;
 import com.example.photofy.BitmapScaler;
+import com.example.photofy.ColorToGenre;
 import com.example.photofy.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.textfield.TextInputEditText;
@@ -33,6 +39,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -45,6 +54,9 @@ public class EditProfileActivity extends AppCompatActivity {
     private TextView tvChangePhoto;
     private TextView tvCancel;
     private TextView tvDone;
+    private MultiSpinnerSearch spinnerChangeGenre;
+
+    private List<String> genres = new ArrayList<>(ColorToGenre.MOOD_TO_GENRE.values());
 
     private ActivityResultLauncher<String> galleryLauncher;
 
@@ -61,6 +73,7 @@ public class EditProfileActivity extends AppCompatActivity {
         tvChangePhoto = findViewById(R.id.tvChangePhoto);
         tvCancel = findViewById(R.id.tvCancel);
         tvDone = findViewById(R.id.tvDone);
+        spinnerChangeGenre = findViewById(R.id.spinnerChangeGenre);
 
         ParseUser current = ParseUser.getCurrentUser();
         current.fetchInBackground(new GetCallback<ParseObject>() {
@@ -97,8 +110,6 @@ public class EditProfileActivity extends AppCompatActivity {
         tvDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: update profile picture immediately
-
                 String newName = etEditName.getText().toString();
                 current.put("Name", newName);
 
@@ -108,14 +119,19 @@ public class EditProfileActivity extends AppCompatActivity {
                 String newBio = etEditBio.getText().toString();
                 current.put("Biography", newBio);
 
+                List<String> genreList = getSelectedGenres();
+                current.put("FavGenres", genreList);
+
                 current.saveInBackground();
 
                 ParseFile picture = current.getParseFile("Profile");
+                String newGenres = TextUtils.join(", ", genreList);
 
                 Intent i = new Intent();
                 i.putExtra("Name", newName);
                 i.putExtra("Username", newUsername);
                 i.putExtra("Bio", newBio);
+                i.putExtra("Genres", newGenres);
                 i.putExtra("Picture", picture.getUrl());
                 setResult(RESULT_OK, i);
                 finish();
@@ -168,6 +184,30 @@ public class EditProfileActivity extends AppCompatActivity {
                         Log.e(TAG, "IOException with gallery " + e);
                     }
                 }
+            }
+        });
+
+        spinnerChangeGenre.setSearchEnabled(true);
+        spinnerChangeGenre.setHintText("Select your three favorite genres");
+        spinnerChangeGenre.setSearchHint("Search for genres");
+        spinnerChangeGenre.setEmptyTitle("Genre not found!");
+        spinnerChangeGenre.setClearText("Clear all");
+        Collections.sort(genres);
+        spinnerChangeGenre.setItems(populateGenres(genres), new MultiSpinnerListener() {
+            @Override
+            public void onItemsSelected(List<KeyPairBoolData> items) {
+                for (int i = 0; i < items.size(); i++) {
+                    if (items.get(i).isSelected()) {
+                        Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
+                    }
+                }
+            }
+        });
+        spinnerChangeGenre.setLimit(3, new MultiSpinnerSearch.LimitExceedListener() {
+            @Override
+            public void onLimitListener(KeyPairBoolData data) {
+                Toast.makeText(getApplicationContext(),
+                        "Genre limit of 3 exceed ", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -230,5 +270,33 @@ public class EditProfileActivity extends AppCompatActivity {
 
         // Return the file target for the photo based on timestamp
         return new File(mediaStorageDir.getPath() + File.separator + "profile.jpg");
+    }
+
+
+    // populates genres into the dropdown
+    private List<KeyPairBoolData> populateGenres(List<String> list) {
+        List<KeyPairBoolData> allGenres = new ArrayList<>();
+        List<String> currentFaves = ParseUser.getCurrentUser().getList("FavGenres");
+
+        // set up list of displayed genres
+        for (int i = 0; i < list.size(); i++) {
+            KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+            keyPairBoolData.setId(i + 1);
+            keyPairBoolData.setName(list.get(i));
+            keyPairBoolData.setSelected(currentFaves.contains(list.get(i)));
+            allGenres.add(keyPairBoolData);
+        }
+
+        return allGenres;
+    }
+
+    // get selected genres from spinner
+    private List<String> getSelectedGenres() {
+        List<KeyPairBoolData> selectedGenres = spinnerChangeGenre.getSelectedItems();
+        List<String> genreList = new ArrayList<>();
+        for (int i = 0; i < selectedGenres.size(); i++) {
+            genreList.add(selectedGenres.get(i).getName());
+        }
+        return genreList;
     }
 }

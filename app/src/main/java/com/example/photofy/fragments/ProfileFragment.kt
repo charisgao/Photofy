@@ -182,7 +182,8 @@ class ProfileFragment : Fragment {
                 val newName = data!!.getStringExtra("Name")
                 val newUsername = data.getStringExtra("Username")
                 val newBio = data.getStringExtra("Bio")
-                val newProfilePic = data.getStringExtra("Picture");
+                val newGenres = data.getStringExtra("Genres")
+                val newProfilePic = data.getStringExtra("Picture")
                 val boldNewUsername = SpannableStringBuilder(newUsername)
                 boldNewUsername.setSpan(
                     StyleSpan(Typeface.BOLD),
@@ -195,6 +196,7 @@ class ProfileFragment : Fragment {
                 tbProfile.title = boldNewUsername
                 tvProfileName.text = newName
                 tvProfileBiography.text = newBio
+                tvProfileFavGenres.text = newGenres
             }
         }
         btnEditProfile.setOnClickListener(View.OnClickListener { goToEditProfile() })
