@@ -59,7 +59,7 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 android:textStyle="bold"
                 android:transitionName="songName"
                 tools:text="Song Title" />
@@ -71,6 +71,7 @@
                 android:layout_marginTop="3dp"
                 android:textAlignment="center"
                 android:textColor="#FFFFFF"
+                android:textSize="14sp"
                 android:textStyle="italic"
                 android:transitionName="artistName"
                 tools:text="Song Artist" />
