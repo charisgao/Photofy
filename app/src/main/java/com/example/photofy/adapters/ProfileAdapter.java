@@ -30,7 +30,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 
     public static final String TAG = "ProfileAdapter";
 
-    private Context context;
+    private final Context context;
     private List<Post> posts;
 
     public ProfileAdapter(Context context, List<Post> posts) {

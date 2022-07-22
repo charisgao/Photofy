@@ -79,9 +79,9 @@ public class CommentsFragment extends Fragment {
 
             int count = post.getNumComments();
             if (count == 1) {
-                tvTotalNumComments.setText(String.valueOf(count + " comment"));
+                tvTotalNumComments.setText(count + " comment");
             } else {
-                tvTotalNumComments.setText(String.valueOf(count + " comments"));
+                tvTotalNumComments.setText(count + " comments");
             }
         }
 
@@ -95,9 +95,9 @@ public class CommentsFragment extends Fragment {
 
                 int count = post.updateComments();
                 if (count == 1) {
-                    tvTotalNumComments.setText(String.valueOf(count + " comment"));
+                    tvTotalNumComments.setText(count + " comment");
                 } else {
-                    tvTotalNumComments.setText(String.valueOf(count + " comments"));
+                    tvTotalNumComments.setText(count + " comments");
                 }
             }
         });

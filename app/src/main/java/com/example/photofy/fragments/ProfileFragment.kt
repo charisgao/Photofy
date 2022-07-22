@@ -104,7 +104,7 @@ class ProfileFragment : Fragment {
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture)
         tvProfileName = view.findViewById(R.id.tvProfileName)
         tvProfileBiography = view.findViewById(R.id.tvProfileBiography)
-        tvProfileFavGenres = view.findViewById(R.id.tvProfileFavGenres);
+        tvProfileFavGenres = view.findViewById(R.id.tvProfileFavGenres)
         tvNumberPosts = view.findViewById(R.id.tvNumberPosts)
         tvNumberLikes = view.findViewById(R.id.tvNumberLikes)
         tvNumberFollowers = view.findViewById(R.id.tvNumberFollowers)
@@ -174,7 +174,7 @@ class ProfileFragment : Fragment {
 
         btnFollowing.setOnClickListener(View.OnClickListener { unfollowUser() })
 
-        editProfileLauncher = registerForActivityResult<Intent, ActivityResult>(
+        editProfileLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -201,7 +201,7 @@ class ProfileFragment : Fragment {
         }
         btnEditProfile.setOnClickListener(View.OnClickListener { goToEditProfile() })
 
-        settingsLauncher = registerForActivityResult<Intent, ActivityResult>(
+        settingsLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -447,6 +447,5 @@ class ProfileFragment : Fragment {
 
     companion object {
         const val TAG = "ProfileFragment"
-        private const val REQUEST_CODE = 1337
     }
 }

@@ -2,7 +2,6 @@ package com.example.photofy.models;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
-import java.util.List;
 
 @ParseClassName("Song")
 public class Song extends ParseObject {

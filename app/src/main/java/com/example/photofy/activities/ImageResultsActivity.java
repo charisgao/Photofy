@@ -39,7 +39,7 @@ public class ImageResultsActivity extends AppCompatActivity {
     private ImageView ivCapturedImage;
     private Button btnGetSongs;
 
-    private ColorToGenre genreFinder = new ColorToGenre();
+    private final ColorToGenre genreFinder = new ColorToGenre();
 
     private Photo photo;
     private String path;
@@ -99,7 +99,6 @@ public class ImageResultsActivity extends AppCompatActivity {
                 RequestQueue queue = Volley.newRequestQueue(ImageResultsActivity.this);
                 recommendationsService = new RecommendationsService(token, queue);
 
-                StringBuilder parameter = new StringBuilder();
                 List<String> favGenres = ParseUser.getCurrentUser().getList("FavGenres");
 
                 recommendationsService.getRecommendations(genre, favGenres, new RecommendationsCallback() {

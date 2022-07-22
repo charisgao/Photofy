@@ -56,7 +56,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private TextView tvDone;
     private MultiSpinnerSearch spinnerChangeGenre;
 
-    private List<String> genres = new ArrayList<>(ColorToGenre.MOOD_TO_GENRE.values());
+    private final List<String> genres = new ArrayList<>(ColorToGenre.MOOD_TO_GENRE.values());
 
     private ActivityResultLauncher<String> galleryLauncher;
 
@@ -159,15 +159,11 @@ public class EditProfileActivity extends AppCompatActivity {
                         File resizedFile = getPhotoFile();
                         try {
                             resizedFile.createNewFile();
-                            FileOutputStream fos = null;
-                            try {
-                                fos = new FileOutputStream(resizedFile);
+                            try (FileOutputStream fos = new FileOutputStream(resizedFile)) {
                                 // Write the bytes of the bitmap to file
                                 fos.write(bytes.toByteArray());
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
-                            } finally {
-                                fos.close();
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
