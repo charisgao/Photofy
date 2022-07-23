@@ -69,7 +69,6 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 File file = getPhotoFile();
-                Bundle result = new Bundle();
 
                 ImageCapture.OutputFileOptions outputFileOptions =
                         new ImageCapture.OutputFileOptions.Builder(file).build();
@@ -93,7 +92,7 @@ public class CameraActivity extends AppCompatActivity {
                                 });
                             }
                             @Override
-                            public void onError(ImageCaptureException error) {
+                            public void onError(@NonNull ImageCaptureException error) {
                                 Log.e(TAG, "Error while capturing camera image", error);
                             }
                         }

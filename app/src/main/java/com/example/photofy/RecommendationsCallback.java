@@ -5,6 +5,6 @@ import com.example.photofy.models.Song;
 import java.util.ArrayList;
 
 public interface RecommendationsCallback {
-    public void callback(ArrayList<Song> songs);
+    void callback(ArrayList<Song> songs);
 }
 

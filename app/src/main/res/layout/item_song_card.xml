@@ -1,69 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="?attr/materialCardViewElevatedStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    style="?attr/materialCardViewElevatedStyle" >
+    android:layout_height="600dp"
+    android:layout_margin="5dp">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <!-- Media -->
-        <ImageView
-            android:id="@+id/ivSongAlbumCover"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:scaleType="centerCrop" />
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_bg">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Title, secondary and supporting text -->
-            <TextView
-                android:id="@+id/tvRecommendedSong"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:fontFamily="@font/open_sans_bold"
-                android:textAlignment="center"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                tools:text="Song Name" />
+            <!-- Media -->
+            <ImageView
+                android:id="@+id/ivSongAlbumCover"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:scaleType="centerCrop" />
 
-            <TextView
-                android:id="@+id/tvRecommendedArtist"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="3dp"
-                android:fontFamily="@font/open_sans_italic"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                tools:text="Song Artist" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvRecommendedAlbum"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="5dp"
-                android:fontFamily="@font/open_sans_medium"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="@color/white"
-                tools:text="Song Album" />
+                <!-- Title, secondary and supporting text -->
+                <TextView
+                    android:id="@+id/tvRecommendedSong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:fontFamily="@font/open_sans_bold"
+                    android:textAlignment="center"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    tools:text="Song Name" />
+
+                <TextView
+                    android:id="@+id/tvRecommendedArtist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="3dp"
+                    android:fontFamily="@font/open_sans_italic"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    tools:text="Song Artist" />
+
+                <TextView
+                    android:id="@+id/tvRecommendedAlbum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="5dp"
+                    android:fontFamily="@font/open_sans_medium"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="@color/white"
+                    tools:text="Song Album" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </com.google.android.material.card.MaterialCardView>

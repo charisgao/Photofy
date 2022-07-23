@@ -19,7 +19,7 @@ public class SettingsActivity extends AppCompatActivity {
     private Button btnSettingsCancel;
     private Button btnSettingsUpdate;
 
-    private ParseUser currentUser = ParseUser.getCurrentUser();
+    private final ParseUser currentUser = ParseUser.getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -173,13 +173,15 @@ class SearchFragment : Fragment() {
         val searchResults: MutableList<Post> = ArrayList()
         if (filtered) {
             for (post in filteredPosts) {
-                if (post.caption.lowercase().contains(phrase.lowercase()) || post.user.username.contains(phrase.lowercase())) {
+                val song: Song = post.song.fetch() as Song
+                if (post.caption.lowercase().contains(phrase.lowercase()) || post.user.username.contains(phrase.lowercase()) || song.songName.lowercase().contains(phrase.lowercase()) || song.artistName.lowercase().contains(phrase.lowercase())) {
                     searchResults.add(post)
                 }
             }
         } else {
             for (post in allPosts) {
-                if (post.caption.lowercase().contains(phrase.lowercase()) || post.user.username.contains(phrase.lowercase())) {
+                val song: Song = post.song.fetch() as Song
+                if (post.caption.lowercase().contains(phrase.lowercase()) || post.user.username.contains(phrase.lowercase()) || song.songName.lowercase().contains(phrase.lowercase()) || song.artistName.lowercase().contains(phrase.lowercase())) {
                     searchResults.add(post)
                 }
             }

@@ -37,7 +37,7 @@ public class SignupActivity extends AppCompatActivity {
     private Button btnSignup;
     private TextView tvLogin;
 
-    private List<String> genres = new ArrayList<>(ColorToGenre.MOOD_TO_GENRE.values());
+    private final List<String> genres = new ArrayList<>(ColorToGenre.MOOD_TO_GENRE.values());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

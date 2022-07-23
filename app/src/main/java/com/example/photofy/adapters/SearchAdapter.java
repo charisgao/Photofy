@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.util.Pair;
@@ -34,7 +33,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     public static final String TAG = "SearchAdapter";
     private final Context context;
     private final List<Post> posts;
-    private ActivityResultLauncher<Intent> detailsLauncher;
 
     public SearchAdapter(Context context, List<Post> posts) {
         this.context = context;

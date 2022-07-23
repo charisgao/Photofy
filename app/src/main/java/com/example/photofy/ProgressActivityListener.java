@@ -2,7 +2,7 @@ package com.example.photofy;
 
 public interface ProgressActivityListener {
 
-    public void showProgressBar();
+    void showProgressBar();
 
-    public void hideProgressBar();
+    void hideProgressBar();
 }

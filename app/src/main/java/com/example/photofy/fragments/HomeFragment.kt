@@ -47,7 +47,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class HomeFragment() : Fragment() {
+class HomeFragment : Fragment() {
     private lateinit var viewpagerPosts: ViewPager2
     private lateinit var swipeContainer: SwipeRefreshLayout
     private lateinit var fabCompose: FloatingActionButton
@@ -282,9 +282,9 @@ class HomeFragment() : Fragment() {
         val query = ParseQuery.getQuery(Post::class.java)
         query.include(Post.KEY_USER)
         query.limit = 20
-        val validUsers: List<String> = ParseUser.getCurrentUser().getList<String>("Following")!!
+        val validUsers: List<String> = ParseUser.getCurrentUser().getList("Following")!!
 
-        val validUsersBackup: MutableList<String> = ArrayList(validUsers);
+        val validUsersBackup: MutableList<String> = ArrayList(validUsers)
         validUsersBackup.add(ParseUser.getCurrentUser().objectId)
         query.whereContainedIn(Post.KEY_USER, validUsersBackup)
         query.addDescendingOrder(Post.KEY_CREATED)

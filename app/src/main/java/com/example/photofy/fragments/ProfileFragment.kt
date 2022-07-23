@@ -104,7 +104,7 @@ class ProfileFragment : Fragment {
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture)
         tvProfileName = view.findViewById(R.id.tvProfileName)
         tvProfileBiography = view.findViewById(R.id.tvProfileBiography)
-        tvProfileFavGenres = view.findViewById(R.id.tvProfileFavGenres);
+        tvProfileFavGenres = view.findViewById(R.id.tvProfileFavGenres)
         tvNumberPosts = view.findViewById(R.id.tvNumberPosts)
         tvNumberLikes = view.findViewById(R.id.tvNumberLikes)
         tvNumberFollowers = view.findViewById(R.id.tvNumberFollowers)
@@ -174,7 +174,7 @@ class ProfileFragment : Fragment {
 
         btnFollowing.setOnClickListener(View.OnClickListener { unfollowUser() })
 
-        editProfileLauncher = registerForActivityResult<Intent, ActivityResult>(
+        editProfileLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -182,7 +182,8 @@ class ProfileFragment : Fragment {
                 val newName = data!!.getStringExtra("Name")
                 val newUsername = data.getStringExtra("Username")
                 val newBio = data.getStringExtra("Bio")
-                Log.i(TAG, "got new info $newUsername $newBio")
+                val newGenres = data.getStringExtra("Genres")
+                val newProfilePic = data.getStringExtra("Picture")
                 val boldNewUsername = SpannableStringBuilder(newUsername)
                 boldNewUsername.setSpan(
                     StyleSpan(Typeface.BOLD),
@@ -190,14 +191,17 @@ class ProfileFragment : Fragment {
                     newUsername!!.length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
+
+                Glide.with(requireContext()).load(newProfilePic).circleCrop().into(ivProfilePicture)
                 tbProfile.title = boldNewUsername
                 tvProfileName.text = newName
                 tvProfileBiography.text = newBio
+                tvProfileFavGenres.text = newGenres
             }
         }
         btnEditProfile.setOnClickListener(View.OnClickListener { goToEditProfile() })
 
-        settingsLauncher = registerForActivityResult<Intent, ActivityResult>(
+        settingsLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -397,7 +401,6 @@ class ProfileFragment : Fragment {
                 Toast.makeText(context, R.string.logout_error_toast, Toast.LENGTH_SHORT).show()
                 Log.e(TAG, "Issue with logout", e)
             } else {
-                // TODO: figure out how to log user out from Spotify
                 editor = requireContext().getSharedPreferences("SPOTIFY", Context.MODE_PRIVATE)
                     .edit()
                 editor.remove("token")
@@ -444,6 +447,5 @@ class ProfileFragment : Fragment {
 
     companion object {
         const val TAG = "ProfileFragment"
-        private const val REQUEST_CODE = 1337
     }
 }
