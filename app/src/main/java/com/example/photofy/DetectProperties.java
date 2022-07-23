@@ -24,6 +24,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Returns the dominant color (hex code) of an image using Google Cloud Vision API's algorithm
+ * Authorizes Google credentials and analyzes image using an ImageAnnotatorClient
+ */
 public class DetectProperties {
 
     public static final String TAG = "DetectProperties";

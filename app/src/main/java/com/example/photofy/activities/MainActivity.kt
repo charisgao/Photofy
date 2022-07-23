@@ -3,11 +3,13 @@ package com.example.photofy.activities
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.example.photofy.ProgressActivityListener
 import com.example.photofy.PushNotificationService
 import com.example.photofy.R
 import com.example.photofy.fragments.HomeFragment
@@ -19,9 +21,10 @@ import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.messaging.FirebaseMessaging
 import com.parse.ParseUser
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ProgressActivityListener {
     private lateinit var navController: NavController
     private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var progressBar: ProgressBar
     private val fragmentManager = supportFragmentManager
     private val KEY_DEVICE_TOKEN = "DeviceToken"
 
@@ -45,6 +48,8 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.setupWithNavController(navController)
         bottomNavigationView.itemIconTintList = null
 
+        progressBar = findViewById(R.id.progressBar)
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.commentsFragment -> bottomNavigationView.visibility = View.GONE
@@ -56,7 +61,10 @@ class MainActivity : AppCompatActivity() {
             lateinit var fragment: Fragment
             when (item.itemId) {
                 R.id.action_home -> fragment = HomeFragment()
-                R.id.action_search -> fragment = SearchFragment()
+                R.id.action_search -> {
+                    showProgressBar()
+                    fragment = SearchFragment()
+                }
                 R.id.action_profile -> fragment = ProfileFragment()
                 else -> {}
             }
@@ -80,5 +88,13 @@ class MainActivity : AppCompatActivity() {
                 current.saveInBackground()
             }
         })
+    }
+
+    override fun showProgressBar() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    override fun hideProgressBar() {
+        progressBar.visibility = View.GONE
     }
 }

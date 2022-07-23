@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import com.example.photofy.R;
 import com.example.photofy.adapters.WelcomeAdapter;
 import com.example.photofy.models.Welcome;
-import com.parse.ParseClassName;
 
 import java.util.ArrayList;
 import java.util.List;

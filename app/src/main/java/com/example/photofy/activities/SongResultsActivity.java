@@ -80,6 +80,7 @@ public class SongResultsActivity extends AppCompatActivity {
                 }
                 ParseUser currentUser = ParseUser.getCurrentUser();
                 savePost(caption, currentUser, photo, song);
+                mSpotifyAppRemote.getPlayerApi().pause();
             }
         });
     }

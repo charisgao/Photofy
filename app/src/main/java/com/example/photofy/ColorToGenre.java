@@ -7,6 +7,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Given the hex code of the dominant color from an image (determined from DetectProperties),
+ * generates a music genre associated with the image through color-mood theory.
+ *
+ * Color-mood theory research articles:
+ * https://www.pnas.org/doi/10.1073/pnas.1910704117#sec-1
+ * https://www.ocf.berkeley.edu/~acowen/music.html#
+ *
+ * Derived the 13 colors and moods from the aforementioned resources
+ * Mapped moods to music genre using
+ * https://www.mindbodygreen.com/articles/13-emotions-you-feel-when-listening-to-music-according-to-science/
+ */
 public class ColorToGenre {
 
     public static final String TAG = "ColorToGenre";
@@ -25,9 +37,7 @@ public class ColorToGenre {
     private final static Color YELLOWGREEN = Color.valueOf(204,204,51); //L
     private final static Color BROWN = Color.valueOf(158,79,69); //M
     private final static Color BLACK = Color.valueOf(0,0,0);
-    private final static Color WHITE = Color.valueOf(255,255,255);
 
-    // color to mood mapping source: https://www.pnas.org/doi/10.1073/pnas.1910704117#sec-1, https://www.ocf.berkeley.edu/~acowen/music.html#
     // if I have time later on, can expand to more colors through https://design-milk.com/color-coded-diaries-emotions-300-days/
     public final static Map<Color, String> COLOR_TO_MOOD = new HashMap<Color, String>() {{
         put(BLUE, "amusing");
@@ -68,6 +78,7 @@ public class ColorToGenre {
         return Color.valueOf(Color.red(color), Color.green(color), Color.blue(color));
     }
 
+    // gets closest color from the 13 colors + black to the dominant color
     private Color getClosestColor(String imageColor) {
         Color dominantColor = getDominantColor(imageColor);
         Map<Color, Double> distances = new HashMap<>();

@@ -71,7 +71,7 @@ public class ImageResultsActivity extends AppCompatActivity {
         btnGetSongs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToLoadingFragment();
+                goToLoadingActivity();
                 runBackground(photo, path);
             }
         });
@@ -101,25 +101,8 @@ public class ImageResultsActivity extends AppCompatActivity {
 
                 StringBuilder parameter = new StringBuilder();
                 List<String> favGenres = ParseUser.getCurrentUser().getList("FavGenres");
-                for (String g : favGenres) {
-                    if (g.equalsIgnoreCase("indie-pop")) {
-                        parameter.append("n");
-                    } else if (g.equalsIgnoreCase("soul")) {
-                        parameter.append("o");
-                    } else if (g.equalsIgnoreCase("romance")) {
-                        parameter.append("e");
-                    } else if (g.equalsIgnoreCase("sad")) {
-                        parameter.append("S");
-                    } else if (g.equalsIgnoreCase("alternative")) {
-                        parameter.append("l");
-                    } else {
-                        parameter.append(g.charAt(0));
-                    }
-                }
 
-                Log.i(TAG, parameter.toString());
-
-                recommendationsService.getRecommendations(genre, parameter.toString(), new RecommendationsCallback() {
+                recommendationsService.getRecommendations(genre, favGenres, new RecommendationsCallback() {
                     @Override
                     public void callback(ArrayList<Song> songs) {
                         goToRecommendationsActivity(songs);
@@ -136,9 +119,10 @@ public class ImageResultsActivity extends AppCompatActivity {
         runner.start();
     }
 
-    private void goToLoadingFragment() {
+    private void goToLoadingActivity() {
         Intent i = new Intent(this, LoadingActivity.class);
         startActivity(i);
+        finish();
     }
 
     private void goToRecommendationsActivity(ArrayList<Song> songs) {
@@ -146,6 +130,7 @@ public class ImageResultsActivity extends AppCompatActivity {
         i.putExtra("photo", photo);
         i.putParcelableArrayListExtra("songs", songs);
         startActivity(i);
+        finish();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 }

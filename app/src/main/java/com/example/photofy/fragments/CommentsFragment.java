@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.photofy.PushNotificationService;
 import com.example.photofy.adapters.CommentsAdapter;
 import com.example.photofy.R;
 import com.example.photofy.models.Comment;
@@ -90,6 +91,7 @@ public class CommentsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 newComment();
+                sendCommentNotification(post.getUser());
 
                 int count = post.updateComments();
                 if (count == 1) {
@@ -139,5 +141,9 @@ public class CommentsFragment extends Fragment {
         comments.add(0, comment);
         commentsAdapter.notifyItemInserted(0);
         rvComments.smoothScrollToPosition(0);
+    }
+
+    private void sendCommentNotification(ParseUser userTo) {
+        PushNotificationService.pushNotification(getContext(), userTo.getString("DeviceToken"), "New comment!", userTo.getUsername() + " commented on your post");
     }
 }
