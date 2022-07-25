@@ -24,7 +24,6 @@ import com.google.android.material.transition.platform.MaterialFadeThrough
 import com.parse.*
 import com.parse.boltsinternal.Task
 
-
 class SearchFragment : Fragment() {
 
     private lateinit var etSearch: EditText
@@ -174,14 +173,14 @@ class SearchFragment : Fragment() {
         if (filtered) {
             for (post in filteredPosts) {
                 val song: Song = post.song.fetch() as Song
-                if (post.caption.lowercase().contains(phrase.lowercase()) || post.user.username.contains(phrase.lowercase()) || song.songName.lowercase().contains(phrase.lowercase()) || song.artistName.lowercase().contains(phrase.lowercase())) {
+                if (post.user.username.contains(phrase.lowercase()) || song.songName.lowercase().contains(phrase.lowercase()) || song.artistName.lowercase().contains(phrase.lowercase())) {
                     searchResults.add(post)
                 }
             }
         } else {
             for (post in allPosts) {
                 val song: Song = post.song.fetch() as Song
-                if (post.caption.lowercase().contains(phrase.lowercase()) || post.user.username.contains(phrase.lowercase()) || song.songName.lowercase().contains(phrase.lowercase()) || song.artistName.lowercase().contains(phrase.lowercase())) {
+                if (post.user.username.contains(phrase.lowercase()) || song.songName.lowercase().contains(phrase.lowercase()) || song.artistName.lowercase().contains(phrase.lowercase())) {
                     searchResults.add(post)
                 }
             }

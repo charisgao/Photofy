@@ -27,10 +27,8 @@ import com.example.photofy.RecommendationsErrorCallback;
 import com.example.photofy.RecommendationsService;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Song;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ImageResultsActivity extends AppCompatActivity {
 
@@ -99,9 +97,7 @@ public class ImageResultsActivity extends AppCompatActivity {
                 RequestQueue queue = Volley.newRequestQueue(ImageResultsActivity.this);
                 recommendationsService = new RecommendationsService(token, queue);
 
-                List<String> favGenres = ParseUser.getCurrentUser().getList("FavGenres");
-
-                recommendationsService.getRecommendations(genre, favGenres, new RecommendationsCallback() {
+                recommendationsService.getRecommendations(genre, new RecommendationsCallback() {
                     @Override
                     public void callback(ArrayList<Song> songs) {
                         goToRecommendationsActivity(songs);
