@@ -270,17 +270,23 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                     mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(new CallResult.ResultCallback<PlayerState>() {
                         @Override
                         public void onResult(PlayerState status) {
-                            if (status.isPaused) {
-                                if (count == 0) {
-                                    mSpotifyAppRemote.getPlayerApi().play("spotify:track:" + song.getSpotifyId());
+                            if (tvSongName.getText().toString().equalsIgnoreCase(status.track.name)) {
+                                if (status.isPaused) {
+                                    if (count == 0) {
+                                        mSpotifyAppRemote.getPlayerApi().play("spotify:track:" + song.getSpotifyId());
+                                    } else {
+                                        mSpotifyAppRemote.getPlayerApi().resume();
+                                    }
+                                    ibPlay.setImageResource(R.drawable.ic_pause_button);
+                                    count++;
                                 } else {
-                                    mSpotifyAppRemote.getPlayerApi().resume();
+                                    mSpotifyAppRemote.getPlayerApi().pause();
+                                    ibPlay.setImageResource(R.drawable.ic_play_button);
                                 }
+                            } else {
+                                mSpotifyAppRemote.getPlayerApi().play("spotify:track:" + song.getSpotifyId());
                                 ibPlay.setImageResource(R.drawable.ic_pause_button);
                                 count++;
-                            } else {
-                                mSpotifyAppRemote.getPlayerApi().pause();
-                                ibPlay.setImageResource(R.drawable.ic_play_button);
                             }
                         }
                     });
