@@ -85,7 +85,8 @@ class SearchFragment : Fragment() {
                 s: CharSequence, start: Int,
                 before: Int, count: Int
             ) {
-                callAdapter(search(s.toString()))
+                val searchResults = search(s.toString())
+                adapter.submitList(searchResults)
             }
         })
 
@@ -103,7 +104,7 @@ class SearchFragment : Fragment() {
             // if nothing clicked (user unclicked all) then query all posts
             if (checkedIds.isEmpty()) {
                 filtered = false
-                callAdapter(allPosts)
+                adapter.submitList(allPosts)
                 tvNoPosts.visibility = View.GONE
             }
             // if user clicked some chips then call filtered query on selected genres
@@ -133,8 +134,7 @@ class SearchFragment : Fragment() {
                     // save received posts to list and notify adapter of new data
                     allPosts.clear()
                     allPosts.addAll(posts)
-                    adapter.notifyItemRangeInserted(0, posts.size)
-
+                    adapter.submitList(allPosts)
                     progressActivity.hideProgressBar()
                     // unpin cache
                     ParseObject.unpinAllInBackground(allPosts)
@@ -159,15 +159,7 @@ class SearchFragment : Fragment() {
         )
     }
 
-    private fun callAdapter(posts: List<Post>) {
-        adapter = SearchAdapter(
-            context,
-            posts)
-        rvSearchedPosts.adapter = adapter
-        rvSearchedPosts.layoutManager = GridLayoutManager(context, 2)
-        adapter.notifyDataSetChanged()
-    }
-
+    // TODO: performance problems related to song fetch
     private fun search(phrase: String): MutableList<Post> {
         val searchResults: MutableList<Post> = ArrayList()
         if (filtered) {
@@ -190,7 +182,6 @@ class SearchFragment : Fragment() {
 
     // filter posts by genres in chips
     private fun filteredQuery(genres: MutableList<String>) {
-        filteredPosts.clear()
         val songQueries: MutableList<ParseQuery<Song>> = ArrayList()
 
         for (genre in genres) {
@@ -210,9 +201,11 @@ class SearchFragment : Fragment() {
                 val error = task.error
                 if (error == null) {
                     val posts = task.result!!
-
+                    filteredPosts.clear()
                     filteredPosts.addAll(posts)
-                    callAdapter(filteredPosts)
+
+                    adapter.submitList(filteredPosts)
+
                     if (filteredPosts.isEmpty()) {
                         tvNoPosts.visibility = View.VISIBLE
                     } else {

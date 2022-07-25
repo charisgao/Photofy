@@ -6,6 +6,7 @@ import com.parse.ParseObject;
 @ParseClassName("Song")
 public class Song extends ParseObject {
 
+    public static final String KEY_OBJECT_ID = "objectId";
     public static final String KEY_SPOTIFYID = "SpotifyId";
     public static final String KEY_NAME = "Name";
     public static final String KEY_ARTIST = "Artist";
@@ -14,6 +15,10 @@ public class Song extends ParseObject {
     public static final String KEY_GENRE = "Genres";
     public static final String KEY_PREVIEW = "Preview";
     public static final String KEY_DURATION = "Duration";
+
+    public String getId() {
+        return getString(KEY_OBJECT_ID);
+    }
 
     public String getSpotifyId() {
         return getString(KEY_SPOTIFYID);

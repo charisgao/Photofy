@@ -73,8 +73,11 @@ class MainActivity : AppCompatActivity(), ProgressActivityListener {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.commentsFragment -> bottomNavigationView.visibility = View.GONE
-                else -> bottomNavigationView.visibility = View.VISIBLE
+                R.id.commentsFragment -> {
+                    bottomNavigationView.visibility = View.GONE
+                    fabCompose.visibility = View.GONE }
+                else -> { bottomNavigationView.visibility = View.VISIBLE
+                    fabCompose.visibility = View.VISIBLE }
             }
         }
 

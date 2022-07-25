@@ -8,9 +8,14 @@ import com.parse.ParseUser;
 @ParseClassName("Image")
 public class Photo extends ParseObject {
 
+    public static final String KEY_OBJECT_ID = "objectId";
     public static final String KEY_IMAGE = "Photo";
     public static final String KEY_USER = "User";
     public static final String KEY_COLOR = "Color";
+
+    public String getId() {
+        return getString(KEY_OBJECT_ID);
+    }
 
     public ParseFile getImage() {
         return getParseFile(KEY_IMAGE);

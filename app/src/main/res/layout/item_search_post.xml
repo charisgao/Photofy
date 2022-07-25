@@ -37,7 +37,6 @@
             android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
-            android:transitionName="songName"
             app:layout_constraintBottom_toBottomOf="@+id/ivSearchImage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +52,6 @@
             android:textColor="#FFFFFF"
             android:textSize="12sp"
             android:textStyle="italic"
-            android:transitionName="artistName"
             tools:text="Artist Name" />
 
     </LinearLayout>
