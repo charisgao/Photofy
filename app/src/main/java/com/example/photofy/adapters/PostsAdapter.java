@@ -254,9 +254,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                     mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(new CallResult.ResultCallback<PlayerState>() {
                         @Override
                         public void onResult(PlayerState status) {
-                            if (!seekBar.isPressed()) {
-                                seekBar.setProgress((int) status.playbackPosition);
-                                Log.d(TAG, "" + status.playbackPosition);
+                            if (song.getSongName().equalsIgnoreCase(status.track.name)) {
+                                if (!seekBar.isPressed()) {
+                                    seekBar.setProgress((int) status.playbackPosition);
+                                    Log.d(TAG, "" + status.playbackPosition);
+                                }
                             }
                         }
                     });
@@ -270,7 +272,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                     mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(new CallResult.ResultCallback<PlayerState>() {
                         @Override
                         public void onResult(PlayerState status) {
-                            if (tvSongName.getText().toString().equalsIgnoreCase(status.track.name)) {
+                            if (song.getSongName().equalsIgnoreCase(status.track.name)) {
                                 if (status.isPaused) {
                                     if (count == 0) {
                                         mSpotifyAppRemote.getPlayerApi().play("spotify:track:" + song.getSpotifyId());

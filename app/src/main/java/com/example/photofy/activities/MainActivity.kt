@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity(), ProgressActivityListener {
         editor.putString("token", spotifyToken)
         editor.apply()
 
-        saveToken()
+        saveFirebaseToken()
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment?
@@ -98,6 +98,7 @@ class MainActivity : AppCompatActivity(), ProgressActivityListener {
         // Set default selection
         bottomNavigationView.selectedItemId = R.id.action_home
 
+        // TODO: improve upload image quality
         galleryLauncher = registerForActivityResult<String, Uri>(ActivityResultContracts.GetContent()) { selectedImage ->
             if (selectedImage != null) {
                 try {
@@ -111,7 +112,7 @@ class MainActivity : AppCompatActivity(), ProgressActivityListener {
                     // Configure byte output stream
                     val bytes = ByteArrayOutputStream()
                     // Compress the image further
-                    resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 40, bytes)
+                    resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, bytes)
                     // Create a new file for the resized bitmap
                     val resizedFile = photoFile
                     try {
@@ -134,7 +135,7 @@ class MainActivity : AppCompatActivity(), ProgressActivityListener {
                     picture.image = ParseFile(resizedFile)
                     picture.saveInBackground {
                         val i = Intent(this, ImageResultsActivity::class.java)
-                        i.putExtra("filePath", resizedFile.absolutePath)
+                        i.putExtra("filePath", photoFile.absolutePath)
                         i.putExtra("photo", picture)
                         i.putExtra("gallery", true)
                         startActivity(i)
@@ -149,7 +150,7 @@ class MainActivity : AppCompatActivity(), ProgressActivityListener {
         }
     }
 
-    private fun saveToken() {
+    private fun saveFirebaseToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w(PushNotificationService.TAG, "Fetching device token failed", task.exception)
