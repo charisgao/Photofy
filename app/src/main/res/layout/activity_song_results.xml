@@ -122,6 +122,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Post"
+        android:backgroundTint="@color/ice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -129,13 +130,15 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tfCaptionLayout"
-        style="?attr/textInputFilledStyle"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:backgroundTint="@color/dark_blue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="40dp"
         android:ems="10"
+        android:textColorHint="@color/black"
         android:hint="Add a caption here!"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -144,8 +147,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etCaption"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/baby_blue" />
+            android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
