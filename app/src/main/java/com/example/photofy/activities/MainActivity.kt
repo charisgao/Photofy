@@ -14,6 +14,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -42,6 +43,7 @@ import java.util.*
 class MainActivity : AppCompatActivity(), ProgressActivityListener {
     private lateinit var navController: NavController
     private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var rlProgressBar: RelativeLayout
     private lateinit var progressBar: ProgressBar
     private lateinit var galleryLauncher: ActivityResultLauncher<String>
     private val fragmentManager = supportFragmentManager
@@ -66,6 +68,7 @@ class MainActivity : AppCompatActivity(), ProgressActivityListener {
         bottomNavigationView.setupWithNavController(navController)
         bottomNavigationView.itemIconTintList = null
 
+        rlProgressBar = findViewById(R.id.rlProgressBar)
         progressBar = findViewById(R.id.progressBar)
 
         fabCompose = findViewById(R.id.fabCompose)
@@ -243,10 +246,12 @@ class MainActivity : AppCompatActivity(), ProgressActivityListener {
         }
 
     override fun showProgressBar() {
+        rlProgressBar.visibility = View.VISIBLE
         progressBar.visibility = View.VISIBLE
     }
 
     override fun hideProgressBar() {
+        rlProgressBar.visibility = View.GONE
         progressBar.visibility = View.GONE
     }
 
