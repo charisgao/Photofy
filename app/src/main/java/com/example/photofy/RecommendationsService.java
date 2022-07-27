@@ -43,8 +43,7 @@ public class RecommendationsService {
         HttpUrl.Builder url = HttpUrl.parse("https://api.spotify.com/v1/recommendations").newBuilder();
         url.addQueryParameter("market", "US");
         url.addQueryParameter("seed_genres", genre);
-
-        Log.d(TAG, url.build().toString());
+        url.addQueryParameter("min_popularity", "0.6");
         return url.build().toString();
     }
 

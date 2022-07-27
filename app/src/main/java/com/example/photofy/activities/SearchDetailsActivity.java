@@ -154,7 +154,7 @@ public class SearchDetailsActivity extends AppCompatActivity {
     }
 
     private void sendFollowNotification(ParseUser userTo) {
-        PushNotificationService.pushNotification(this, userTo.getString("DeviceToken"), "New follower!", userTo.getUsername() + " followed you");
+        PushNotificationService.pushNotification(this, userTo.getString("DeviceToken"), "New follower!", ParseUser.getCurrentUser().getUsername() + " followed you");
     }
 
     private void followUser(ParseUser user) {

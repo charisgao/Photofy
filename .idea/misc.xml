@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/blur_bg.xml" value="0.221" />
         <entry key="app/src/main/res/drawable/genre_select_bg.xml" value="0.2905" />
         <entry key="app/src/main/res/drawable/genre_selected_bg.xml" value="0.2805" />
         <entry key="app/src/main/res/drawable/genre_unselected_bg.xml" value="0.2905" />
@@ -47,7 +48,7 @@
         <entry key="app/src/main/res/layout/activity_settings.xml" value="0.3365036231884058" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.19130859374999998" />
         <entry key="app/src/main/res/layout/activity_song_recommendations.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/activity_song_results.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/activity_song_results.xml" value="0.1861724853515625" />
         <entry key="app/src/main/res/layout/activity_spotify_login.xml" value="0.24320652173913043" />
         <entry key="app/src/main/res/layout/activity_welcome.xml" value="0.25" />
         <entry key="app/src/main/res/layout/card_stack_view.xml" value="0.24270833333333333" />
