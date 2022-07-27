@@ -67,6 +67,7 @@ class ProfileFragment : Fragment {
     private lateinit var btnEditProfile: Button
     private lateinit var btnFollow: Button
     private lateinit var btnFollowing: Button
+    private lateinit var tvProfileNoPosts: TextView
     private lateinit var rvProfilePosts: RecyclerView
 
     private var user = ParseUser.getCurrentUser()
@@ -113,6 +114,7 @@ class ProfileFragment : Fragment {
         btnFollow = view.findViewById(R.id.btnFollow)
         btnFollowing = view.findViewById(R.id.btnFollowing)
         rvProfilePosts = view.findViewById(R.id.rvProfilePosts)
+        tvProfileNoPosts = view.findViewById(R.id.tvProfileNoPosts)
         tbProfile.inflateMenu(R.menu.menu_profile_toolbar)
 
         val username = SpannableStringBuilder(user.username)
@@ -146,6 +148,7 @@ class ProfileFragment : Fragment {
         tvProfileBiography.text = user.getString("Biography")
         val favGenres: MutableList<String> = user.getList("FavGenres")!!
         tvProfileFavGenres.text = TextUtils.join(", ", favGenres)
+        tvProfileNoPosts.visibility = View.GONE
 
         setPostCount()
         setLikeCount()
@@ -442,6 +445,10 @@ class ProfileFragment : Fragment {
             // Save received posts to list and notify adapter of new data
             profilePosts.addAll(posts)
             profileAdapter.notifyDataSetChanged()
+
+            if (profilePosts.isEmpty()) {
+                tvProfileNoPosts.visibility = View.VISIBLE
+            }
         })
     }
 
