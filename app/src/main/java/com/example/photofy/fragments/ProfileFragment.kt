@@ -319,7 +319,7 @@ class ProfileFragment : Fragment {
     }
 
     private fun sendFollowNotification(userTo: ParseUser) {
-        PushNotificationService.pushNotification(context, userTo.getString("DeviceToken"), "New follower!", userTo.username + " followed you"
+        PushNotificationService.pushNotification(context, userTo.getString("DeviceToken"), "New follower!", ParseUser.getCurrentUser().username + " followed you"
         )
     }
 

@@ -1,5 +1,6 @@
 package com.example.photofy.fragments
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,8 +10,11 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentResultListener
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photofy.ProgressActivityListener
@@ -21,8 +25,10 @@ import com.example.photofy.models.Song
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.transition.platform.MaterialFadeThrough
-import com.parse.*
+import com.parse.ParseObject
+import com.parse.ParseQuery
 import com.parse.boltsinternal.Task
+
 
 class SearchFragment : Fragment() {
 
@@ -67,7 +73,7 @@ class SearchFragment : Fragment() {
         allPosts = ArrayList()
         filteredPosts = ArrayList()
 
-        adapter = SearchAdapter(context, allPosts)
+        adapter = SearchAdapter(context, allPosts, rvSearchedPosts)
         rvSearchedPosts.adapter = adapter
         rvSearchedPosts.layoutManager = GridLayoutManager(context, 2)
         queryPosts()
@@ -118,6 +124,14 @@ class SearchFragment : Fragment() {
                 filteredQuery(checkedGenres)
             }
         }
+
+        val manager: FragmentManager = (activity as AppCompatActivity).supportFragmentManager
+        manager.setFragmentResultListener("requestKey", this,
+            FragmentResultListener { _, _ ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    rvSearchedPosts.setRenderEffect(null)
+                }
+            })
     }
 
     private fun queryPosts() {

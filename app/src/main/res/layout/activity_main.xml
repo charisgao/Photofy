@@ -76,4 +76,16 @@
 
     </RelativeLayout>
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/flSearchDetails"
+        android:name="com.example.photofy.fragments.BlankFragment"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/flContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/flContainer" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
