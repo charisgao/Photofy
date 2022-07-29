@@ -109,4 +109,7 @@ dependencies {
 
     // Showcase view
     implementation 'com.github.mreram:showcaseview:1.4.0'
+
+    // Flexbox
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
 }

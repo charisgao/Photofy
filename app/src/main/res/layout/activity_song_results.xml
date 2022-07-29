@@ -44,6 +44,7 @@
         android:rotation="-25"
         app:layout_constraintBottom_toTopOf="@+id/ivResultsSongImage"
         app:layout_constraintEnd_toStartOf="@+id/tvMatch"
+        app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/eighth" />
 
     <ImageView
@@ -53,7 +54,6 @@
         android:rotation="15"
         app:layout_constraintBottom_toTopOf="@+id/tfCaptionLayout"
         app:layout_constraintEnd_toEndOf="@+id/frameLayout"
-        app:layout_constraintStart_toEndOf="@+id/tvResultsSongArtist"
         app:srcCompat="@drawable/sixteenth" />
 
     <ImageView
@@ -122,15 +122,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Post"
-        android:backgroundTint="@color/ice"
+        android:backgroundTint="@color/dark_blue"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tfCaptionLayout" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tfCaptionLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        style="@style/Widget.App.TextInputLayout"
         android:backgroundTint="@color/dark_blue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -147,7 +147,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etCaption"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:lines="3"/>
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,14 +1,22 @@
-package com.example.photofy.activities;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+package com.example.photofy.fragments;
 
 import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.transition.AutoTransition;
+
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +24,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.photofy.PushNotificationService;
 import com.example.photofy.R;
+import com.example.photofy.activities.MainActivity;
 import com.example.photofy.models.Follow;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Post;
@@ -29,9 +38,9 @@ import com.parse.ParseUser;
 import java.io.IOException;
 import java.util.List;
 
-public class SearchDetailsActivity extends AppCompatActivity {
+public class SearchDetailsFragment extends Fragment {
 
-    public static final String TAG = "SearchDetailsActivity";
+    public static final String TAG = "SearchDetailsFragment";
 
     private ImageView ivImageSearchDetails;
     private ImageView ivProfileSearchDetails;
@@ -41,44 +50,56 @@ public class SearchDetailsActivity extends AppCompatActivity {
     private TextView tvSongArtistSearchDetails;
     private TextView tvSongAlbumSearchDetails;
     private ImageView ivAdd;
+    private ImageButton ibSearchDetailsClose;
     private ConstraintLayout clSongDetails;
 
     private Post post;
     private MediaPlayer mediaPlayer;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_details);
+    public SearchDetailsFragment() {
+        // Required empty public constructor
+    }
 
-        ivImageSearchDetails = findViewById(R.id.ivImageSearchDetails);
-        ivProfileSearchDetails = findViewById(R.id.ivProfileSearchDetails);
-        tvUsernameSearchDetails = findViewById(R.id.tvUsernameSearchDetails);
-        ivSongPictureSearchDetails = findViewById(R.id.ivSongPictureSearchDetails);
-        tvSongNameSearchDetails = findViewById(R.id.tvSongNameSearchDetails);
-        tvSongArtistSearchDetails = findViewById(R.id.tvSongArtistSearchDetails);
-        tvSongAlbumSearchDetails = findViewById(R.id.tvSongAlbumSearchDetails);
-        ivAdd = findViewById(R.id.ivAdd);
-        clSongDetails = findViewById(R.id.clSongDetails);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_search_details, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ivImageSearchDetails = view.findViewById(R.id.ivImageSearchDetails);
+        ivProfileSearchDetails = view.findViewById(R.id.ivProfileSearchDetails);
+        tvUsernameSearchDetails = view.findViewById(R.id.tvUsernameSearchDetails);
+        ivSongPictureSearchDetails = view.findViewById(R.id.ivSongPictureSearchDetails);
+        tvSongNameSearchDetails = view.findViewById(R.id.tvSongNameSearchDetails);
+        tvSongArtistSearchDetails = view.findViewById(R.id.tvSongArtistSearchDetails);
+        tvSongAlbumSearchDetails = view.findViewById(R.id.tvSongAlbumSearchDetails);
+        ivAdd = view.findViewById(R.id.ivAdd);
+        ibSearchDetailsClose = view.findViewById(R.id.ibSearchDetailsClose);
+        clSongDetails = view.findViewById(R.id.clSongDetails);
 
         // Extract post from bundle
-        post = getIntent().getParcelableExtra("post");
+        post = getArguments().getParcelable("post");
 
         Photo photo = (Photo) post.getPhoto();
         photo.fetchInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject object, ParseException e) {
-                Glide.with(SearchDetailsActivity.this).load(photo.getImage().getUrl()).into(ivImageSearchDetails);
+                Glide.with(getContext()).load(photo.getImage().getUrl()).into(ivImageSearchDetails);
             }
         });
-        Glide.with(SearchDetailsActivity.this).load(post.getUser().getParseFile("Profile").getUrl()).circleCrop().into(ivProfileSearchDetails);
+        Glide.with(getContext()).load(post.getUser().getParseFile("Profile").getUrl()).circleCrop().into(ivProfileSearchDetails);
         tvUsernameSearchDetails.setText(post.getUser().getUsername());
 
         Song song = (Song) post.getSong();
         song.fetchInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject object, ParseException e) {
-                Glide.with(SearchDetailsActivity.this).load(song.getAlbumCover()).into(ivSongPictureSearchDetails);
+                Glide.with(getContext()).load(song.getAlbumCover()).into(ivSongPictureSearchDetails);
                 tvSongNameSearchDetails.setText(song.getSongName());
                 tvSongArtistSearchDetails.setText(song.getArtistName());
                 tvSongAlbumSearchDetails.setText(song.getAlbumName());
@@ -129,7 +150,24 @@ public class SearchDetailsActivity extends AppCompatActivity {
         tvUsernameSearchDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                followController(following);
+                BlankFragment blankFragment = new BlankFragment();
+                ProfileFragment profileFragment = new ProfileFragment(post.getUser());
+                FragmentManager manager = ((MainActivity) getContext()).getSupportFragmentManager();
+                manager.beginTransaction().replace(R.id.flSearchDetails, blankFragment).addToBackStack(null).commit();
+                manager.beginTransaction().replace(R.id.flContainer, profileFragment).addToBackStack(null).commit();
+//                followController(following);
+            }
+        });
+
+        ibSearchDetailsClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle result = new Bundle();
+                FragmentManager manager = ((MainActivity) getContext()).getSupportFragmentManager();
+                manager.setFragmentResult("requestKey", result);
+                BlankFragment blankFragment = new BlankFragment();
+                blankFragment.setExitTransition(new AutoTransition());
+                manager.beginTransaction().replace(R.id.flSearchDetails, blankFragment).addToBackStack(null).commit();
             }
         });
     }
@@ -138,23 +176,23 @@ public class SearchDetailsActivity extends AppCompatActivity {
         if (following.contains(post.getUser().getObjectId())) {
             unfollowUser(post.getUser());
             ivAdd.setImageResource(R.drawable.ic_add);
-            Toast.makeText(SearchDetailsActivity.this, "unfollowed " + post.getUser().getUsername(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "unfollowed " + post.getUser().getUsername(), Toast.LENGTH_SHORT).show();
         } else if (!post.getUser().getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
             followUser(post.getUser());
             ivAdd.setImageResource(R.drawable.ic_check);
             sendFollowNotification(post.getUser());
-            Toast.makeText(SearchDetailsActivity.this, "followed " + post.getUser().getUsername(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "followed " + post.getUser().getUsername(), Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         mediaPlayer.release();
     }
 
     private void sendFollowNotification(ParseUser userTo) {
-        PushNotificationService.pushNotification(this, userTo.getString("DeviceToken"), "New follower!", userTo.getUsername() + " followed you");
+        PushNotificationService.pushNotification(getContext(), userTo.getString("DeviceToken"), "New follower!", ParseUser.getCurrentUser().getUsername() + " followed you");
     }
 
     private void followUser(ParseUser user) {

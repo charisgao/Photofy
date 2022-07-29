@@ -31,14 +31,14 @@
         android:id="@+id/fabCompose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="-15dp"
         android:layout_marginEnd="20dp"
-        android:backgroundTint="@color/baby_blue"
+        android:backgroundTint="@color/light_blue"
         android:clickable="true"
         android:src="@drawable/ic_filled_compose"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:borderWidth="0dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/flContainer"
-        app:tint="@color/dark_blue" />
+        app:layout_constraintTop_toBottomOf="@+id/flContainer" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/navHostFragment"
@@ -75,5 +75,17 @@
             android:visibility="gone"/>
 
     </RelativeLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/flSearchDetails"
+        android:name="com.example.photofy.fragments.BlankFragment"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/flContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/flContainer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

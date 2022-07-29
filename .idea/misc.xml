@@ -4,6 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/blur_bg.xml" value="0.221" />
+        <entry key="app/src/main/res/drawable/genre_select_bg.xml" value="0.2905" />
+        <entry key="app/src/main/res/drawable/genre_selected_bg.xml" value="0.2805" />
+        <entry key="app/src/main/res/drawable/genre_unselected_bg.xml" value="0.2905" />
         <entry key="app/src/main/res/drawable/gradient_bg.xml" value="0.3065" />
         <entry key="app/src/main/res/drawable/ic_add.xml" value="0.3185" />
         <entry key="app/src/main/res/drawable/ic_bg.xml" value="0.1" />
@@ -38,12 +42,13 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.24764251708984375" />
         <entry key="app/src/main/res/layout/activity_main2.xml" value="0.27708333333333335" />
         <entry key="app/src/main/res/layout/activity_search_details.xml" value="0.3524581909179688" />
+        <entry key="app/src/main/res/layout/activity_select_fav_genres.xml" value="0.2873980054397099" />
         <entry key="app/src/main/res/layout/activity_set_genres.xml" value="0.2595108695652174" />
         <entry key="app/src/main/res/layout/activity_set_preferred_genres.xml" value="0.2609375" />
         <entry key="app/src/main/res/layout/activity_settings.xml" value="0.3365036231884058" />
-        <entry key="app/src/main/res/layout/activity_signup.xml" value="0.24320652173913043" />
+        <entry key="app/src/main/res/layout/activity_signup.xml" value="0.19130859374999998" />
         <entry key="app/src/main/res/layout/activity_song_recommendations.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/activity_song_results.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/activity_song_results.xml" value="0.1861724853515625" />
         <entry key="app/src/main/res/layout/activity_spotify_login.xml" value="0.24320652173913043" />
         <entry key="app/src/main/res/layout/activity_welcome.xml" value="0.25" />
         <entry key="app/src/main/res/layout/card_stack_view.xml" value="0.24270833333333333" />
@@ -55,7 +60,7 @@
         <entry key="app/src/main/res/layout/fragment_compose.xml" value="0.21822916666666667" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_loading.xml" value="0.3145833333333333" />
-        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.3328804347826087" />
+        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.25279083251953127" />
         <entry key="app/src/main/res/layout/fragment_search.xml" value="0.28229166666666666" />
         <entry key="app/src/main/res/layout/fragment_search_details.xml" value="0.3129528985507246" />
         <entry key="app/src/main/res/layout/fragment_song_recommendations.xml" value="0.26066284179687504" />

@@ -39,17 +39,48 @@ public class RecommendationsService {
         this.queue = queue;
     }
 
-    private String getUrl(String genre){
+    private String getUrl(String genre, List<String> favGenres){
         HttpUrl.Builder url = HttpUrl.parse("https://api.spotify.com/v1/recommendations").newBuilder();
         url.addQueryParameter("market", "US");
         url.addQueryParameter("seed_genres", genre);
 
-        Log.d(TAG, url.build().toString());
+        for (String fav : favGenres) {
+            if (fav.equalsIgnoreCase("hip-hop")) {
+                url.addQueryParameter("min_energy", "0.4");
+            } else if (fav.equalsIgnoreCase("synth-pop")) {
+                url.addQueryParameter("min_loudness", "0.4");
+            } else if (fav.equalsIgnoreCase("industrial")) {
+                url.addQueryParameter("max_acousticness", "0.5");
+            } else if (fav.equalsIgnoreCase("classical")) {
+                url.addQueryParameter("min_instrumentalness", "0.6");
+            } else if (fav.equalsIgnoreCase("ambient")) {
+                url.addQueryParameter("max_tempo", "100");
+            } else if (fav.equalsIgnoreCase("indie-pop")) {
+                url.addQueryParameter("max_energy", "0.6");
+            } else if (fav.equalsIgnoreCase("soul")) {
+                url.addQueryParameter("min_acousticness", "0.4");
+            } else if (fav.equalsIgnoreCase("party")) {
+                url.addQueryParameter("min_danceability", "0.75");
+            } else if (fav.equalsIgnoreCase("metal")) {
+                url.addQueryParameter("min_tempo", "95");
+            } else if (fav.equalsIgnoreCase("r-n-b")) {
+                url.addQueryParameter("min_valence", "0.4");
+            } else if (fav.equalsIgnoreCase("romance")) {
+                url.addQueryParameter("max_liveness", "0.6");
+            } else if (fav.equalsIgnoreCase("sad")) {
+                url.addQueryParameter("max_valence", "0.6");
+            } else if (fav.equalsIgnoreCase("grindcore")) {
+                url.addQueryParameter("max_loudness", "0.9");
+            } else if (fav.equalsIgnoreCase("alternative")) {
+                url.addQueryParameter("min_popularity", "0.4");
+            }
+        }
+
         return url.build().toString();
     }
 
-    public void getRecommendations(String genre, RecommendationsCallback recommendationsCallback, RecommendationsErrorCallback errorCallback) {
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getUrl(genre), null, new Response.Listener<JSONObject>() {
+    public void getRecommendations(String genre, List<String> favGenres, RecommendationsCallback recommendationsCallback, RecommendationsErrorCallback errorCallback) {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getUrl(genre, favGenres), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Log.i(TAG, "in response");
