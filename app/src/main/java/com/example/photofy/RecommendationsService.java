@@ -66,17 +66,16 @@ public class RecommendationsService {
             } else if (fav.equalsIgnoreCase("r-n-b")) {
                 url.addQueryParameter("min_valence", "0.4");
             } else if (fav.equalsIgnoreCase("romance")) {
-                url.addQueryParameter("max_liveness", "0.7");
+                url.addQueryParameter("max_liveness", "0.6");
             } else if (fav.equalsIgnoreCase("sad")) {
                 url.addQueryParameter("max_valence", "0.6");
             } else if (fav.equalsIgnoreCase("grindcore")) {
-                url.addQueryParameter("max_loudness", "0.6");
+                url.addQueryParameter("max_loudness", "0.9");
             } else if (fav.equalsIgnoreCase("alternative")) {
-                url.addQueryParameter("min_liveness", "0.6");
+                url.addQueryParameter("min_popularity", "0.4");
             }
         }
 
-        Log.d(TAG, url.build().toString());
         return url.build().toString();
     }
 

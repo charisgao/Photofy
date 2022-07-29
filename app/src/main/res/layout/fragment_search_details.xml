@@ -3,23 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@android:color/transparent"
-    tools:context=".activities.SearchDetailsActivity">
+    tools:context=".fragments.SearchDetailsFragment">
 
     <ImageView
         android:id="@+id/ivImageSearchDetails"
         android:layout_width="0dp"
         android:layout_height="500dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:transitionName="detailsImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars"
-        android:transitionName="image"/>
+        tools:srcCompat="@tools:sample/avatars" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clSongDetails"
@@ -59,9 +56,8 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 android:textStyle="bold"
-                android:transitionName="songName"
                 tools:text="Song Title" />
 
             <TextView
@@ -71,8 +67,8 @@
                 android:layout_marginTop="3dp"
                 android:textAlignment="center"
                 android:textColor="#FFFFFF"
+                android:textSize="14sp"
                 android:textStyle="italic"
-                android:transitionName="artistName"
                 tools:text="Song Artist" />
 
             <TextView
@@ -96,8 +92,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/linearLayoutSongSearchDetails"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/linearLayoutSongSearchDetails"
-            tools:srcCompat="@tools:sample/avatars"
-            android:transitionName="song"/>
+            tools:srcCompat="@tools:sample/avatars" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -138,5 +133,17 @@
         app:layout_constraintBottom_toBottomOf="@+id/ivProfileSearchDetails"
         app:layout_constraintEnd_toStartOf="@+id/tvUsernameSearchDetails"
         app:srcCompat="@drawable/ic_add" />
+
+    <ImageButton
+        android:id="@+id/ibSearchDetailsClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="7dp"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/black" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

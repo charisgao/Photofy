@@ -21,7 +21,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tfLoginUsernameLayout"
-        style="?attr/textInputFilledStyle"
+        style="@style/Widget.App.TextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
@@ -41,7 +41,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tfLoginPasswordLayout"
-        style="?attr/textInputFilledStyle"
+        style="@style/Widget.App.TextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"

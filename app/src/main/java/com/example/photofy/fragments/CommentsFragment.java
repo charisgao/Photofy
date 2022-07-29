@@ -79,9 +79,9 @@ public class CommentsFragment extends Fragment {
 
             int count = post.getNumComments();
             if (count == 1) {
-                tvTotalNumComments.setText(String.valueOf(count + " comment"));
+                tvTotalNumComments.setText(count + " comment");
             } else {
-                tvTotalNumComments.setText(String.valueOf(count + " comments"));
+                tvTotalNumComments.setText(count + " comments");
             }
         }
 
@@ -95,9 +95,9 @@ public class CommentsFragment extends Fragment {
 
                 int count = post.updateComments();
                 if (count == 1) {
-                    tvTotalNumComments.setText(String.valueOf(count + " comment"));
+                    tvTotalNumComments.setText(count + " comment");
                 } else {
-                    tvTotalNumComments.setText(String.valueOf(count + " comments"));
+                    tvTotalNumComments.setText(count + " comments");
                 }
             }
         });
@@ -144,6 +144,6 @@ public class CommentsFragment extends Fragment {
     }
 
     private void sendCommentNotification(ParseUser userTo) {
-        PushNotificationService.pushNotification(getContext(), userTo.getString("DeviceToken"), "New comment!", userTo.getUsername() + " commented on your post");
+        PushNotificationService.pushNotification(getContext(), userTo.getString("DeviceToken"), "New comment!", ParseUser.getCurrentUser().getUsername() + " commented on your post");
     }
 }
