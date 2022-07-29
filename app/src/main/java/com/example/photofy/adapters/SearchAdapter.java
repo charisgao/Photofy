@@ -16,7 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.Explode;
+import androidx.transition.Fade;
 
 import com.bumptech.glide.Glide;
 import com.example.photofy.DetailsTransition;
@@ -114,7 +114,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                         SearchDetailsFragment searchDetailsFragment = new SearchDetailsFragment();
 
                         searchDetailsFragment.setSharedElementEnterTransition(new DetailsTransition());
-                        searchDetailsFragment.setEnterTransition(new Explode());
+                        searchDetailsFragment.setEnterTransition(new Fade());
 
                         searchDetailsFragment.setArguments(bundle);
                         ((MainActivity) context).getSupportFragmentManager()
