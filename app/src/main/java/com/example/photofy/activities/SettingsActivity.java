@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.photofy.R;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.parse.ParseUser;
 
@@ -20,7 +19,7 @@ public class SettingsActivity extends AppCompatActivity {
     private Button btnSettingsCancel;
     private Button btnSettingsUpdate;
 
-    private ParseUser currentUser = ParseUser.getCurrentUser();
+    private final ParseUser currentUser = ParseUser.getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

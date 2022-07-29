@@ -210,6 +210,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                     post.isLiked = !post.isLiked;
                     int count = post.updateLikes();
                     tvNumLikes.setText(Integer.toString(count));
+                    ivHeart.setVisibility(View.GONE);
                 }
             });
 
@@ -253,9 +254,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                     mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(new CallResult.ResultCallback<PlayerState>() {
                         @Override
                         public void onResult(PlayerState status) {
-                            if (!seekBar.isPressed()) {
-                                seekBar.setProgress((int) status.playbackPosition);
-                                Log.d(TAG, "" + status.playbackPosition);
+                            if (song.getSongName().equalsIgnoreCase(status.track.name)) {
+                                if (!seekBar.isPressed()) {
+                                    seekBar.setProgress((int) status.playbackPosition);
+                                    Log.d(TAG, "" + status.playbackPosition);
+                                }
                             }
                         }
                     });
@@ -269,17 +272,23 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                     mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(new CallResult.ResultCallback<PlayerState>() {
                         @Override
                         public void onResult(PlayerState status) {
-                            if (status.isPaused) {
-                                if (count == 0) {
-                                    mSpotifyAppRemote.getPlayerApi().play("spotify:track:" + song.getSpotifyId());
+                            if (song.getSongName().equalsIgnoreCase(status.track.name)) {
+                                if (status.isPaused) {
+                                    if (count == 0) {
+                                        mSpotifyAppRemote.getPlayerApi().play("spotify:track:" + song.getSpotifyId());
+                                    } else {
+                                        mSpotifyAppRemote.getPlayerApi().resume();
+                                    }
+                                    ibPlay.setImageResource(R.drawable.ic_pause_button);
+                                    count++;
                                 } else {
-                                    mSpotifyAppRemote.getPlayerApi().resume();
+                                    mSpotifyAppRemote.getPlayerApi().pause();
+                                    ibPlay.setImageResource(R.drawable.ic_play_button);
                                 }
+                            } else {
+                                mSpotifyAppRemote.getPlayerApi().play("spotify:track:" + song.getSpotifyId());
                                 ibPlay.setImageResource(R.drawable.ic_pause_button);
                                 count++;
-                            } else {
-                                mSpotifyAppRemote.getPlayerApi().pause();
-                                ibPlay.setImageResource(R.drawable.ic_play_button);
                             }
                         }
                     });
@@ -367,7 +376,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         }
 
         private void sendLikeNotification(ParseUser userTo) {
-            PushNotificationService.pushNotification(context, userTo.getString("DeviceToken"), "New like!", userTo.getUsername() + " liked your post!");
+            PushNotificationService.pushNotification(context, userTo.getString("DeviceToken"), "New like!", ParseUser.getCurrentUser().getUsername() + " liked your post");
         }
 
         private void setupSeekBar(int millis) {
@@ -386,7 +395,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             transaction.replace(R.id.flContainer, otherProfileFragment).addToBackStack(null).commit();
         }
 
-        public void animateHeart(final ImageView view) {
+        public void animateHeart(ImageView view) {
             ScaleAnimation scaleAnimation = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
                     Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             prepareAnimation(scaleAnimation);

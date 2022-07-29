@@ -2,7 +2,6 @@ package com.example.photofy;
 
 import static com.example.photofy.PhotofyApplication.firebaseKey;
 
-import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,12 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.StrictMode;
 import android.util.Log;
-import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -32,6 +29,10 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Notification Service using Firebase Cloud Messaging, generates notifications to user's devices
+ * with a custom NotificationChannel and JsonObjectRequest that creates the appropriate notif
+ */
 public class PushNotificationService extends FirebaseMessagingService {
 
     public static final String TAG = "PushNotificationService";
@@ -56,32 +57,21 @@ public class PushNotificationService extends FirebaseMessagingService {
         Intent i = new Intent(this, MainActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setSmallIcon(R.drawable.splash_logo)
                 .setAutoCancel(true)
                 .setVibrate(new long[] {1000, 1000})
                 .setOnlyAlertOnce(true)
+                .setContentTitle(title)
+                .setContentText(body)
                 .setContentIntent(pendingIntent);
-
-        builder = builder.setContent(getRemoteView(title, body));
 
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
         manager.createNotificationChannel(channel);
         manager.notify(0, builder.build());
-    }
-
-    private RemoteViews getRemoteView(String title, String body) {
-         // attach the notification created with the custom layout
-        @SuppressLint("RemoteViewLayout") RemoteViews remoteView = new RemoteViews("com.example.photofy", R.layout.item_notification);
-
-        remoteView.setImageViewResource(R.id.ivNotif, R.drawable.splash_logo);
-        remoteView.setTextViewText(R.id.tvNotifTitle, title);
-        remoteView.setTextViewText(R.id.tvNotifMessage, body);
-
-        return remoteView;
     }
 
     public static void pushNotification(Context context, String deviceToken, String title, String body) {
@@ -112,8 +102,8 @@ public class PushNotificationService extends FirebaseMessagingService {
                 }
             }) {
                 @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
+                public Map<String, String> getHeaders() {
+                    HashMap<String, String> headers = new HashMap<>();
                     headers.put("Content-Type", "application/json");
                     headers.put("Authorization", "key=" + firebaseKey);
                     return headers;

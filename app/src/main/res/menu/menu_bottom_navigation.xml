@@ -17,4 +17,7 @@
         android:icon="@drawable/ic_filled_profile"
         android:title="Profile"
         app:showAsAction="always" />
+
+    <!--empty placeholder for FAB-->
+    <item app:showAsAction="always" />
 </menu>

@@ -1,8 +1,6 @@
 package com.example.photofy.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,14 +9,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.util.Pair;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.photofy.R;
-import com.example.photofy.activities.SearchDetailsActivity;
+import com.example.photofy.activities.MainActivity;
+import com.example.photofy.fragments.SearchDetailsFragment;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Post;
 import com.example.photofy.models.Song;
@@ -32,7 +28,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 
     public static final String TAG = "ProfileAdapter";
 
-    private Context context;
+    private final Context context;
     private List<Post> posts;
 
     public ProfileAdapter(Context context, List<Post> posts) {
@@ -76,15 +72,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                     if (position != RecyclerView.NO_POSITION) {
                         Post post = posts.get(position);
 
-                        Intent i = new Intent(context, SearchDetailsActivity.class);
-                        i.putExtra("post", post);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("post", post);
 
-                        Pair<View, String> p1 = Pair.create(ivTakenImage, "image");
-                        Pair<View, String> p2 = Pair.create(tvGeneratedSongName, "songName");
-                        Pair<View, String> p3 = Pair.create(ivGeneratedSong, "song");
-
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, p1, p2, p3);
-                        context.startActivity(i, options.toBundle());
+                        SearchDetailsFragment searchDetailsFragment = new SearchDetailsFragment();
+                        searchDetailsFragment.setArguments(bundle);
+                        ((MainActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.flSearchDetails, searchDetailsFragment).commit();
                     }
                 }
             });

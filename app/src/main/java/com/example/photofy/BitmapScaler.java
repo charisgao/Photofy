@@ -25,14 +25,14 @@ public class BitmapScaler
     {
         float factorH = height / (float) b.getHeight();
         float factorW = width / (float) b.getWidth();
-        float factorToUse = (factorH > factorW) ? factorW : factorH;
+        float factorToUse = Math.min(factorH, factorW);
         return Bitmap.createScaledBitmap(b, (int) (b.getWidth() * factorToUse),
                 (int) (b.getHeight() * factorToUse), true);
     }
 
 
     // scale and don't keep aspect ratio
-    public static Bitmap strechToFill(Bitmap b, int width, int height)
+    public static Bitmap stretchToFill(Bitmap b, int width, int height)
     {
         float factorH = height / (float) b.getHeight();
         float factorW = width / (float) b.getWidth();

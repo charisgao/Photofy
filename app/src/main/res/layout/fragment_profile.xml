@@ -82,16 +82,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/clStats" />
 
+    <TextView
+        android:id="@+id/tvHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="35dp"
+        android:text="History"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnEditProfile" />
+
+    <View
+        android:id="@+id/horizontalLine"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="15dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="@id/tvHistory"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvHistory"
+        app:layout_constraintTop_toTopOf="@+id/tvHistory" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvProfilePosts"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="8dp"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btnEditProfile" />
+        app:layout_constraintTop_toTopOf="@+id/horizontalLine" />
 
     <Button
         android:id="@+id/btnFollow"
@@ -125,7 +151,7 @@
         android:id="@+id/clStats"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivProfilePicture">
@@ -234,5 +260,16 @@
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/tvProfileName"
         app:layout_constraintTop_toTopOf="@+id/tvProfileFavGenres" />
+
+    <TextView
+        android:id="@+id/tvProfileNoPosts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You do not have any posts.\nMake your first post!"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/rvProfilePosts"
+        app:layout_constraintTop_toTopOf="@+id/rvProfilePosts" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

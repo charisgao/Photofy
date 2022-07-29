@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/**
+ * Uploads image from local storage to GCS bucket for DetectProperties to obtain the dominant color
+ */
 public class UploadObject {
 
     public static final String TAG = "UploadObject";

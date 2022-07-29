@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.photofy.PushNotificationService
 import com.example.photofy.R
 import com.example.photofy.activities.EditProfileActivity
 import com.example.photofy.activities.LoginActivity
@@ -66,6 +67,7 @@ class ProfileFragment : Fragment {
     private lateinit var btnEditProfile: Button
     private lateinit var btnFollow: Button
     private lateinit var btnFollowing: Button
+    private lateinit var tvProfileNoPosts: TextView
     private lateinit var rvProfilePosts: RecyclerView
 
     private var user = ParseUser.getCurrentUser()
@@ -103,7 +105,7 @@ class ProfileFragment : Fragment {
         ivProfilePicture = view.findViewById(R.id.ivProfilePicture)
         tvProfileName = view.findViewById(R.id.tvProfileName)
         tvProfileBiography = view.findViewById(R.id.tvProfileBiography)
-        tvProfileFavGenres = view.findViewById(R.id.tvProfileFavGenres);
+        tvProfileFavGenres = view.findViewById(R.id.tvProfileFavGenres)
         tvNumberPosts = view.findViewById(R.id.tvNumberPosts)
         tvNumberLikes = view.findViewById(R.id.tvNumberLikes)
         tvNumberFollowers = view.findViewById(R.id.tvNumberFollowers)
@@ -112,6 +114,7 @@ class ProfileFragment : Fragment {
         btnFollow = view.findViewById(R.id.btnFollow)
         btnFollowing = view.findViewById(R.id.btnFollowing)
         rvProfilePosts = view.findViewById(R.id.rvProfilePosts)
+        tvProfileNoPosts = view.findViewById(R.id.tvProfileNoPosts)
         tbProfile.inflateMenu(R.menu.menu_profile_toolbar)
 
         val username = SpannableStringBuilder(user.username)
@@ -145,6 +148,7 @@ class ProfileFragment : Fragment {
         tvProfileBiography.text = user.getString("Biography")
         val favGenres: MutableList<String> = user.getList("FavGenres")!!
         tvProfileFavGenres.text = TextUtils.join(", ", favGenres)
+        tvProfileNoPosts.visibility = View.GONE
 
         setPostCount()
         setLikeCount()
@@ -166,10 +170,14 @@ class ProfileFragment : Fragment {
             }
         }
 
-        btnFollow.setOnClickListener(View.OnClickListener { followUser() })
+        btnFollow.setOnClickListener(View.OnClickListener {
+            followUser()
+            sendFollowNotification(user)
+        })
+
         btnFollowing.setOnClickListener(View.OnClickListener { unfollowUser() })
 
-        editProfileLauncher = registerForActivityResult<Intent, ActivityResult>(
+        editProfileLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -177,7 +185,8 @@ class ProfileFragment : Fragment {
                 val newName = data!!.getStringExtra("Name")
                 val newUsername = data.getStringExtra("Username")
                 val newBio = data.getStringExtra("Bio")
-                Log.i(TAG, "got new info $newUsername $newBio")
+                val newGenres = data.getStringExtra("Genres")
+                val newProfilePic = data.getStringExtra("Picture")
                 val boldNewUsername = SpannableStringBuilder(newUsername)
                 boldNewUsername.setSpan(
                     StyleSpan(Typeface.BOLD),
@@ -185,14 +194,17 @@ class ProfileFragment : Fragment {
                     newUsername!!.length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
+
+                Glide.with(requireContext()).load(newProfilePic).circleCrop().into(ivProfilePicture)
                 tbProfile.title = boldNewUsername
                 tvProfileName.text = newName
                 tvProfileBiography.text = newBio
+                tvProfileFavGenres.text = newGenres
             }
         }
         btnEditProfile.setOnClickListener(View.OnClickListener { goToEditProfile() })
 
-        settingsLauncher = registerForActivityResult<Intent, ActivityResult>(
+        settingsLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -306,6 +318,11 @@ class ProfileFragment : Fragment {
         queryPosts()
     }
 
+    private fun sendFollowNotification(userTo: ParseUser) {
+        PushNotificationService.pushNotification(context, userTo.getString("DeviceToken"), "New follower!", ParseUser.getCurrentUser().username + " followed you"
+        )
+    }
+
     private fun deletePost(post: Post) {
         val query = ParseQuery.getQuery(Post::class.java)
         query.whereEqualTo(Post.KEY_OBJECT_ID, post.objectId)
@@ -387,7 +404,6 @@ class ProfileFragment : Fragment {
                 Toast.makeText(context, R.string.logout_error_toast, Toast.LENGTH_SHORT).show()
                 Log.e(TAG, "Issue with logout", e)
             } else {
-                // TODO: figure out how to log user out from Spotify
                 editor = requireContext().getSharedPreferences("SPOTIFY", Context.MODE_PRIVATE)
                     .edit()
                 editor.remove("token")
@@ -429,11 +445,14 @@ class ProfileFragment : Fragment {
             // Save received posts to list and notify adapter of new data
             profilePosts.addAll(posts)
             profileAdapter.notifyDataSetChanged()
+
+            if (profilePosts.isEmpty()) {
+                tvProfileNoPosts.visibility = View.VISIBLE
+            }
         })
     }
 
     companion object {
         const val TAG = "ProfileFragment"
-        private const val REQUEST_CODE = 1337
     }
 }
