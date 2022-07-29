@@ -8,6 +8,7 @@ import com.parse.ParseUser;
 @ParseClassName("Post")
 public class Post extends ParseObject {
 
+    public static final String KEY_OBJECT_ID = "objectId";
     public static final String KEY_USER = "User";
     public static final String KEY_IMAGE = "Photo";
     public static final String KEY_SONG = "Song";
@@ -17,6 +18,10 @@ public class Post extends ParseObject {
     public static final String KEY_COMMENTS = "Comments";
 
     public boolean isLiked;
+
+    public String getId() {
+        return getString(KEY_OBJECT_ID);
+    }
 
     public ParseUser getUser() {
         return getParseUser(KEY_USER);

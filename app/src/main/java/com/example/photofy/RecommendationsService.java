@@ -76,7 +76,6 @@ public class RecommendationsService {
             }
         }
 
-        Log.d(TAG, url.build().toString());
         return url.build().toString();
     }
 

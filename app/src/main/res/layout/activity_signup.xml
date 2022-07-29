@@ -20,30 +20,78 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tfSignUpEmailLayout"
-        style="?attr/textInputFilledStyle"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvSubtitle">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tfSignUpFirstNameLayout"
+            style="@style/Widget.App.TextInputLayout"
+            android:layout_width="145dp"
+            android:layout_height="wrap_content"
+            android:hint="first name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSignUpFirstName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tfSignUpLastNameLayout"
+            style="@style/Widget.App.TextInputLayout"
+            android:layout_width="145dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:hint="last name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/tfSignUpFirstNameLayout"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSignUpLastName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tfSignUpEmailLayout"
+        style="@style/Widget.App.TextInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="40dp"
         android:hint="email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSubtitle">
+        app:layout_constraintTop_toBottomOf="@+id/clName">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etSignUpEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/baby_blue"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tfSignUpUsernameLayout"
-        style="?attr/textInputFilledStyle"
+        style="@style/Widget.App.TextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
@@ -57,13 +105,12 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etSignUpUsername"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/baby_blue"/>
+            android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tfSignUpPasswordLayout"
-        style="?attr/textInputFilledStyle"
+        style="@style/Widget.App.TextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
@@ -79,35 +126,21 @@
             android:id="@+id/etSignUpPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/baby_blue"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
-
-    <com.androidbuts.multispinnerfilter.MultiSpinnerSearch
-        android:id="@+id/spinnerGenre"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="40dp"
-        android:background="@color/baby_blue"
-        android:backgroundTint="@color/baby_blue"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvFavGenres" />
 
     <Button
         android:id="@+id/btnSignUp"
         style="@style/Widget.Material3.Button.TonalButton"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="28dp"
         android:backgroundTint="@color/dark_blue"
         android:text="@string/signup"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerGenre" />
+        app:layout_constraintTop_toBottomOf="@+id/tfSignUpPasswordLayout" />
 
     <ImageView
         android:id="@+id/ivCamera"
@@ -124,7 +157,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="105dp"
         android:layout_marginEnd="30dp"
         android:fontFamily="@font/open_sans_bold"
         android:text="@string/signup"
@@ -183,16 +216,5 @@
             app:layout_constraintStart_toEndOf="@+id/tvAccount"
             app:layout_constraintTop_toTopOf="@+id/tvAccount" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <TextView
-        android:id="@+id/tvFavGenres"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="25dp"
-        android:text="Favorite Genres:"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tfSignUpPasswordLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

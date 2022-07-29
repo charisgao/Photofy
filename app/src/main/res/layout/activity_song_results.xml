@@ -44,6 +44,7 @@
         android:rotation="-25"
         app:layout_constraintBottom_toTopOf="@+id/ivResultsSongImage"
         app:layout_constraintEnd_toStartOf="@+id/tvMatch"
+        app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/eighth" />
 
     <ImageView
@@ -53,7 +54,6 @@
         android:rotation="15"
         app:layout_constraintBottom_toTopOf="@+id/tfCaptionLayout"
         app:layout_constraintEnd_toEndOf="@+id/frameLayout"
-        app:layout_constraintStart_toEndOf="@+id/tvResultsSongArtist"
         app:srcCompat="@drawable/sixteenth" />
 
     <ImageView
@@ -70,10 +70,13 @@
 
     <TextView
         android:id="@+id/tvResultsSongName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="30dp"
+        android:layout_marginEnd="30dp"
         android:fontFamily="@font/open_sans_medium"
+        android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -84,10 +87,13 @@
 
     <TextView
         android:id="@+id/tvResultsSongArtist"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
         android:fontFamily="@font/open_sans_mediumitalic"
+        android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -116,20 +122,23 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Post"
+        android:backgroundTint="@color/dark_blue"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tfCaptionLayout" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tfCaptionLayout"
-        style="?attr/textInputFilledStyle"
+        style="@style/Widget.App.TextInputLayout"
+        android:backgroundTint="@color/dark_blue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="40dp"
         android:ems="10"
+        android:textColorHint="@color/black"
         android:hint="Add a caption here!"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -139,7 +148,7 @@
             android:id="@+id/etCaption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/baby_blue" />
+            android:lines="3"/>
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

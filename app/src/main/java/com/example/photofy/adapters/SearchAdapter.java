@@ -1,10 +1,11 @@
 package com.example.photofy.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
-import android.util.Log;
+import android.graphics.RenderEffect;
+import android.graphics.Shader;
+import android.os.Build;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.util.Pair;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.Fade;
 
 import com.bumptech.glide.Glide;
+import com.example.photofy.DetailsTransition;
 import com.example.photofy.R;
-import com.example.photofy.activities.SearchDetailsActivity;
+import com.example.photofy.SearchDiffUtilCallback;
+import com.example.photofy.activities.MainActivity;
+import com.example.photofy.fragments.SearchDetailsFragment;
 import com.example.photofy.models.Photo;
 import com.example.photofy.models.Post;
 import com.example.photofy.models.Song;
@@ -32,11 +36,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
     public static final String TAG = "SearchAdapter";
     private final Context context;
-    private final List<Post> posts;
+    private List<Post> posts;
+    private RecyclerView rvSearchedPosts;
 
-    public SearchAdapter(Context context, List<Post> posts) {
+    public SearchAdapter(Context context, List<Post> posts, RecyclerView rvSearchedPosts) {
         this.context = context;
         this.posts = posts;
+        this.rvSearchedPosts = rvSearchedPosts;
     }
 
     @NonNull
@@ -55,6 +61,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public int getItemCount() {
         return posts.size();
+    }
+
+    public void submitList(List<Post> newList) {
+        List<Post> oldList = posts;
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new SearchDiffUtilCallback(oldList, newList));
+        posts = newList;
+        diffResult.dispatchUpdatesTo(this);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -89,17 +102,26 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                 ivSearchImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.i(TAG, "clicked");
 
-                        Intent i = new Intent(context, SearchDetailsActivity.class);
-                        i.putExtra("post", post);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            RenderEffect blurEffect = RenderEffect.createBlurEffect(16, 16, Shader.TileMode.MIRROR);
+                            rvSearchedPosts.setRenderEffect(blurEffect);
+                        }
 
-                        Pair<View, String> p1 = Pair.create(ivSearchImage, "image");
-                        Pair<View, String> p2 = Pair.create(tvSearchSongName, "songName");
-                        Pair<View, String> p3 = Pair.create(tvSearchSongArtist, "artistName");
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("post", post);
 
-                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, p1, p2, p3);
-                        context.startActivity(i, options.toBundle());
+                        SearchDetailsFragment searchDetailsFragment = new SearchDetailsFragment();
+
+                        searchDetailsFragment.setSharedElementEnterTransition(new DetailsTransition());
+                        searchDetailsFragment.setEnterTransition(new Fade());
+
+                        searchDetailsFragment.setArguments(bundle);
+                        ((MainActivity) context).getSupportFragmentManager()
+                                .beginTransaction()
+                                .addSharedElement(ivSearchImage, "detailsImage")
+                                .replace(R.id.flSearchDetails, searchDetailsFragment)
+                                .commit();
                     }
                 });
             } catch (ParseException e) {

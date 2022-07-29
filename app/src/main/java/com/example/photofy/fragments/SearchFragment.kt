@@ -1,5 +1,6 @@
 package com.example.photofy.fragments
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,8 +10,11 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentResultListener
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photofy.ProgressActivityListener
@@ -21,7 +25,8 @@ import com.example.photofy.models.Song
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.transition.platform.MaterialFadeThrough
-import com.parse.*
+import com.parse.ParseObject
+import com.parse.ParseQuery
 import com.parse.boltsinternal.Task
 
 
@@ -68,7 +73,7 @@ class SearchFragment : Fragment() {
         allPosts = ArrayList()
         filteredPosts = ArrayList()
 
-        adapter = SearchAdapter(context, allPosts)
+        adapter = SearchAdapter(context, allPosts, rvSearchedPosts)
         rvSearchedPosts.adapter = adapter
         rvSearchedPosts.layoutManager = GridLayoutManager(context, 2)
         queryPosts()
@@ -86,7 +91,8 @@ class SearchFragment : Fragment() {
                 s: CharSequence, start: Int,
                 before: Int, count: Int
             ) {
-                callAdapter(search(s.toString()))
+                val searchResults = search(s.toString())
+                adapter.submitList(searchResults)
             }
         })
 
@@ -104,7 +110,7 @@ class SearchFragment : Fragment() {
             // if nothing clicked (user unclicked all) then query all posts
             if (checkedIds.isEmpty()) {
                 filtered = false
-                callAdapter(allPosts)
+                adapter.submitList(allPosts)
                 tvNoPosts.visibility = View.GONE
             }
             // if user clicked some chips then call filtered query on selected genres
@@ -118,6 +124,14 @@ class SearchFragment : Fragment() {
                 filteredQuery(checkedGenres)
             }
         }
+
+        val manager: FragmentManager = (activity as AppCompatActivity).supportFragmentManager
+        manager.setFragmentResultListener("requestKey", this,
+            FragmentResultListener { _, _ ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    rvSearchedPosts.setRenderEffect(null)
+                }
+            })
     }
 
     private fun queryPosts() {
@@ -134,8 +148,7 @@ class SearchFragment : Fragment() {
                     // save received posts to list and notify adapter of new data
                     allPosts.clear()
                     allPosts.addAll(posts)
-                    adapter.notifyItemRangeInserted(0, posts.size)
-
+                    adapter.submitList(allPosts)
                     progressActivity.hideProgressBar()
                     // unpin cache
                     ParseObject.unpinAllInBackground(allPosts)
@@ -160,28 +173,20 @@ class SearchFragment : Fragment() {
         )
     }
 
-    private fun callAdapter(posts: List<Post>) {
-        adapter = SearchAdapter(
-            context,
-            posts)
-        rvSearchedPosts.adapter = adapter
-        rvSearchedPosts.layoutManager = GridLayoutManager(context, 2)
-        adapter.notifyDataSetChanged()
-    }
-
+    // TODO: performance problems related to song fetch
     private fun search(phrase: String): MutableList<Post> {
         val searchResults: MutableList<Post> = ArrayList()
         if (filtered) {
             for (post in filteredPosts) {
                 val song: Song = post.song.fetch() as Song
-                if (post.caption.lowercase().contains(phrase.lowercase()) || post.user.username.contains(phrase.lowercase()) || song.songName.lowercase().contains(phrase.lowercase()) || song.artistName.lowercase().contains(phrase.lowercase())) {
+                if (post.user.username.contains(phrase.lowercase()) || song.songName.lowercase().contains(phrase.lowercase()) || song.artistName.lowercase().contains(phrase.lowercase())) {
                     searchResults.add(post)
                 }
             }
         } else {
             for (post in allPosts) {
                 val song: Song = post.song.fetch() as Song
-                if (post.caption.lowercase().contains(phrase.lowercase()) || post.user.username.contains(phrase.lowercase()) || song.songName.lowercase().contains(phrase.lowercase()) || song.artistName.lowercase().contains(phrase.lowercase())) {
+                if (post.user.username.contains(phrase.lowercase()) || song.songName.lowercase().contains(phrase.lowercase()) || song.artistName.lowercase().contains(phrase.lowercase())) {
                     searchResults.add(post)
                 }
             }
@@ -191,7 +196,6 @@ class SearchFragment : Fragment() {
 
     // filter posts by genres in chips
     private fun filteredQuery(genres: MutableList<String>) {
-        filteredPosts.clear()
         val songQueries: MutableList<ParseQuery<Song>> = ArrayList()
 
         for (genre in genres) {
@@ -211,9 +215,11 @@ class SearchFragment : Fragment() {
                 val error = task.error
                 if (error == null) {
                     val posts = task.result!!
-
+                    filteredPosts.clear()
                     filteredPosts.addAll(posts)
-                    callAdapter(filteredPosts)
+
+                    adapter.submitList(filteredPosts)
+
                     if (filteredPosts.isEmpty()) {
                         tvNoPosts.visibility = View.VISIBLE
                     } else {
